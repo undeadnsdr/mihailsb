@@ -14,7 +14,9 @@ import { PhoneMockup } from '@/components/ui/site-mockup'
 export function Hero() {
   return (
     <Section id="hero" className="pt-8 md:pt-12 lg:pt-16" labelledBy="hero-title">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center lg:gap-6">
+      {/* items-start, а не center: правая колонка (телефон + плитки) выше левой,
+          и при центрировании над заголовком оставалось 200px пустоты */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start lg:gap-6">
         <div className="flex flex-col gap-6 lg:col-span-7">
           <Reveal className="flex">
             <span className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium tracking-[0.01em] text-accent-foreground">

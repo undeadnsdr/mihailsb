@@ -77,10 +77,13 @@ export function StickyActions() {
         </div>
       </div>
 
-      {/* Десктоп: колонка справа */}
+      {/* Широкий экран: колонка справа.
+          Порог 1500px, а не md: контент шириной 1400px и на 1200–1400
+          колонка ложилась поверх правого края карточек. На таких экранах
+          связь и так на виду — в липкой шапке есть кнопка «Написать» */}
       <div
         className={cn(
-          'fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 transition-opacity duration-300 md:flex',
+          'fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 transition-opacity duration-300 min-[1500px]:flex',
           hidden && 'pointer-events-none opacity-0',
         )}
       >
@@ -108,15 +111,22 @@ export function StickyActions() {
           <Phone className="size-6" strokeWidth={1.75} aria-hidden="true" />
         </a>
 
-        <button
-          type="button"
-          aria-label="Наверх страницы"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className={cn(fab, showTop ? 'opacity-100' : 'pointer-events-none opacity-0')}
-        >
-          <ArrowUp className="size-6" strokeWidth={1.75} aria-hidden="true" />
-        </button>
       </div>
+
+      {/* «Наверх» — отдельно от колонки: она появляется только с 1500px,
+          а на обычном ноутбуке страница длинная и кнопка нужна */}
+      <button
+        type="button"
+        aria-label="Наверх страницы"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={cn(
+          fab,
+          'fixed bottom-6 right-5 z-40 hidden transition-opacity duration-300 md:flex',
+          showTop ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+      >
+        <ArrowUp className="size-6" strokeWidth={1.75} aria-hidden="true" />
+      </button>
     </>
   )
 }

@@ -4,7 +4,10 @@ import { Reveal } from '@/components/ui/reveal'
 
 /**
  * Контейнер страницы: max-width 1400px, боковые отступы 24/40/64px.
- * Вертикальный ритм: 96px мобильно, 140px десктоп.
+ * Вертикальный ритм — расстояние между секциями: 96px мобильно,
+ * 140px десктоп. Это сумма отступов двух соседних секций, поэтому
+ * padding вдвое меньше: 48 и 70. Раньше стояло по 140 с каждой стороны —
+ * между блоками зияло 280px, и на ноутбуке в кадр попадал один заголовок.
  * В горизонтальной ориентации смартфона отступы сокращаются вдвое —
  * иначе на экране 400px высотой не видно ничего кроме заголовка.
  */
@@ -27,7 +30,9 @@ export function Section({
       aria-labelledby={labelledBy}
       className={cn(
         'mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-16',
-        tight ? 'py-12 md:py-16' : 'py-16 max-[930px]:max-h-none max-md:py-14 md:py-24 lg:py-[140px]',
+        // липкая шапка ~112px: без scroll-mt переход по якорю прятал заголовок под неё
+        'scroll-mt-28',
+        tight ? 'py-8 md:py-12' : 'py-12 md:py-14 lg:py-[70px]',
         '[@media(max-height:500px)_and_(orientation:landscape)]:py-12',
         className,
       )}

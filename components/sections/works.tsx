@@ -32,14 +32,16 @@ export function Works() {
     setActiveId(bestId)
   }, [])
 
-  // Первая плитка крупнее: ряд 7+5, затем 4+4+4
+  // Три полных ряда по 12 колонок: 7+5, 5+7, 6+6.
+  // Раньше последняя плитка занимала 6 из 12 и висела в пустом ряду;
+  // при шести работах ряды по два держат ритм и не оставляют дыр
   const spans = [
     'md:col-span-7',
     'md:col-span-5',
-    'md:col-span-4',
-    'md:col-span-4',
-    'md:col-span-4',
-    'md:col-span-6 lg:col-span-6',
+    'md:col-span-5',
+    'md:col-span-7',
+    'md:col-span-6',
+    'md:col-span-6',
   ]
 
   return (
@@ -49,10 +51,10 @@ export function Works() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {works.map((work, index) => (
-            <Reveal key={work.id} step={(index % 3) as 0 | 1 | 2} className={spans[index]}>
+            <Reveal key={work.id} step={(index % 2) as 0 | 1} className={spans[index]}>
               <WorkCard
                 work={work}
-                large={index === 0}
+                large={index === 0 || index === 3}
                 inView={activeId === work.id}
                 onVisibility={onVisibility}
               />

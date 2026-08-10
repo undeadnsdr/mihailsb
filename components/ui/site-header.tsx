@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Phone } from 'lucide-react'
 import { nav, site } from '@/lib/content'
 import { TopBar } from '@/components/ui/top-bar'
 import { AvitoButton } from '@/components/ui/cta'
+import { reachGoal } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
 export function SiteHeader() {

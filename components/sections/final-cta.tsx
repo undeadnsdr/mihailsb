@@ -128,9 +128,11 @@ export function FinalCta() {
                 />
               </Field>
 
-              <Field label={finalCta.fields.contactLabel} htmlFor="contact">
+              {/* id поля — contact-field, а не contact: id="contact" занят
+                  самой секцией, а дубль ломает якорь #contact из нижней панели */}
+              <Field label={finalCta.fields.contactLabel} htmlFor="contact-field">
                 <input
-                  id="contact"
+                  id="contact-field"
                   name="contact"
                   required
                   inputMode="text"
