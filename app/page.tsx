@@ -43,7 +43,9 @@ import { JsonLd } from '@/components/json-ld'
  * так доказательство идёт раньше самоидентификации, а не наоборот.
  * Stack — блок для скептиков, которым важно «что под капотом»; в середине
  * воронки он тормозит тех, кому это не нужно, поэтому стоит ближе к концу,
- * рядом с FAQ.
+ * рядом с FAQ. HowItWorks стоит прямо перед Stack: сначала человек читает
+ * про механику работы с исполнителем (шаги, сроки), и только потом —
+ * про техническую механику самого сайта.
  */
 export default function Page() {
   return (
@@ -60,9 +62,9 @@ export default function Page() {
         <Industries />
         <Pricing />
         <Includes />
-        <HowItWorks />
         <Leads />
         <PwaSection />
+        <HowItWorks />
         <Stack />
         <Support />
         <Faq />
