@@ -14,9 +14,12 @@ import { benefitsMarquee } from '@/lib/content'
  * Высота пилюли (h-7) и размер текста/иконок внутри тоже скопированы у
  * TopBar, чтобы обе полоски выглядели одной парой, а не разными по весу.
  *
- * pt-1.5 сверху — тот же зазор, что у TopBar до навигационной пилюли под
- * ней (py-1.5 на обёртке nav в SiteHeader): расстояние строки до hero
- * над ней визуально повторяет расстояние верхней строки до хедера.
+ * pt-1 сверху — тот же зазор, что у TopBar до навигационной пилюли под
+ * ней в floating-состоянии (py-1 на обёртке nav в SiteHeader при
+ * floating). Хедер — sticky и переходит в floating уже через 24px
+ * скролла, а сама лента всегда ниже первого экрана, поэтому в момент,
+ * когда её видно, хедер уже гарантированно floating — значит сравнивать
+ * нужно именно с его floating-отступом, а не с исходным (нефлоатящим).
  *
  * Дорожка отрендерена дважды подряд (aria-hidden у второй копии), а CSS
  * анимация двигает контейнер на -50% его собственной ширины — ровно на
@@ -25,7 +28,7 @@ import { benefitsMarquee } from '@/lib/content'
  */
 export function BenefitsMarquee() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-6 pt-1.5 md:px-10 lg:px-16">
+    <div className="mx-auto w-full max-w-[1400px] px-6 pt-1 md:px-10 lg:px-16">
       <div
         aria-label="Преимущества"
         className="flex h-7 w-full items-center overflow-hidden rounded-full bg-primary text-primary-foreground"
