@@ -49,7 +49,13 @@ export function Hero() {
 /** Крупное фото с заголовком, подзаголовком и кнопками поверх */
 function PhotoCard() {
   return (
-    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border sm:aspect-[16/10] lg:aspect-[4/3]">
+    // На мобильном и планшете высота держится на aspect-ratio — своей
+    // высоты у контента нет (текст лежит поверх фото absolute-позицией).
+    // На lg aspect-ratio снят и заменён на h-full: карточка растягивается
+    // грид-строкой ровно до высоты правой колонки (плитки-цифры + карточка
+    // звонка), а не по собственным пропорциям — так обе колонки совпадают
+    // по высоте вплоть до пикселя.
+    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border sm:aspect-[16/10] lg:aspect-auto lg:h-full">
       <Image
         src="/hero/master-photo.webp"
         alt={hero.photoAlt}
