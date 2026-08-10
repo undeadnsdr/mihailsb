@@ -28,30 +28,38 @@ export function About() {
             ))}
           </Reveal>
 
-          <Reveal step={2}>
-            <VoiceNote
-              src={about.voice.src}
-              type={about.voice.type}
-              title={about.voice.title}
-              hint={about.voice.hint}
-              duration={about.voice.duration}
-              peaks={about.voice.peaks}
-              unsupportedNote={about.voice.unsupportedNote}
-              downloadLabel={about.voice.downloadLabel}
-            />
-          </Reveal>
-
-          {about.review ? (
-            <Reveal step={3}>
-              <BentoCard tone="secondary" className="gap-3">
-                <Quote className="size-6 text-primary" strokeWidth={1.75} aria-hidden="true" />
-                <p className="text-pretty text-[17px] leading-relaxed">{about.review.text}</p>
-                <p className="text-[15px] font-medium text-muted-foreground">
-                  {about.review.author} · {about.review.niche}
-                </p>
-              </BentoCard>
+          {/* Правая карточка «Работаю по Тюмени» тянется на всю высоту строки
+              грида, а этот столбец — flex-col без своей высоты, поэтому
+              под голосовым (когда отзыва нет) оставался невидимый зазор
+              и низ карточек не совпадал. lg:mt-auto на группе «голосовое +
+              отзыв» съедает этот зазор сверху и прижимает низ группы
+              к низу строки — к тому же уровню, где кончается гео-карточка */}
+          <div className="flex flex-col gap-6 lg:mt-auto">
+            <Reveal step={2}>
+              <VoiceNote
+                src={about.voice.src}
+                type={about.voice.type}
+                title={about.voice.title}
+                hint={about.voice.hint}
+                duration={about.voice.duration}
+                peaks={about.voice.peaks}
+                unsupportedNote={about.voice.unsupportedNote}
+                downloadLabel={about.voice.downloadLabel}
+              />
             </Reveal>
-          ) : null}
+
+            {about.review ? (
+              <Reveal step={3}>
+                <BentoCard tone="secondary" className="gap-3">
+                  <Quote className="size-6 text-primary" strokeWidth={1.75} aria-hidden="true" />
+                  <p className="text-pretty text-[17px] leading-relaxed">{about.review.text}</p>
+                  <p className="text-[15px] font-medium text-muted-foreground">
+                    {about.review.author} · {about.review.niche}
+                  </p>
+                </BentoCard>
+              </Reveal>
+            ) : null}
+          </div>
         </div>
 
         <Reveal step={2} className="lg:col-span-5">
