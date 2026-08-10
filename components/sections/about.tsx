@@ -3,7 +3,7 @@ import { about, geo, site } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
-import { ExpandableText } from '@/components/ui/expandable-text'
+import { VoiceNote } from '@/components/ui/voice-note'
 
 /**
  * Про меня + гео.
@@ -17,17 +17,28 @@ export function About() {
         <div className="flex flex-col gap-6 md:col-span-7">
           <SectionHeading id="about-title" title={about.title} />
 
-          <Reveal step={1}>
-            <ExpandableText lines={4} className="flex flex-col gap-4 text-muted-foreground">
-              {about.text.map((paragraph) => (
-                <span key={paragraph} className="block">
-                  {paragraph}
-                </span>
-              ))}
-            </ExpandableText>
+          {/* Текст теперь два коротких абзаца — «Читать дальше» тут только мешает,
+              прятать нечего, а лишний тап отделял бы читателя от голосового ниже */}
+          <Reveal step={1} className="flex flex-col gap-4 text-muted-foreground">
+            {about.text.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </Reveal>
 
-          <Reveal step={2} className="flex">
+          <Reveal step={2}>
+            <VoiceNote
+              src={about.voice.src}
+              type={about.voice.type}
+              title={about.voice.title}
+              hint={about.voice.hint}
+              duration={about.voice.duration}
+              peaks={about.voice.peaks}
+              unsupportedNote={about.voice.unsupportedNote}
+              downloadLabel={about.voice.downloadLabel}
+            />
+          </Reveal>
+
+          <Reveal step={3} className="flex">
             <a
               href={site.avitoUrl}
               target="_blank"
@@ -40,7 +51,7 @@ export function About() {
           </Reveal>
 
           {about.review ? (
-            <Reveal step={3}>
+            <Reveal step={4}>
               <BentoCard tone="secondary" className="gap-3">
                 <Quote className="size-6 text-primary" strokeWidth={1.75} aria-hidden="true" />
                 <p className="text-pretty text-[17px] leading-relaxed">{about.review.text}</p>
