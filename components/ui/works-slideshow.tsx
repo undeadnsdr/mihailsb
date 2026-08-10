@@ -166,8 +166,12 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
 
   return (
     <div className="flex flex-col gap-8 md:gap-10">
-      {/* Выбор проекта: он же оглавление слайдшоу */}
-      <div role="group" aria-label="Проекты" className="flex flex-wrap gap-2">
+      {/* Выбор проекта: он же оглавление слайдшоу.
+          justify-center: семь табов почти никогда не делятся на строки
+          поровну, и последняя строка с одним-двумя табами слева выглядела
+          как случайный обрывок — по центру она читается как завершение
+          ряда, а не недоверстка */}
+      <div role="group" aria-label="Проекты" className="flex flex-wrap justify-center gap-2">
         {works.map((item, itemIndex) => (
           <button
             key={item.id}
@@ -253,7 +257,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           </div>
 
           {/* Переключатель устройств: он же индикатор слайдшоу */}
-          <div role="group" aria-label={`Устройства: ${work.niche}`} className="flex flex-wrap gap-2">
+          <div
+            role="group"
+            aria-label={`Устройства: ${work.niche}`}
+            className="flex flex-wrap justify-center gap-2"
+          >
             {slides.map((item, itemIndex) => (
               <button
                 key={item.kind}
