@@ -110,10 +110,14 @@ function PhotoCard() {
  */
 function CallbackCard() {
   return (
-    <BentoCard className="flex-1 justify-end gap-3 p-5 md:p-6" padded={false}>
+    <BentoCard className="flex-1 justify-end gap-3" padded={false}>
       {/* Фото задаёт контекст блока с первого взгляда: те же лица и стройки,
-          что и на фото-заявке слева, — звонок ведёт к тому же мастеру */}
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-2xl">
+          что и на фото-заявке слева, — звонок ведёт к тому же мастеру.
+          Без своих скруглений и без паддинга у карточки — оно вплотную
+          прилегает к верхней и боковым границам, а скругление углов
+          (включая нижние, если текст под фото не займёт весь остаток
+          высоты карточки) даёт overflow-hidden родителя. */}
+      <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <Image
           src="/hero/callback-photo.png"
           alt="Мастер на объекте отвечает на звонок"

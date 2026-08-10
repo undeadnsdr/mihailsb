@@ -2,11 +2,15 @@ import { Check } from 'lucide-react'
 import { benefitsMarquee } from '@/lib/content'
 
 /**
- * Бегущая строка преимуществ прямо под хедером.
+ * Бегущая строка преимуществ под хедером/хero.
  *
  * Заменила блок акции с таймером на первом экране: та же задача — снять
  * возражения сразу, пока внимание максимально, — но без даты окончания,
  * поэтому блок никогда не «протухает» и не пропадает с сайта сам по себе.
+ *
+ * Внешний контейнер повторяет ширину и отступы TopBar (тот же
+ * max-w-[1400px] и px-6/md:px-10/lg:px-16), поэтому овальная пилюля с
+ * лентой ровно совпадает по ширине с пилюлей локации/звонка над ней.
  *
  * Дорожка отрендерена дважды подряд (aria-hidden у второй копии), а CSS
  * анимация двигает контейнер на -50% его собственной ширины — ровно на
@@ -15,13 +19,15 @@ import { benefitsMarquee } from '@/lib/content'
  */
 export function BenefitsMarquee() {
   return (
-    <div
-      aria-label="Преимущества"
-      className="w-full overflow-hidden bg-primary py-2.5 text-primary-foreground"
-    >
-      <div className="marquee-track flex w-max shrink-0">
-        <MarqueeTrack />
-        <MarqueeTrack aria-hidden />
+    <div className="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-16">
+      <div
+        aria-label="Преимущества"
+        className="w-full overflow-hidden rounded-full bg-primary py-2.5 text-primary-foreground"
+      >
+        <div className="marquee-track flex w-max shrink-0">
+          <MarqueeTrack />
+          <MarqueeTrack aria-hidden />
+        </div>
       </div>
     </div>
   )
