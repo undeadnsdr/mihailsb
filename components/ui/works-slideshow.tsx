@@ -403,24 +403,24 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           </div>
 
           <div className="flex max-w-[46ch] flex-col gap-3">
-            <div className="flex items-start gap-2.5">
-              <HelpCircle
-                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
-                strokeWidth={2}
-                aria-hidden="true"
-              />
-              <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-                <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
-                {work.task}
-              </p>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={2.5} aria-hidden="true" />
-              <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-                <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
-                {work.solution}
-              </p>
-            </div>
+            {/* Иконка сидит в одном inline-flex со словом "Задача"/"Решение"
+                (а не рядом со всем абзацем) и центрируется items-center
+                именно по высоте этого слова — независимо от того, на
+                сколько строк разъедется текст после него */}
+            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
+              <span className="mr-1.5 inline-flex items-center gap-1.5 align-middle font-semibold text-foreground">
+                <HelpCircle className="size-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                Задача.
+              </span>
+              {work.task}
+            </p>
+            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
+              <span className="mr-1.5 inline-flex items-center gap-1.5 align-middle font-semibold text-foreground">
+                <Check className="size-4 shrink-0 text-primary" strokeWidth={2.5} aria-hidden="true" />
+                Решение.
+              </span>
+              {work.solution}
+            </p>
           </div>
 
           {/* Три круговые диаграммы вместо чек-листа услуг: тот же набор
