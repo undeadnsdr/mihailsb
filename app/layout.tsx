@@ -59,14 +59,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${inter.variable} bg-background`}>
-      {/* Запас снизу под мобильную панель связи, чтобы она не накрывала подвал.
-          Порог lg — тот же, на котором панель исчезает (см. StickyActions):
-          по md на планшете в портрете отступ снимался, а панель оставалась
-          и накрывала последние строки подвала.
-          В горизонтальной ориентации смартфона панель худеет до 52px,
-          поэтому и запас там меньше — иначе под подвалом висело пустое
-          поле в 20px на экране высотой 375px */}
-      <body className="font-sans antialiased pb-[72px] max-lg:short-landscape:pb-14 lg:pb-0">
+      {/* Запас снизу под панель связи вынесен в globals.css, а не задан
+          классами: он обязан включаться ровно тем же условием, что и сама
+          панель, а у трёх конкурирующих утилит (pb-[72px] / md:pb-0 /
+          short-landscape:pb-14) исход зависел бы от порядка их вывода в
+          CSS, а не от порядка в className */}
+      <body className="font-sans antialiased">
         {children}
         <Metrika />
         <ServiceWorker />
