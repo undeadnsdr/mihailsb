@@ -115,7 +115,11 @@ const slides: Slide[] = [
  */
 const metrics = [
   { key: 'speed', label: 'Скорость' },
-  { key: 'performance', label: 'Производительность' },
+  // Мягкий перенос (\u00AD) — единственное надёжное место разрыва: без
+  // него браузер выбирает точку сам и режет слово где попало, без дефиса
+  // и по слогам. С ним разрыв виден только там, где явно указан, и всегда
+  // с дефисом
+  { key: 'performance', label: 'Производи\u00ADтельность' },
   { key: 'optimization', label: 'Оптимизация' },
 ] as const
 
@@ -180,14 +184,10 @@ function CircularMetric({ label, value, animKey }: { label: string; value: numbe
           {value}%
         </span>
       </div>
-      {/* w-[68px] держит подпись не шире самого кольца: "Производительность"
-          не влезает в это кольцо одним словом на телефоне, где вьюпорт
-          уже, чем сама метка — без ограничения ширины строка не
-          переносилась и раздвигала три кольца за края экрана */}
-      {/* w-20 шире самого кольца (68px): "Производительность" не влезает
-          в 68px даже на две строки без уродливого разрыва посреди слова,
-          а на 80px укладывается в две ровные строки. items-center у
-          родителя всё равно держит подпись центрированной под кольцом */}
+      {/* w-20 шире самого кольца (68px), потому что "Производительность"
+          не влезает в 68px даже на две строки. lang="ru" + hyphens-auto —
+          браузер переносит слово по слогам с дефисом ("произ-водитель-
+          ность"), а не разрывает его как попало без break-words */}
       <span className="w-20 break-words text-center text-[12px] font-medium leading-snug text-foreground">
         {label}
       </span>
@@ -319,7 +319,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             className="relative aspect-square w-full sm:aspect-[4/3] [container-type:size] short-landscape:aspect-[16/9]"
           >
             <DeviceFrame kind={slide.kind}>
-              {/* key — это перезапуск: у нового прохода новый элемент, а
+              {/* key — это перезапуск: у н��вого прохода новый элемент, а
                   значит анимация начинается с начала, без сброса вручную */}
               <div
                 key={passKey}
@@ -347,7 +347,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           {/* Полоска хода прохода — и она же его хронометр.
               Шаг делает animationend именно этой полоски, а не прокрутки:
               полоска есть у любого кадра, а прокрутка — только у двух.
-              Один источник ��ремени вместо двух, и разойтись им негде */}
+              Один источник ��ремени вместо двух, и разойтись и�� негде */}
           <div aria-hidden="true" className="h-0.5 w-full overflow-hidden rounded-full bg-border">
             <div
               key={passKey}
