@@ -96,8 +96,14 @@ function PhotoCard() {
       {/* До 380px текст занимает почти всю высоту карточки и бейдж
           наезжает на первую строку H1. Города он там не сообщает ничего
           нового — он уже есть в верхней полоске над шапкой, — поэтому
-          на самых узких экранах бейдж просто не показываем */}
-      <span className="absolute left-5 top-5 hidden items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm min-[380px]:inline-flex">
+          на самых узких экранах бейдж просто не показываем.
+          Ровно та же причина в горизонтальной ориентации смартфона, только
+          по другой оси: карточка там низкая (24/7), а текстовый блок под
+          неё не сжимается — он прижат к низу и растёт вверх, поэтому первая
+          строка H1 доходит до самого верха карточки и оказывается под
+          бейджем. Оба условия — про одно и то же: бейдж скрывается там,
+          где под него нет свободного поля над заголовком */}
+      <span className="absolute left-5 top-5 hidden items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm min-[380px]:inline-flex short-landscape:hidden">
         <MapPin className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         {hero.badge}
       </span>
@@ -111,7 +117,15 @@ function PhotoCard() {
       <div className="relative grid lg:h-full">
         <div
           aria-hidden="true"
-          className="col-start-1 row-start-1 aspect-[3/4] w-full sm:aspect-[16/10] lg:hidden short-landscape:aspect-[16/7]"
+          // md (планшет в портрете): 16/10 давало 440px высоты, и вместе с
+          // плитками-цифрами и карточкой звонка первый экран 1024px
+          // заканчивался посередине фото — кнопка «Перезвоните мне» в кадр
+          // не попадала. 16/9 отдаёт эти 44px вниз, ничего не меняя по смыслу
+          // Горизонтальная ориентация: 16/7 при ширине 932px (iPhone 15 Pro
+          // Max боком) — это 407px высоты фото на вьюпорте 430px, и нижняя
+          // панель связи накрывала собственные кнопки первого экрана.
+          // 24/7 держит карточку выше панели на любой ширине этого класса
+          className="col-start-1 row-start-1 aspect-[3/4] w-full sm:aspect-[16/10] md:aspect-[16/9] lg:hidden short-landscape:aspect-[24/7]"
         />
         <div className="col-start-1 row-start-1 flex flex-col justify-end gap-4 self-end p-5 md:p-8">
         <h1
@@ -157,7 +171,15 @@ function CallbackCard() {
           если текстовый блок под ним не дотягивается до низа карточки
           (короткий текст + flex-1), overflow-hidden родителя не подхватит
           скругление у нижнего края фото, поэтому оно задано здесь напрямую. */}
-      <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-b-2xl">
+      {/* Пропорция зависит от того, во всю ширину лежит карточка или в
+          колонке. До lg она растянута на весь экран, и 16/9 давало 396px
+          высоты на планшете в портрете: кнопка «Перезвоните мне» уходила
+          за нижний край первого экрана, а фото занимало больше места, чем
+          главное фото мастера выше. С lg карточка возвращается в узкую
+          колонку справа, где 16/9 — нормальный кадр.
+          В горизонтальной ориентации смартфона полоса ещё ниже: там от
+          вьюпорта в 375px на фото нельзя тратить больше сотни пикселей */}
+      <div className="relative aspect-[21/9] w-full shrink-0 overflow-hidden rounded-b-2xl md:aspect-[3/1] lg:aspect-[16/9] short-landscape:aspect-[32/9]">
         <Image
           src="/hero/callback-photo.png"
           alt="Мастер на объекте отвечает на звонок"

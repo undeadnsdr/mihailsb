@@ -59,8 +59,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${inter.variable} bg-background`}>
-      {/* Запас снизу под мобильную панель связи, чтобы она не накрывала подвал */}
-      <body className="font-sans antialiased pb-[72px] md:pb-0">
+      {/* Запас снизу под мобильную панель связи, чтобы она не накрывала подвал.
+          Порог lg — тот же, на котором панель исчезает (см. StickyActions):
+          по md на планшете в портрете отступ снимался, а панель оставалась
+          и накрывала последние строки подвала.
+          В горизонтальной ориентации смартфона панель худеет до 52px,
+          поэтому и запас там меньше — иначе под подвалом висело пустое
+          поле в 20px на экране высотой 375px */}
+      <body className="font-sans antialiased pb-[72px] max-lg:short-landscape:pb-14 lg:pb-0">
         {children}
         <Metrika />
         <ServiceWorker />

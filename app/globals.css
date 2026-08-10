@@ -95,6 +95,18 @@
     overflow-x: clip;
   }
 
+  /* Горизонтальная ориентация — единственный случай, когда вырез камеры и
+     скругления корпуса забирают именно боковые края экрана. В портрете
+     эти вставки равны нулю, поэтому правило и ограничено ориентацией:
+     на планшете и десктопе оно ничего не меняет, а на телефоне боком
+     первая колонка текста больше не уезжает под «монобровь» */
+  @media (orientation: landscape) {
+    body {
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+    }
+  }
+
   :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;

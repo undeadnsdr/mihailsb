@@ -43,13 +43,28 @@ export function StickyActions() {
 
   return (
     <>
-      {/* Смартфон: нижняя панель */}
+      {/* Смартфон и планшет в портрете: нижняя панель.
+          Порог lg, а не md. По md отваливались сразу два реальных случая.
+          Первый — смартфон боком: у iPhone 15 Pro Max это 932×430, у Pixel
+          8 Pro 892×412, то есть шире 768px. Панель там пропадала, а шапка в
+          этой же ориентации сознательно убирает кнопку «Написать на Авито»,
+          рассчитывая, что панель на месте, — в итоге на экране не
+          оставалось ни одной кнопки перехода в переписку. Второй — планшет
+          в портрете (768–1023px): меню и кнопка в шапке появляются только с
+          lg, а колонка иконок справа — с 1500px, так что на 768px не было
+          ни того, ни другого. */}
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 md:hidden',
+          'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 lg:hidden',
           hidden && 'translate-y-full',
         )}
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        // Боковые вырезы: в горизонтальной ориентации «монобровь» и скругления
+        // корпуса забирают края экрана именно по бокам, а не снизу
+        style={{
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          paddingLeft: 'env(safe-area-inset-left, 0px)',
+          paddingRight: 'env(safe-area-inset-right, 0px)',
+        }}
       >
         {/* В горизонтальной ориентации смартфона панель занимала 73px из
             375px высоты экрана — вместе с шапкой это было 47% вьюпорта.
@@ -118,14 +133,17 @@ export function StickyActions() {
       </div>
 
       {/* «Наверх» — отдельно от колонки: она появляется только с 1500px,
-          а на обычном ноутбуке страница длинная и кнопка нужна */}
+          а на обычном ноутбуке страница длинная и кнопка нужна.
+          Порог lg совпадает с порогом нижней панели: на планшете в портрете
+          кнопка садилась ровно поверх панели связи и накрывала телефонную
+          трубку в её правом углу */}
       <button
         type="button"
         aria-label="Наверх страницы"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className={cn(
           fab,
-          'fixed bottom-6 right-5 z-40 hidden transition-opacity duration-300 md:flex',
+          'fixed bottom-6 right-5 z-40 hidden transition-opacity duration-300 lg:flex',
           showTop ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       >
