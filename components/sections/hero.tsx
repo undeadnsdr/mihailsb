@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Check, Phone } from 'lucide-react'
+import { MapPin, Phone } from 'lucide-react'
 import { hero } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -90,11 +90,6 @@ function PhotoCard() {
             {hero.secondaryCta}
           </ScrollLink>
         </div>
-
-        <p className="flex items-center gap-2 text-[14px] text-background/70">
-          <Check className="size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
-          {hero.trustLine[0]} · {hero.trustLine[1]}
-        </p>
       </div>
     </div>
   )
@@ -144,9 +139,7 @@ function CallbackCard() {
           }
         />
 
-        <h2 className="text-pretty text-center text-[19px] font-medium leading-snug tracking-[-0.01em]">
-          {hero.callbackTitle}
-        </h2>
+        <h2 className="text-pretty text-center text-[14px] text-muted-foreground">{hero.callbackTitle}</h2>
       </div>
     </BentoCard>
   )
