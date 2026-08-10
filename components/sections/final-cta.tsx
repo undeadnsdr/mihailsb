@@ -15,6 +15,11 @@ import { Check, Clock, Send } from 'lucide-react'
  * а заявка, ушедшая в никуда, хуже отсутствия формы. Поэтому по отправке
  * открывается переписка в Телеграме с уже готовым текстом сообщения —
  * человеку остаётся только нажать «Отправить» в самом мессенджере.
+ *
+ * Левая плитка ниже, чем правая (заголовок + форма из 3 полей), поэтому
+ * grid растягивает её на всю высоту строки (stretch по умолчанию), а
+ * justify-end внутри BentoCard прижимает контент к нижней границе —
+ * иначе плитка была бы растянута, но с пустым полем сверху.
  */
 export function FinalCta() {
   const { industry, setIndustry, name, setName, contact, setContact, sent, handleSubmit } =
@@ -24,7 +29,7 @@ export function FinalCta() {
     <Section id="contact" labelledBy="contact-title">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
         <Reveal className="md:col-span-6">
-          <BentoCard tone="primary" className="h-full justify-center gap-6 md:p-10 lg:p-12">
+          <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-10 lg:p-12">
             <h2
               id="contact-title"
               className="text-balance text-[28px] font-bold leading-[1.1] tracking-[-0.02em] md:text-[44px]"
@@ -122,10 +127,10 @@ export function FinalCta() {
                 {finalCta.fields.submit}
               </button>
 
-              <p aria-live="polite" className="text-[15px] leading-relaxed text-muted-foreground">
+              <p aria-live="polite" className="text-center text-[15px] leading-relaxed text-muted-foreground">
                 {sent ? (
-                  <span className="flex items-start gap-2 font-medium text-foreground">
-                    <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
+                  <span className="flex items-center justify-center gap-2 font-medium text-foreground">
+                    <Check className="size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
                     Открылся Телеграм с готовым сообщением — нажмите «Отправить» там.
                   </span>
                 ) : (
