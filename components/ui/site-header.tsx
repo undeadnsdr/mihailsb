@@ -46,9 +46,9 @@ export function SiteHeader() {
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={52}
-              height={52}
-              className="size-10 shrink-0 rounded-full border border-border object-cover sm:size-[52px]"
+              width={60}
+              height={60}
+              className="size-11 shrink-0 rounded-full border border-border object-cover sm:size-[60px]"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
