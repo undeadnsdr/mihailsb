@@ -275,6 +275,84 @@ export function TabletMockup({ work, priority = false }: { work: Work; priority?
   )
 }
 
+/**
+ * Телефон, положенный на бок.
+ *
+ * Отдельная вёрстка нужна из-за геометрии: экран 19.5:9 — это очень
+ * широкая и очень низкая полоса. Мобильный макет в ней получил бы кегль
+ * в 2px по высоте, десктопный не влез бы даже шапкой. Поэтому здесь
+ * контент разложен в две колонки: обложка с заголовком слева, цена,
+ * услуги и кнопка справа. Кегли заданы в cqh, а не cqw — в горизонтальной
+ * ориентации ограничитель именно высота, и текст обязан считаться от неё.
+ */
+export function PhoneLandscapeMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
+  const { mock } = work
+
+  return (
+    <div className="flex h-full w-full bg-card text-card-foreground">
+      <div className="relative w-[44%] shrink-0">
+        <Image
+          src={work.image}
+          alt={work.imageAlt}
+          fill
+          sizes="420px"
+          placeholder="blur"
+          blurDataURL={work.blurDataURL}
+          priority={priority}
+          loading={priority ? undefined : 'lazy'}
+          className="object-cover"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(0deg, rgba(17,24,39,0.88) 0%, rgba(17,24,39,0.25) 100%)' }}
+        />
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[1.6cqh] px-[7%] pb-[7%]">
+          <p className="text-[8cqh] font-bold leading-[1.05] tracking-[-0.03em] text-[#f5f6f8]">
+            {mock.headline}
+          </p>
+          <p className="text-[4.6cqh] leading-snug text-[#dce6f2]">{mock.sub}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-[2.4cqh] px-[4%] py-[3.4%]">
+        <div className="flex items-center justify-between gap-[2cqh]">
+          <span className="truncate text-[5cqh] font-bold tracking-[-0.02em] text-primary">
+            {work.niche}
+          </span>
+          <span className="flex items-center gap-[1.2cqh] rounded-full bg-primary px-[3cqh] py-[1.6cqh] text-[4cqh] font-medium text-primary-foreground">
+            <Phone className="size-[4.2cqh]" strokeWidth={1.75} aria-hidden="true" />
+            Позвонить
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between gap-[2cqh] rounded-[2cqh] bg-accent px-[3cqh] py-[2.2cqh] text-accent-foreground">
+          <span className="text-[4cqh] font-medium">{mock.priceLabel}</span>
+          <span className="tnum whitespace-nowrap text-[6cqh] font-bold tracking-[-0.02em]">
+            {mock.price}
+          </span>
+        </div>
+
+        <div className="grid flex-1 grid-cols-2 gap-x-[2.4cqh] gap-y-[1.6cqh] content-start">
+          {mock.services.map((service) => (
+            <span key={service} className="flex items-center gap-[1.4cqh] text-[4cqh] font-medium">
+              <Check className="size-[4.2cqh] shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
+              <span className="truncate">{service}</span>
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between gap-[2cqh]">
+          <p className="text-[3.8cqh] leading-snug text-muted-foreground">{mock.guarantee}</p>
+          <span className="shrink-0 rounded-[1.6cqh] bg-primary px-[3cqh] py-[2cqh] text-[4cqh] font-medium text-primary-foreground">
+            Вызвать на замер
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /** Слой размытия поверх макета: закрывает название и домен заказчика */
 export function BlurRegions({ work, className }: { work: Work; className?: string }) {
   if (!work.blurRegions?.length) return null

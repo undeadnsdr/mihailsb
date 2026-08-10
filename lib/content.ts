@@ -127,7 +127,7 @@ export const pains = {
     },
     {
       title: 'Одни и те же вопросы отнимают время',
-      text: 'Цены, сроки, состав сметы, условия гарантии — т����������повые вопросы, на которые вы отвечаете вручную каждому обратившемуся. Эту нагрузку закрывает один раз оформленная страница.',
+      text: 'Цены, сроки, состав сметы, условия гарантии — т������������повые вопросы, на которые вы отвечаете вручную каждому обратившемуся. Эту нагрузку закрывает один раз оформленная страница.',
     },
   ],
 } as const
@@ -227,6 +227,8 @@ export type Work = {
   image: string
   blurDataURL: string
   imageAlt: string
+  /** Описание проекта в колонке рядом со слайдшоу устройств */
+  about: string
   mock: {
     headline: string
     sub: string
@@ -236,8 +238,6 @@ export type Work = {
     guarantee: string
   }
   blurRegions?: { top: number; left: number; width: number; height: number }[]
-  /** Устройство, на котором показан макет в карточке. По умолчанию — desktop */
-  device?: 'phone' | 'tablet-landscape' | 'tablet-portrait' | 'laptop' | 'monitor'
 }
 
 export const works: Work[] = [
@@ -249,6 +249,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAAAQBQCdASoUABQAPtFao02oJSMiKA1RABoJZQC/7BIvfkt1WcwljH9ThC49tgHpfK+gAN5iFhro/jQYxRbykjgSqXkkrlIe1zpG9Mdx+pLjeZELwPoGH8tF4JvnsCjEoT2C+mQYIMopj9i4rHmas+LQf5TpFQgJhnIOrn2SB73NkvaUb/SF2p/nJi4iO5LUDYTrLj93r52oAA==',
     imageAlt: 'Металлическая кровля частного дома после монтажа',
+    about:
+      'Кровельщик работает с крыши и смотрит заявки с телефона. Поэтому первым экраном идёт кнопка звонка, а цены за квадрат стоят выше отзывов: клиент решает по цене и скорости выезда.',
     mock: {
       headline: 'Кровля под ключ в Тюмени',
       sub: 'Монтаж, ремонт, гидроизоляция. Выезд на замер бесплатно.',
@@ -257,7 +259,6 @@ export const works: Work[] = [
       services: ['Металлочерепица', 'Профнастил', 'Ремонт протечек', 'Мансардные окна'],
       guarantee: 'Гарантия 3 года на работы',
     },
-    device: 'laptop',
   },
   {
     id: 'heating',
@@ -267,6 +268,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBQCdASoUABQAPtFgqE+oJSOiKAgBABoJZQDOOA9mXvo6uoDyrko0WXyocb6am1yXeAi4APww3tfTS5/lsLnMm59ZUZ1x726JgoWya0V9kMyqyXd1W+Fxz52Z+C1jfJwwn+NjxWJYMfpcl6u3XHIzCgI1hFNwLAN3tRz/L7yWfSo0ouvnqndt4e6oxGBH5gAAAA==',
     imageAlt: 'Котельная частного дома с настенным котлом и коллектором',
+    about:
+      'Сезонная сфера: осенью звонят каждый день, летом почти не звонят. Заголовок и кнопки заточены под срочность — «успеем до морозов», а цена показана за киловатт, чтобы не пугать общей суммой.',
     mock: {
       headline: 'Отопление и водоснабжение',
       sub: 'Котлы, тёплый пол, разводка по дому. Успеем до морозов.',
@@ -275,7 +278,6 @@ export const works: Work[] = [
       services: ['Газовые котлы', 'Тёплый пол', 'Радиаторы', 'Водоснабжение'],
       guarantee: 'Гарантия 2 года, обслуживание',
     },
-    device: 'phone',
   },
   {
     id: 'septic',
@@ -285,6 +287,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAQBQCdASoUABQAPtFgqU+oJSOiKAgBABoJZQDA3YyeXBwcQuRvVPnRm2bGbIiYOP5kAP6tOWS5Z1086VzdM0Kc33wCLq8P62uUW6nTH8tP6kev4eW1ZHmMWmcm0LdFaAn60se4ZtBasNUkz5q2g6ZlhysVxk2gUH0KC3EpCcZ5AG50Qdje178S2lzfTBET6cPr4HRCJdOfvJ0XtUpusOSrbPXPM8bA+2ntqAAA',
     imageAlt: 'Монтаж се��ти��а на частном участке, экскаватор и пластиковая станция',
+    about:
+      'Заявки идут с участков за городом, где связь ловит через раз. Поэтому страница лёгкая и открывается на 3G, а телефон и WhatsApp вынесены так, чтобы дозвониться можно было в один тап.',
     mock: {
       headline: 'Септик и скважина под ключ',
       sub: 'Монтаж за один день. Работаем п���� всему Тюменскому району.',
@@ -293,7 +297,6 @@ export const works: Work[] = [
       services: ['Септики', 'Бурение скважин', 'Дрен��ж участка', 'Обслуживание'],
       guarantee: 'Гарантия на монтаж 3 года',
     },
-    device: 'phone',
   },
   {
     id: 'fence',
@@ -303,6 +306,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAACwBACdASoUABQAPtFgqU+oJSOiKAgBABoJZQC90BFB96o7T/3GFojNuI1GzksoAP7we5s4lR4OSWpJB+l91W/BHBpf9MAGAM30mhyRY6tliE+9hzvZV+ITZMVr1gehbNhE6h6agEigd/NXfI8NO9+DOb0p8nBeOwJZy/sxO9xRPRfqwKEjDRSJcnXuwRDdGF7CciAA',
     imageAlt: 'Смонтированный забор из профнастила с откатными воротами',
+    about:
+      'Здесь всё решает цена за метр: клиент сравнивает три-четыре подрядчика подряд. Цена стоит на первом экране открыто — так меньше пустых звонков «а сколько стоит» и больше заявок с готовым решением.',
     mock: {
       headline: 'Заборы, ворота, навесы',
       sub: 'Профнастил, штакетник, откатные ворота. Замер в день обращения.',
@@ -311,7 +316,6 @@ export const works: Work[] = [
       services: ['Профнастил', 'Евроштакетник', 'Откатные ворота', 'Навесы'],
       guarantee: 'Гарантия 2 года',
     },
-    device: 'monitor',
   },
   {
     id: 'house',
@@ -321,6 +325,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAABwBQCdASoUABQAPtFgqU+oJSOiKAgBABoJYwC7AdwAeqGA09inyExQ8CEPi74SWHzRZMlAAPyPzKCT9YheFW7ZrNh2kic+ribXW83o0VsL4bcIwgCKua+TxtUauhwxGnZIyDNMYqgZc53ncPKbhiPUJrOFsPogqHzyagaVrnRAl+QBIx8lchmBCIpnUsAAJeE9XthfvVwZ3AXI/WmL9awMBVB9RZorgerBA+M2ZJmkt27AAAA=',
     imageAlt: 'Каркасный дом на этапе строительства',
+    about:
+      'Дом выбирают долго и вдумчиво, часто вечером с планшета вместе с женой. Поэтому упор на смету и график: их видно до звонка, а не «рассчитаем индивидуально» после заполнения формы.',
     mock: {
       headline: 'Дома, бани, пристройки',
       sub: 'Каркас и брус. Проект, смета и график — до начала работ.',
@@ -329,7 +335,6 @@ export const works: Work[] = [
       services: ['Каркасные дома', 'Бани', 'Пристройки', 'Фундамент'],
       guarantee: 'Смета фиксируется договором',
     },
-    device: 'tablet-landscape',
   },
   {
     id: 'kitchen',
@@ -339,6 +344,8 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAADQBQCdASoUABQAPtFaqE4oJSQiKAqpABoJYwC1GyMv/2P+AzbDC6MmJXQQUBLc8NC8sXumjfnAAP5pYNFJs64NZJKW7A+fVUNGQ8CdS+HjU6Lhs5uZCa2mPXENjtB9RGegMklmK3f639OhCKl1ko5eCLW22H/Sr5BqjMlVfeXktzqt5lrmgGFKJpoOKVRKZ2ueJhzMC73RsE1ArM1kfo1JmOQ0ap8WFU4roNAAAAA=',
     imageAlt: 'Кухня на заказ с матовыми фасадами в частном доме',
+    about:
+      'Мебель выбирают глазами, поэтому фото занимают больше места, чем текст, и не режутся на телефоне. Свой цех и монтаж за день вынесены в первый экран — это главное отличие от перекупщиков.',
     mock: {
       headline: 'Кухни и мебель на заказ',
       sub: 'Свой цех. Замер, проект в 3D, монтаж за один день.',
@@ -347,13 +354,13 @@ export const works: Work[] = [
       services: ['Кухни', 'Шкафы-купе', 'Гардеробные', 'Мебель в баню'],
       guarantee: 'Гарантия 18 месяцев',
     },
-    device: 'tablet-portrait',
   },
 ]
 
 export const worksSection = {
   title: 'Строю сайты под все экраны',
-  subtitle: 'Наведите курсором или коснитесь — страница прокрутится сама.',
+  subtitle:
+    'Каждый проект — на ноутбуке, планшете и смартфоне, в обеих ориентациях. Кадры меняются сами, можно переключить вручную.',
   disclaimer:
     'Демонстрационные макеты под конкретные сферы. Сайты действующих заказчиков показываю в переписке — на них стоят их названия и телефоны.',
   cta: 'Прислать мне пример',
@@ -386,7 +393,7 @@ export const stack = {
       { title: 'Статическая сборка', text: 'Сайт превращается в набор готовых файлов. Их отдаёт любой хостинг — падать и тормозить тут просто нечему.' },
       { title: 'Заявки без своего сервера', text: 'Форма уходит в Telegram или на почту через защищённый обработчик. Данные не лежат на стороннем сервисе.' },
       { title: 'Аналитика и SEO', text: 'Встроенная аналитика посещений, карта сайта, микроразметка. Ключевые запросы поиска встроены в страницу.' },
-      { title: 'Безопасность', text: 'HTTPS, заголовки защиты от подмены контента и CSP. Форму прикрывает антиспам-проверка.' },
+      { title: 'Безопасность', text: 'HTTPS, заголовки защиты от подмены контента и CSP. Форму прикрывает ан��испам-проверка.' },
     ],
   },
   database: {
@@ -500,7 +507,7 @@ export const support = {
 export const about = {
   title: 'Про меня',
   text: [
-    'Меня зовут Илья и более 10 лет я делаю сайты. Делаю сайты-одностраничники в нишах: стр��ительство, ремонт, оборудование и услуги.',
+    'Меня зовут Илья и более 10 лет я ��елаю сайты. Делаю сайты-одностраничники в нишах: стр��ительство, ремонт, оборудование и услуги.',
     'Работаю один, без агентства, менеджеров, брифов на 20 страниц и непонятных техзаданий. Отсюда короткие сроки и честная цена. Буду рад быть Вам полезным.',
   ],
   /**
