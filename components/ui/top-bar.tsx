@@ -54,13 +54,13 @@ export function TopBar({ floating }: { floating: boolean }) {
   return (
     <div
       className={cn(
-        'mx-auto w-full max-w-[1400px] px-6 pt-3 transition-[padding] duration-300 md:px-10 lg:px-16',
-        floating && 'pt-2',
+        'mx-auto w-full max-w-[1400px] px-6 pt-2 transition-[padding] duration-300 md:px-10 lg:px-16',
+        floating && 'pt-1.5',
       )}
     >
       <div
         className={cn(
-          'relative isolate flex h-9 items-center justify-between gap-4 overflow-hidden rounded-full border border-border px-5 shadow-sm transition-all duration-300',
+          'relative isolate flex h-7 items-center justify-between gap-4 overflow-hidden rounded-full border border-border px-4 shadow-sm transition-all duration-300',
           floating ? 'glass' : 'bg-card',
         )}
       >
@@ -93,11 +93,11 @@ function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
     <>
       <p
         className={cn(
-          'flex items-center gap-1.5 text-[13px] font-medium leading-none sm:text-sm',
+          'flex items-center gap-1 text-xs font-medium leading-none sm:text-[13px]',
           muted ? 'text-muted-foreground' : 'text-primary-foreground',
         )}
       >
-        <MapPin className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+        <MapPin className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
         <span className="truncate">
           {site.city} и {site.region}
         </span>
@@ -112,17 +112,17 @@ function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
               data-goal="click_callback"
               data-place="topbar"
               onClick={() => reachGoal('click_callback', { place: 'topbar' })}
-              className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary transition-colors hover:text-primary-hover sm:text-sm"
+              className="flex shrink-0 items-center gap-1 text-xs font-medium leading-none text-primary transition-colors hover:text-primary-hover sm:text-[13px]"
             >
-              <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <Phone className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
               <span className="sm:hidden">{topBar.ctaShort}</span>
               <span className="hidden sm:inline">{topBar.cta}</span>
             </button>
           }
         />
       ) : (
-        <span className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary-foreground sm:text-sm">
-          <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+        <span className="flex shrink-0 items-center gap-1 text-xs font-medium leading-none text-primary-foreground sm:text-[13px]">
+          <Phone className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
           <span className="sm:hidden">{topBar.ctaShort}</span>
           <span className="hidden sm:inline">{topBar.cta}</span>
         </span>
