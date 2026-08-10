@@ -70,7 +70,14 @@ function PhotoCard() {
     // высоты, то есть картинка одна была выше всего вьюпорта, и H1 с
     // кнопками уходили за нижний край. 16/7 укладывает карточку ровно
     // в высоту, оставшуюся от шапки и панели связи
-    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border sm:aspect-[16/10] lg:aspect-auto lg:h-full short-landscape:aspect-[16/7]">
+    // Раньше высоту задавал aspect-[3/4]. На экране 300px это 357px, а
+    // текстовый блок поверх фото (H1 в три строки + подзаголовок + две
+    // кнопки в столбик) занимает 388px. Он прижат к bottom-0 и растёт
+    // вверх, поэтому первая строка H1 уходила выше границы фото и
+    // обрезалась overflow-hidden, а бейдж города накрывал заголовок.
+    // Теперь пропорцию держит невидимая распорка внутри (см. ниже), а
+    // сама карточка тянется по контенту, если текст в пропорцию не влез
+    <div className="relative overflow-hidden rounded-2xl border border-border lg:h-full">
       <Image
         src="/hero/master-photo.webp"
         alt={hero.photoAlt}
@@ -86,12 +93,27 @@ function PhotoCard() {
         style={{ background: 'linear-gradient(0deg, rgba(17,24,39,0.88) 0%, rgba(17,24,39,0.35) 45%, transparent 70%)' }}
       />
 
-      <span className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm">
+      {/* До 380px текст занимает почти всю высоту карточки и бейдж
+          наезжает на первую строку H1. Города он там не сообщает ничего
+          нового — он уже есть в верхней полоске над шапкой, — поэтому
+          на самых узких экранах бейдж просто не показываем */}
+      <span className="absolute left-5 top-5 hidden items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm min-[380px]:inline-flex">
         <MapPin className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         {hero.badge}
       </span>
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-5 md:p-8">
+      {/* Сетка в одну колонку: распорка и текст лежат в одной и той же
+          ячейке (оба в row 1), поэтому не складываются по высоте. Распорка
+          задаёт минимум — прежнюю пропорцию карточки, — а текст выравнен по
+          низу ячейки и, если он выше распорки, растит ячейку под себя.
+          Это и есть то, чего не мог aspect-ratio на самой карточке.
+          На lg высоту диктует грид-строка, и хватает обычного h-full */}
+      <div className="relative grid lg:h-full">
+        <div
+          aria-hidden="true"
+          className="col-start-1 row-start-1 aspect-[3/4] w-full sm:aspect-[16/10] lg:hidden short-landscape:aspect-[16/7]"
+        />
+        <div className="col-start-1 row-start-1 flex flex-col justify-end gap-4 self-end p-5 md:p-8">
         <h1
           id="hero-title"
           className="text-balance text-[27px] font-bold leading-[1.1] tracking-[-0.03em] text-background sm:text-[32px] md:text-[38px] lg:text-[48px] short-landscape:text-[26px]"
@@ -110,6 +132,7 @@ function PhotoCard() {
           >
             {hero.secondaryCta}
           </ScrollLink>
+          </div>
         </div>
       </div>
     </div>

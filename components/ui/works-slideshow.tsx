@@ -178,10 +178,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               setActive(0)
             }}
             className={cn(
-              // min-h-11 (44px) на смартфоне: выбор проекта — основной
-              // орган управления слайдшоу, и по вертикали он давал 38px,
-              // меньше пальца. С sm высоту задаёт padding
-              'inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors sm:min-h-0',
+              // min-h-11 (44px): выбор проекта — основной орган управления
+              // слайдшоу, а по вертикали он давал 38px, меньше пальца.
+              // Порог lg, а не sm: планшет в обеих ориентациях — тоже тач,
+              // и 38px там так же неудобны, как на смартфоне
+              'inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors lg:min-h-0',
               itemIndex === workIndex
                 ? 'border-foreground bg-foreground text-background'
                 : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
@@ -260,14 +261,18 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 aria-pressed={itemIndex === active}
                 onClick={() => setActive(itemIndex)}
                 className={cn(
-                  'inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-0',
+                  'inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors lg:min-h-0',
                   itemIndex === active
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
                 )}
               >
-                <span className="hidden sm:inline">{item.label}</span>
-                <span className="sm:hidden">{item.short}</span>
+                {/* Пять кнопок в ряд: полные подписи («Планшет горизонтально»)
+                    появляются только с lg, где на них есть ширина. До этого
+                    короткие «Планшет ↔» — на планшете в портрете полные
+                    названия занимали три строки кнопок вместо одной */}
+                <span className="hidden lg:inline">{item.label}</span>
+                <span className="lg:hidden">{item.short}</span>
               </button>
             ))}
           </div>

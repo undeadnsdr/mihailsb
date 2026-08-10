@@ -128,7 +128,11 @@ function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
               data-goal="click_callback"
               data-place="topbar"
               onClick={() => reachGoal('click_callback', { place: 'topbar' })}
-              className="flex shrink-0 items-center gap-1 text-xs font-medium leading-none text-primary transition-colors hover:text-primary-hover sm:text-[13px]"
+              // self-stretch: зона нажатия была равна высоте строки — 14px,
+              // втрое меньше пальца. Растягивание по высоте полоски даёт
+              // 28px, не меняя вёрстку: полоска и так этой высоты.
+              // Выше не сделать — pill с overflow-hidden обрежет клик
+              className="flex shrink-0 items-center gap-1 self-stretch text-xs font-medium leading-none text-primary transition-colors hover:text-primary-hover sm:text-[13px]"
             >
               <Phone className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
               <span className="sm:hidden">{topBar.ctaShort}</span>

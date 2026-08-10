@@ -43,7 +43,13 @@ export function SiteHeader() {
             floating ? 'glass' : 'bg-card',
           )}
         >
-          <a href="#top" className="flex min-w-0 items-center gap-3 justify-self-start">
+          {/* Без justify-self-start: в grid это выравнивание переключает
+              элемент на размер по содержимому, и логотип занимал 163px
+              вместо своей колонки в 56px — он наезжал на телефон справа
+              на 91px, а truncate не срабатывал вообще. По умолчанию
+              (stretch) элемент равен колонке, и обрезка работает.
+              Влево он и так прижат, так как это первая колонка */}
+          <a href="#top" className="flex min-w-0 items-center gap-3">
             {/* Фото автора — сайты делает реальный человек, не студия.
                 Круглый кроп по лицу, размер пропорционален уменьшенной высоте панели */}
             <Image
@@ -70,7 +76,11 @@ export function SiteHeader() {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="text-sm font-medium tracking-[0.01em] text-muted-foreground transition-colors hover:text-foreground"
+                  // Меню включается на lg — то есть первым его получает
+                  // планшет в горизонтальной ориентации, а это тач. Ссылки
+                  // высотой 17px там не нажать: flex + min-h-10 расширяет
+                  // зону до 40px, не меняя вид самой строки
+                  className="flex min-h-10 items-center text-sm font-medium tracking-[0.01em] text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {item.label}
                 </a>
@@ -86,7 +96,12 @@ export function SiteHeader() {
               data-goal="click_phone"
               data-place="header"
               onClick={() => reachGoal('click_phone', { place: 'header' })}
-              className="flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden short-landscape:flex"
+              // Номер неразрывный и занимает 166px. Порог 420px — ширина,
+              // на которой домену остаётся 134px при нужных ему 119px:
+              // ниже он начинал обрезаться в «ильясайты.р…». Там номер
+              // скрыт, и позвонить можно из «Звонка» в верхней полоске
+              // или кнопкой с трубкой в нижней панели связи
+              className="hidden min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover min-[420px]:flex sm:hidden short-landscape:flex"
             >
               <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}

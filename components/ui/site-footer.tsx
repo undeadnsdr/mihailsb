@@ -24,7 +24,12 @@ export function SiteFooter() {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <a href={`tel:${site.phoneRaw}`} className="flex min-h-[36px] items-center gap-1.5 text-[15px] font-medium">
+            {/* 44px на смартфоне — минимум для пальца; на мышиных ширинах
+                возвращается компактные 36px, иначе подвал распухает */}
+            <a
+              href={`tel:${site.phoneRaw}`}
+              className="flex min-h-11 items-center gap-1.5 text-[15px] font-medium sm:min-h-[36px]"
+            >
               <Phone className="size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}
             </a>
@@ -32,7 +37,7 @@ export function SiteFooter() {
               href={site.avitoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-[36px] items-center gap-1.5 text-[15px] font-medium text-primary"
+              className="flex min-h-11 items-center gap-1.5 text-[15px] font-medium text-primary sm:min-h-[36px]"
             >
               <AvitoIcon className="size-4 shrink-0" />
               Профиль на Авито
@@ -48,7 +53,9 @@ export function SiteFooter() {
               <a
                 key={item.href}
                 href={item.href}
-                className="min-h-[36px] text-[14px] leading-[36px] text-muted-foreground transition-colors hover:text-foreground"
+                // leading задаёт высоту строки под min-h, иначе текст
+                // прижимается к верху увеличенной зоны нажатия
+                className="min-h-11 text-[14px] leading-[44px] text-muted-foreground transition-colors hover:text-foreground sm:min-h-[36px] sm:leading-[36px]"
               >
                 {item.label}
               </a>
