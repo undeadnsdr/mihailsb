@@ -1,4 +1,4 @@
-import { MapPin, Quote } from 'lucide-react'
+import { ChevronDown, MapPin, Quote } from 'lucide-react'
 import { about, geo } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -20,12 +20,33 @@ export function About() {
         <div className="flex flex-col gap-6 lg:col-span-7">
           <SectionHeading id="about-title" title={about.title} />
 
-          {/* Текст теперь два коротких абзаца — «Читать дальше» тут только мешает,
-              прятать нечего, а лишний тап отделял бы читателя от голосового ниже */}
-          <Reveal step={1} className="flex flex-col gap-4 text-muted-foreground">
-            {about.text.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+          {/* На смартфоне текст сворачивается до 3 строк с шевроном: на этой
+              ширине два абзаца целиком отталкивают читателя объёмом раньше,
+              чем он увидит голосовое и цену. На sm+ разворачивать нечего —
+              оба абзаца и так помещаются без скролла, «Читать дальше» там
+              только мешал бы */}
+          <Reveal step={1} className="text-muted-foreground">
+            <details className="group sm:hidden">
+              <summary className="flex cursor-pointer list-none flex-col gap-2 [&::-webkit-details-marker]:hidden">
+                <p className="text-pretty line-clamp-3 group-open:hidden">{about.text.join(' ')}</p>
+                <ChevronDown
+                  className="ml-auto size-5 shrink-0 text-primary transition-transform group-open:rotate-180"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+              </summary>
+              <div className="flex flex-col gap-4">
+                {about.text.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </details>
+
+            <div className="hidden flex-col gap-4 sm:flex">
+              {about.text.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
           </Reveal>
 
           {/* Правая карточка «Работаю по Тюмени» тянется на всю высоту строки
