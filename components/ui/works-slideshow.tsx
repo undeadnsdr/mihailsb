@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { Check, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react'
+import { ArrowLeftRight, ArrowUpDown, Check, HelpCircle, Laptop } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
 import { DeviceFrame, type DeviceKind } from '@/components/ui/device-frames'
@@ -33,6 +33,10 @@ import {
 type Slide = {
   kind: DeviceKind
   label: string
+  /** Название устройства без ориентации — то, что написано на самой кнопке */
+  device: string
+  /** Иконка ориентации на кнопке: у ноутбука её нет, у остальных — стрелки */
+  orientation: 'vertical' | 'horizontal' | null
   /**
    * Высота полотна внутри кадра. h-auto — по содержимому: столько, сколько
    * занимает страница, и прокрутка проезжает ровно её излишек над кадром.
@@ -55,34 +59,50 @@ type Slide = {
  * телефоне, где адаптив укладывает страницу без прокрутки.
  */
 const slides: Slide[] = [
-  { kind: 'laptop', label: 'Ноутбук', height: 'h-auto', pass: '7s', passMs: 7000 },
   {
-    kind: 'tablet-landscape',
-    label: 'Планшет ↔ горизонтально',
+    kind: 'laptop',
+    label: 'Ноутбук',
+    device: 'Ноутбук',
+    orientation: null,
     height: 'h-auto',
     pass: '7s',
     passMs: 7000,
   },
   {
-    kind: 'tablet-portrait',
-    label: 'Планшет ↕ вертикально',
-    height: 'h-full',
-    pass: '4.5s',
-    passMs: 4500,
-  },
-  {
     kind: 'phone-portrait',
-    label: 'Смартфон ↕ вертикально',
+    label: 'Смартфон вертикально',
+    device: 'Смартфон',
+    orientation: 'vertical',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
   },
   {
     kind: 'phone-landscape',
-    label: 'Смартфон ↔ горизонтально',
+    label: 'Смартфон горизонтально',
+    device: 'Смартфон',
+    orientation: 'horizontal',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
+  },
+  {
+    kind: 'tablet-portrait',
+    label: 'Планшет вертикально',
+    device: 'Планшет',
+    orientation: 'vertical',
+    height: 'h-full',
+    pass: '4.5s',
+    passMs: 4500,
+  },
+  {
+    kind: 'tablet-landscape',
+    label: 'Планшет горизонтально',
+    device: 'Планшет',
+    orientation: 'horizontal',
+    height: 'h-auto',
+    pass: '7s',
+    passMs: 7000,
   },
 ]
 
@@ -317,7 +337,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           {/* Полоска хода прохода — и она же его хронометр.
               Шаг делает animationend именно этой полоски, а не прокрутки:
               полоска есть у любого кадра, а прокрутка — только у двух.
-              Один источник времени вместо двух, и разойтись им негде */}
+              Один источник ��ремени вместо двух, и разойтись им негде */}
           <div aria-hidden="true" className="h-0.5 w-full overflow-hidden rounded-full bg-border">
             <div
               key={passKey}
@@ -331,66 +351,41 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           </div>
 
           {/* Переключатель устройств: он же индикатор слайдшоу.
-              Раньше это был ряд из пяти кнопок-пилюль — на десктопе он
-              умещался в строку, а на телефоне разваливался на 2-3 строки
-              и не собирал взгляд. Карусель со стрелками занимает ту же
-              компактную ширину везде, а название текущего устройства уже
-              несёт стрелку ориентации (↔ / ↕) — она и объясняет, что
-              значит «горизонтально/вертикально», без отдельной иконки
-              поворота. mx-auto центрирует блок по ширине родителя, а
-              родитель — та же колонка, что и сцена с макетом сайта, так
-              что стрелки оказываются по центру именно относительно неё */}
+              Пять кнопок, каждая — название устройства плюс иконка
+              ориентации (стрелки ↕ или ↔), а не текстовый символ: значок
+              читается быстрее и одинаково хорошо смотрится в любом
+              масштабе. У ноутбука ориентации нет — там нет иконки вовсе.
+              justify-center вместо жёсткой строки: на телефоне пять
+              кнопок не помещаются в одну линию и переходят на вторую,
+              и по центру она не выглядит обрывком */}
           <div
+            role="group"
             aria-label={`Устройства: ${work.niche}`}
-            className="mx-auto flex flex-col items-center gap-3"
+            className="flex flex-wrap justify-center gap-2"
           >
-            <div className="flex items-center gap-3">
+            {slides.map((item, itemIndex) => (
               <button
+                key={item.kind}
                 type="button"
-                aria-label="Предыдущее устройство"
-                onClick={() => setActive((active - 1 + slides.length) % slides.length)}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                aria-pressed={itemIndex === active}
+                onClick={() => setActive(itemIndex)}
+                className={cn(
+                  'inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors lg:min-h-0',
+                  itemIndex === active
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
+                )}
               >
-                <ChevronLeft className="size-4" strokeWidth={2} aria-hidden="true" />
+                {item.orientation === 'vertical' ? (
+                  <ArrowUpDown className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                ) : item.orientation === 'horizontal' ? (
+                  <ArrowLeftRight className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                ) : (
+                  <Laptop className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                )}
+                {item.device}
               </button>
-              <span
-                aria-live="polite"
-                className="min-w-[15ch] text-center text-[13px] font-medium tnum text-foreground"
-              >
-                {slide.label}
-              </span>
-              <button
-                type="button"
-                aria-label="Следующее устройство"
-                onClick={() => setActive((active + 1) % slides.length)}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
-              >
-                <ChevronRight className="size-4" strokeWidth={2} aria-hidden="true" />
-              </button>
-            </div>
-
-            {/* Точки-индикатор: пять шагов слайдшоу, активная крупнее и
-                выделена цветом. Кликабельны — прямой переход к устройству
-                остаётся доступен, просто не отдельной подписанн��й кнопкой */}
-            <div className="flex items-center gap-1.5">
-              {slides.map((item, itemIndex) => (
-                <button
-                  key={item.kind}
-                  type="button"
-                  aria-label={item.label}
-                  aria-pressed={itemIndex === active}
-                  onClick={() => setActive(itemIndex)}
-                  className="p-1"
-                >
-                  <span
-                    className={cn(
-                      'block size-1.5 rounded-full transition-colors',
-                      itemIndex === active ? 'bg-primary' : 'bg-border hover:bg-foreground/40',
-                    )}
-                  />
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
