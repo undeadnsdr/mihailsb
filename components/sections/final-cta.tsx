@@ -1,14 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { Check, Clock } from 'lucide-react'
-import { finalCta, site, avitoMessage } from '@/lib/content'
+import { finalCta, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
 import { AvitoButton, PhoneButton } from '@/components/ui/cta'
 import { AvitoIcon } from '@/components/ui/avito-icon'
-import { reachGoal, getUtmSuffix } from '@/lib/analytics'
+import { useAvitoLeadForm } from '@/lib/lead-form'
+import { Check, Clock } from 'lucide-react'
 
 /**
  * Финальный экран.
@@ -20,36 +19,8 @@ import { reachGoal, getUtmSuffix } from '@/lib/analytics'
  * месте, где лежат отзывы и рейтинг.
  */
 export function FinalCta() {
-  const [industry, setIndustry] = useState('')
-  const [name, setName] = useState('')
-  const [contact, setContact] = useState('')
-  const [copied, setCopied] = useState(false)
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    // UTM попадает в текст сообщения — только так видно, из какого
-    // объявления пришёл человек: Авито не передаёт рефереры в переписку
-    const message = [
-      avitoMessage + getUtmSuffix() + '.',
-      industry ? `Сфера: ${industry}.` : '',
-      name ? `Меня зовут ${name}.` : '',
-      contact ? `Связь: ${contact}.` : '',
-    ]
-      .filter(Boolean)
-      .join(' ')
-
-    try {
-      await navigator.clipboard.writeText(message)
-      setCopied(true)
-    } catch {
-      // Буфер недоступен (старый Safari, отказ в разрешении) — не блокируем переход
-      setCopied(false)
-    }
-
-    reachGoal('form_submit', { industry: industry || 'не выбрана' })
-    window.open(site.avitoUrl, '_blank', 'noopener,noreferrer')
-  }
+  const { industry, setIndustry, name, setName, contact, setContact, copied, handleSubmit } =
+    useAvitoLeadForm('final')
 
   return (
     <Section id="contact" labelledBy="contact-title">
