@@ -124,22 +124,6 @@
     }
   }
 
-  /* Вырез в нижнем правом углу — приём-подпись страницы (раздел 1.5).
-     clip-path через path невозможен в процентах, поэтому используем
-     радиальную маску: она даёт вогнутую дугу и корректно деградирует. */
-  .corner-cut {
-    --cut: 92px;
-    mask-image: radial-gradient(circle var(--cut) at 100% 100%, transparent 99%, #000 100%);
-    -webkit-mask-image: radial-gradient(circle var(--cut) at 100% 100%, transparent 99%, #000 100%);
-  }
-
-  @supports not (mask-image: radial-gradient(circle 1px at 0 0, #000 1%, #000 2%)) {
-    .corner-cut {
-      mask-image: none;
-      -webkit-mask-image: none;
-    }
-  }
-
   /* Плотность тени по всей странице — не темнее rgba(17,24,39,0.12) */
   .card-shadow {
     box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 8px 24px rgba(17, 24, 39, 0.06);
@@ -164,8 +148,11 @@
   }
 
   /* Имитация скролла демо-сайта.
-     Контент выше кадра ровно в 2.4 раза, поэтому конечное смещение
-     всегда -58.3333% от собственной высоты — считать в JS нечего. */
+     Смещение считается точно и без JS: -100% — это высота самого макета,
+     +100cqh — высота кадра, поэтому низ макета встаёт ровно на низ кадра.
+     Проценты в translateY считаются от высоты элемента, cqh — от кадра
+     (у кадра container-type: size), так что доскролл всегда до конца и
+     никогда не уезжает в пустоту, какой бы длины ни был макет. */
   .autoscroll-run {
     animation: autoscroll 9s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
   }
@@ -177,7 +164,7 @@
     }
     90%,
     100% {
-      transform: translateY(-58.3333%);
+      transform: translateY(calc(-100% + 100cqh));
     }
   }
 }

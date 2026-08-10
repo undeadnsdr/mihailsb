@@ -7,13 +7,18 @@ import { reachGoal } from '@/lib/analytics'
 import { AvitoIcon } from '@/components/ui/avito-icon'
 import { cn } from '@/lib/utils'
 
-const button =
-  'glass flex size-11 items-center justify-center rounded-xl text-primary transition-colors hover:text-primary-hover md:size-12'
+const fab =
+  'glass flex size-12 items-center justify-center rounded-xl text-primary transition-colors hover:text-primary-hover'
 
 /**
- * Фиксированная колонка справа. На горизонтальном смартфоне уходит
- * в горизонтальный стек снизу — вертикально там места нет.
- * При появлении формы во вьюпорте панель прячется, чтобы не перекрывать поля.
+ * Постоянный доступ к связи.
+ *
+ * На смартфоне это нижняя панель с подписанной кнопкой: круглые иконки
+ * у правого края накрывали контент карточек и не объясняли, куда ведут.
+ * На десктопе — колонка иконок справа, там места хватает.
+ *
+ * Когда форма во вьюпорте, панель прячется: две конкурирующие точки
+ * входа в одном экране только мешают.
  */
 export function StickyActions() {
   const [showTop, setShowTop] = useState(false)
@@ -37,45 +42,81 @@ export function StickyActions() {
   }, [])
 
   return (
-    <div
-      className={cn(
-        'fixed right-4 bottom-4 z-40 flex flex-col gap-3 transition-opacity duration-300 md:right-5 md:bottom-auto md:top-1/2 md:-translate-y-1/2',
-        '[@media(max-height:500px)_and_(orientation:landscape)]:top-auto [@media(max-height:500px)_and_(orientation:landscape)]:bottom-3 [@media(max-height:500px)_and_(orientation:landscape)]:right-3 [@media(max-height:500px)_and_(orientation:landscape)]:translate-y-0 [@media(max-height:500px)_and_(orientation:landscape)]:flex-row',
-        hidden && 'pointer-events-none opacity-0',
-      )}
-    >
-      <a
-        href={site.avitoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Написать мне на Авито"
-        data-goal="click_avito"
-        data-place="sticky"
-        onClick={() => reachGoal('click_avito', { place: 'sticky' })}
-        className={button}
+    <>
+      {/* Смартфон: нижняя панель */}
+      <div
+        className={cn(
+          'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 md:hidden',
+          hidden && 'translate-y-full',
+        )}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
-        <AvitoIcon className="size-5 md:size-6" />
-      </a>
+        <div className="flex items-center gap-3 px-4 py-3">
+          <a
+            href={site.avitoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-goal="click_avito"
+            data-place="sticky"
+            onClick={() => reachGoal('click_avito', { place: 'sticky' })}
+            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+          >
+            <AvitoIcon className="size-5" />
+            Написать на Авито
+          </a>
+          <a
+            href={`tel:${site.phoneRaw}`}
+            aria-label={`Позвонить по номеру ${site.phone}`}
+            data-goal="click_phone"
+            data-place="sticky"
+            onClick={() => reachGoal('click_phone', { place: 'sticky' })}
+            className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary text-primary transition-colors hover:text-primary-hover"
+          >
+            <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
 
-      <a
-        href={`tel:${site.phoneRaw}`}
-        aria-label={`Позвонить по номеру ${site.phone}`}
-        data-goal="click_phone"
-        data-place="sticky"
-        onClick={() => reachGoal('click_phone', { place: 'sticky' })}
-        className={button}
+      {/* Десктоп: колонка справа */}
+      <div
+        className={cn(
+          'fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 transition-opacity duration-300 md:flex',
+          hidden && 'pointer-events-none opacity-0',
+        )}
       >
-        <Phone className="size-5 md:size-6" strokeWidth={1.75} aria-hidden="true" />
-      </a>
+        <a
+          href={site.avitoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Написать мне на Авито"
+          data-goal="click_avito"
+          data-place="sticky"
+          onClick={() => reachGoal('click_avito', { place: 'sticky' })}
+          className={fab}
+        >
+          <AvitoIcon className="size-6" />
+        </a>
 
-      <button
-        type="button"
-        aria-label="Наверх страницы"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={cn(button, 'transition-opacity', showTop ? 'opacity-100' : 'pointer-events-none opacity-0')}
-      >
-        <ArrowUp className="size-5 md:size-6" strokeWidth={1.75} aria-hidden="true" />
-      </button>
-    </div>
+        <a
+          href={`tel:${site.phoneRaw}`}
+          aria-label={`Позвонить по номеру ${site.phone}`}
+          data-goal="click_phone"
+          data-place="sticky"
+          onClick={() => reachGoal('click_phone', { place: 'sticky' })}
+          className={fab}
+        >
+          <Phone className="size-6" strokeWidth={1.75} aria-hidden="true" />
+        </a>
+
+        <button
+          type="button"
+          aria-label="Наверх страницы"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className={cn(fab, showTop ? 'opacity-100' : 'pointer-events-none opacity-0')}
+        >
+          <ArrowUp className="size-6" strokeWidth={1.75} aria-hidden="true" />
+        </button>
+      </div>
+    </>
   )
 }

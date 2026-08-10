@@ -59,7 +59,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${inter.variable} bg-background`}>
-      <body className="font-sans antialiased">
+      {/* Запас снизу под мобильную панель связи, чтобы она не накрывала подвал */}
+      <body className="font-sans antialiased pb-[72px] md:pb-0">
         {children}
         <Metrika />
         <ServiceWorker />

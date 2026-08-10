@@ -29,7 +29,13 @@ export function WorkCard({
   onVisibility?: (id: string, ratio: number) => void
 }) {
   const [hovered, setHovered] = useState(false)
+  const [noFx, setNoFx] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  // ?nofx — кадры для объявления снимаются с начала макета, без прокрутки
+  useEffect(() => {
+    setNoFx(new URLSearchParams(window.location.search).has('nofx'))
+  }, [])
 
   useEffect(() => {
     if (!onVisibility) return
@@ -46,7 +52,7 @@ export function WorkCard({
     return () => observer.disconnect()
   }, [onVisibility, work.id])
 
-  const running = hovered || inView
+  const running = (hovered || inView) && !noFx
 
   return (
     <article
@@ -59,8 +65,10 @@ export function WorkCard({
         {/* Кадр 4:3 — тот самый, что нарезается для объявления */}
         <div
           className={cn(
-            'corner-cut relative overflow-hidden rounded-2xl border border-border bg-card card-shadow',
-            '[container-type:inline-size]',
+            'relative overflow-hidden rounded-2xl border border-border bg-card card-shadow',
+            // container-type: size, а не inline-size: кадру нужны cqh для
+            // точного доскролла, а высота и так задана соотношением 4:3
+            '[container-type:size]',
           )}
           style={{ aspectRatio: '4 / 3' }}
         >
@@ -68,30 +76,31 @@ export function WorkCard({
             <SiteMockup work={work} priority={priority} />
           </div>
 
+          {/* Слой размытия оставлен для будущих реальных скриншотов клиентов;
+              у синтетических демо blurRegions пустые и слой не рендерится */}
           <BlurRegions work={work} />
 
-          {/* Стеклянный бейдж — одна из трёх разрешённых зон стекла */}
-          <span className="glass-dark absolute left-3 top-3 rounded-full px-3 py-1.5 text-[13px] font-medium">
-            {work.niche} · {work.city}
+          {/* Статус прокрутки — единственная стеклянная зона карточки.
+              Лежит в правом нижнем углу, где у макета нет текста */}
+          <span
+            className={cn(
+              'glass-dark absolute bottom-3 right-3 rounded-full px-3 py-1.5 text-[13px] font-medium transition-opacity',
+              running ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+            )}
+          >
+            {running ? 'прокручивается' : 'наведите'}
           </span>
         </div>
-
-        {/* Управляющий элемент, вложенный в вырез */}
-        <span
-          aria-hidden="true"
-          className={cn(
-            'absolute -bottom-1 -right-1 flex items-center justify-center rounded-full bg-primary text-[13px] font-medium text-primary-foreground transition-transform',
-            large ? 'size-20' : 'size-16',
-            running && 'scale-105',
-          )}
-        >
-          {running ? 'идёт' : 'смотреть'}
-        </span>
       </div>
 
-      <p className="text-[15px] leading-relaxed text-muted-foreground">
-        {work.mock.headline} — {work.mock.priceLabel.toLowerCase()} {work.mock.price}
-      </p>
+      <div className="flex flex-col gap-1">
+        <h3 className={cn('font-semibold tracking-[-0.02em]', large ? 'text-xl' : 'text-lg')}>
+          {work.niche} · {work.city}
+        </h3>
+        <p className="text-[15px] leading-relaxed text-muted-foreground">
+          {work.mock.headline} — {work.mock.priceLabel.toLowerCase()} {work.mock.price}
+        </p>
+      </div>
     </article>
   )
 }

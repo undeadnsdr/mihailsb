@@ -25,7 +25,11 @@ export function Reveal({ children, className, step = 0, as = 'div' }: RevealProp
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) {
+    // ?nofx — снимок всей страницы одним кадром: IntersectionObserver не
+    // срабатывает при полностраничном скриншоте, и нижние секции выходят
+    // пустыми. Этим же режимом удобно нарезать картинки для объявления.
+    const noFx = new URLSearchParams(window.location.search).has('nofx')
+    if (reduced || noFx) {
       setShown(true)
       return
     }

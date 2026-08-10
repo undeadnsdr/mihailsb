@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "STATIC_EXPORT=1 next build",
+    "images": "node scripts/optimize-images.mjs",
     "start": "next start",
     "lint": "eslint ."
   },

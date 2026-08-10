@@ -50,6 +50,19 @@ export function SiteHeader() {
             ))}
           </ul>
 
+          {/* На смартфоне вместо кнопки — номер: кнопка «Написать»
+              дублировала бы нижнюю панель, а телефона в ней нет подписанного */}
+          <a
+            href={`tel:${site.phoneRaw}`}
+            data-goal="click_phone"
+            data-place="header"
+            onClick={() => reachGoal('click_phone', { place: 'header' })}
+            className="flex min-h-[44px] items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
+          >
+            <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
+            {site.phone}
+          </a>
+
           <AvitoButton
             place="header"
             className="hidden min-h-[44px] px-4 text-[15px] max-md:w-auto sm:inline-flex"

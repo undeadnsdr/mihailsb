@@ -170,7 +170,6 @@ export const works: Work[] = [
       services: ['Металлочерепица', 'Профнастил', 'Ремонт протечек', 'Мансардные окна'],
       guarantee: 'Гарантия 3 года на работы',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
   {
     id: 'heating',
@@ -188,7 +187,6 @@ export const works: Work[] = [
       services: ['Газовые котлы', 'Тёплый пол', 'Радиаторы', 'Водоснабжение'],
       guarantee: 'Гарантия 2 года, обслуживание',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
   {
     id: 'septic',
@@ -206,7 +204,6 @@ export const works: Work[] = [
       services: ['Септики', 'Бурение скважин', 'Дренаж участка', 'Обслуживание'],
       guarantee: 'Гарантия на монтаж 3 года',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
   {
     id: 'fence',
@@ -224,7 +221,6 @@ export const works: Work[] = [
       services: ['Профнастил', 'Евроштакетник', 'Откатные ворота', 'Навесы'],
       guarantee: 'Гарантия 2 года',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
   {
     id: 'house',
@@ -242,7 +238,6 @@ export const works: Work[] = [
       services: ['Каркасные дома', 'Бани', 'Пристройки', 'Фундамент'],
       guarantee: 'Смета фиксируется договором',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
   {
     id: 'kitchen',
@@ -260,7 +255,6 @@ export const works: Work[] = [
       services: ['Кухни', 'Шкафы-купе', 'Гардеробные', 'Мебель в баню'],
       guarantee: 'Гарантия 18 месяцев',
     },
-    blurRegions: [{ top: 3, left: 26, width: 30, height: 5 }],
   },
 ]
 

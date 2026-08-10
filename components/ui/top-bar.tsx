@@ -37,21 +37,18 @@ export function TopBar() {
     }
   }, [])
 
-  const filled = progress > 0.02
-
   return (
     <div className="relative isolate overflow-hidden border-b border-border bg-secondary">
-      {/* Заливка. Меняется только transform — перерисовки макета нет */}
+      {/* Полоса прогресса — тонкая линия по нижней кромке, а не заливка всей
+          строки: заливка на половине прокрутки давала тёмный фон под серым
+          текстом слева и убивала контраст. Меняется только transform */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 origin-left bg-primary"
+        className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-primary"
         style={{ transform: `scaleX(${progress})`, willChange: 'transform' }}
       />
       <div className="mx-auto flex h-10 w-full max-w-[1400px] items-center justify-between gap-4 px-6 md:px-10 lg:px-16">
-        <p
-          className="flex items-center gap-1.5 text-[13px] font-medium leading-none transition-colors duration-300 sm:text-sm"
-          style={{ color: filled ? 'var(--primary-foreground)' : 'var(--muted-foreground)' }}
-        >
+        <p className="flex items-center gap-1.5 text-[13px] font-medium leading-none text-muted-foreground sm:text-sm">
           <MapPin className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
           <span className="truncate">
             {site.city} и {site.region}
@@ -64,11 +61,13 @@ export function TopBar() {
           data-goal="click_avito"
           data-place="topbar"
           onClick={() => reachGoal('click_avito', { place: 'topbar' })}
-          className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none underline decoration-transparent underline-offset-4 transition-colors duration-300 hover:decoration-current sm:text-sm"
-          style={{ color: progress > 0.85 ? 'var(--primary-foreground)' : 'var(--primary)' }}
+          className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current sm:text-sm"
         >
           <AvitoIcon className="size-4 shrink-0" />
-          <span>Написать на Авито</span>
+          {/* На узком экране обе надписи в строку не влезают и «Авито»
+              обрезается, поэтому оставляем короткую версию */}
+          <span className="sm:hidden">Авито</span>
+          <span className="hidden sm:inline">Написать на Авито</span>
         </a>
       </div>
     </div>
