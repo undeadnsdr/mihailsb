@@ -21,7 +21,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40">
-      <TopBar />
+      <TopBar floating={floating} />
       {/* Плавающая стеклянная панель — одна из трёх зон, где стекло разрешено */}
       <div
         className={cn(

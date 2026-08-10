@@ -1,14 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Check, Clock } from 'lucide-react'
-import { hero, finalCta, site } from '@/lib/content'
+import { MapPin, Check, Phone } from 'lucide-react'
+import { hero, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
 import { AvitoButton, ScrollLink } from '@/components/ui/cta'
-import { AvitoIcon } from '@/components/ui/avito-icon'
-import { useAvitoLeadForm } from '@/lib/lead-form'
+import { CallbackModal } from '@/components/ui/callback-modal'
+import { reachGoal } from '@/lib/analytics'
 
 /**
  * Кадр 1 для объявления.
@@ -39,7 +39,7 @@ export function Hero() {
             ))}
           </div>
 
-          <LeadWidget />
+          <CallbackCard />
         </Reveal>
       </div>
     </Section>
@@ -101,75 +101,36 @@ function PhotoCard() {
 }
 
 /**
- * Мини-форма заявки — упрощённая версия финальной формы (без имени):
- * выбрал сферу, оставил телефон, дальше открывается переписка на Авито.
- * Логика общая с финальной формой (lib/lead-form.ts), поэтому обе формы
- * шлют одинаковое сообщение и цель Метрики с разным `place`.
+ * Карточка обратного звонка рядом с плитками-цифрами.
+ *
+ * Раньше здесь была мини-форма заявки, которая вела всё в ту же переписку
+ * на Авито, что и кнопка на фото слева — то же действие продублировано,
+ * а предзаполнить сообщение в Авито и так нельзя. Теперь тут отдельный
+ * сценарий: звонок, для тех, кому проще ответить на входящий, чем писать.
  */
-function LeadWidget() {
-  const { industry, setIndustry, contact, setContact, copied, handleSubmit } = useAvitoLeadForm('hero')
-
+function CallbackCard() {
   return (
-    <BentoCard className="flex-1 gap-4 p-5 md:p-6">
-      <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.widgetTitle}</h2>
+    <BentoCard className="flex-1 justify-center gap-3 p-5 md:p-6">
+      <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.callbackTitle}</h2>
+      <p className="text-pretty text-[14px] leading-relaxed text-muted-foreground">{hero.callbackText}</p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <select
-          id="hero-industry"
-          name="industry"
-          required
-          value={industry}
-          onChange={(event) => setIndustry(event.target.value)}
-          aria-label={finalCta.fields.industryLabel}
-          className="min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[16px] text-foreground"
-        >
-          <option value="" disabled>
-            {finalCta.fields.industryPlaceholder}
-          </option>
-          {finalCta.industryOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      <CallbackModal
+        place="hero"
+        trigger={
+          <button
+            type="button"
+            data-goal="click_callback"
+            data-place="hero"
+            onClick={() => reachGoal('click_callback', { place: 'hero' })}
+            className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+          >
+            <Phone className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+            {hero.callbackCta}
+          </button>
+        }
+      />
 
-        <input
-          id="hero-contact"
-          name="contact"
-          required
-          inputMode="text"
-          autoComplete="tel"
-          placeholder={finalCta.fields.contactPlaceholder}
-          aria-label={finalCta.fields.contactLabel}
-          value={contact}
-          onChange={(event) => setContact(event.target.value)}
-          className="min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[16px] text-foreground placeholder:text-muted-foreground"
-        />
-
-        <button
-          type="submit"
-          data-goal="form_submit"
-          data-place="hero"
-          className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
-        >
-          <AvitoIcon className="size-5 shrink-0" />
-          {hero.widgetSubmit}
-        </button>
-
-        <p aria-live="polite" className="flex items-start gap-2 text-[14px] leading-relaxed text-muted-foreground">
-          {copied ? (
-            <>
-              <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
-              <span className="text-foreground">Сообщение скопировано — вставьте в переписку.</span>
-            </>
-          ) : (
-            <>
-              <Clock className="mt-0.5 size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              <span>Отвечаю {site.responseTime}. Платить сейчас не нужно.</span>
-            </>
-          )}
-        </p>
-      </form>
+      <p className="text-[14px] text-muted-foreground">Отвечаю {site.responseTime}. Звонок за мой счёт.</p>
     </BentoCard>
   )
 }

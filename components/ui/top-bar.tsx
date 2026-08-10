@@ -1,17 +1,31 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { MapPin } from 'lucide-react'
-import { site } from '@/lib/content'
+import { MapPin, Phone } from 'lucide-react'
+import { site, topBar } from '@/lib/content'
 import { reachGoal } from '@/lib/analytics'
-import { AvitoIcon } from '@/components/ui/avito-icon'
+import { CallbackModal } from '@/components/ui/callback-modal'
+import { cn } from '@/lib/utils'
 
 /**
- * Строка над хедером: локация слева, кнопка связи справа.
- * По мере прокрутки заполняется цветом слева направо — заодно служит
- * индикатором прочитанного, а не просто украшением.
+ * Полоска над навигацией: локация слева, «Перезвоните мне» справа.
+ *
+ * Раньше правая часть вела в переписку на Авито — то же действие, что и
+ * кнопка в навигации чуть ниже. Теперь здесь отдельный сценарий: звонок,
+ * а не переписка, поэтому дублирования с навигацией больше нет.
+ *
+ * По ширине и горизонтальным отступам полоска повторяет контейнер навигации
+ * (те же px-6/md:px-10/lg:px-16 и max-w-[1400px]), а верхний отступ равен
+ * отступу навигации над её пилюлей — тот же `floating`, что и в хедере,
+ * передаётся сюда, чтобы оба отступа уменьшались синхронно при скролле.
+ *
+ * Заливка цветом идёт не тонкой линией, а на всю высоту полоски: копия
+ * содержимого в цвете primary-foreground лежит поверх обычной копии и
+ * раскрывается через clip-path слева направо на ширину прогресса скролла.
+ * clip-path в процентах считается от размера самого элемента, поэтому
+ * эффект работает без замера пикселей и ресайз-обсёрверов.
  */
-export function TopBar() {
+export function TopBar({ floating }: { floating: boolean }) {
   const [progress, setProgress] = useState(0)
   const frame = useRef<number | null>(null)
 
@@ -38,38 +52,76 @@ export function TopBar() {
   }, [])
 
   return (
-    <div className="relative isolate overflow-hidden border-b border-border bg-secondary">
-      {/* Полоса прогресса — тонкая линия по нижней кромке, а не заливка всей
-          строки: заливка на половине прокрутки давала тёмный фон под серым
-          текстом слева и убивала контраст. Меняется только transform */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-primary"
-        style={{ transform: `scaleX(${progress})`, willChange: 'transform' }}
-      />
-      <div className="mx-auto flex h-10 w-full max-w-[1400px] items-center justify-between gap-4 px-6 md:px-10 lg:px-16">
-        <p className="flex items-center gap-1.5 text-[13px] font-medium leading-none text-muted-foreground sm:text-sm">
-          <MapPin className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-          <span className="truncate">
-            {site.city} и {site.region}
-          </span>
-        </p>
-        <a
-          href={site.avitoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-goal="click_avito"
-          data-place="topbar"
-          onClick={() => reachGoal('click_avito', { place: 'topbar' })}
-          className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current sm:text-sm"
+    <div
+      className={cn(
+        'mx-auto w-full max-w-[1400px] px-6 pt-3 transition-[padding] duration-300 md:px-10 lg:px-16',
+        floating && 'pt-2',
+      )}
+    >
+      <div className="relative isolate flex h-11 items-center justify-between gap-4 overflow-hidden rounded-full bg-secondary px-5">
+        {/* Базовый слой — обычные цвета, здесь же живёт реальная интерактивная кнопка */}
+        <BarContent tone="muted" />
+
+        {/* Слой заливки — декоративная копия, недоступна для указателя и скринридера,
+            раскрывается слева направо на ширину прогресса скролла */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-center justify-between gap-4 rounded-full bg-primary px-5 text-primary-foreground"
+          style={{ clipPath: `inset(0 ${(1 - progress) * 100}% 0 0)` }}
         >
-          <AvitoIcon className="size-4 shrink-0" />
-          {/* На узком экране обе надписи в строку не влезают и «Авито»
-              обрезается, поэтому оставляем короткую версию */}
-          <span className="sm:hidden">Авито</span>
-          <span className="hidden sm:inline">Написать на Авито</span>
-        </a>
+          <BarContent tone="filled" />
+        </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Содержимое полоски. Рендерится дважды (обычным и залитым цветом) —
+ * поэтому вынесено в отдельную функцию, чтобы разметка совпадала пиксель
+ * в пиксель и заливка не давала швов.
+ */
+function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
+  const muted = tone === 'muted'
+
+  return (
+    <>
+      <p
+        className={cn(
+          'flex items-center gap-1.5 text-[13px] font-medium leading-none sm:text-sm',
+          muted ? 'text-muted-foreground' : 'text-primary-foreground',
+        )}
+      >
+        <MapPin className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+        <span className="truncate">
+          {site.city} и {site.region}
+        </span>
+      </p>
+
+      {muted ? (
+        <CallbackModal
+          place="topbar"
+          trigger={
+            <button
+              type="button"
+              data-goal="click_callback"
+              data-place="topbar"
+              onClick={() => reachGoal('click_callback', { place: 'topbar' })}
+              className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary transition-colors hover:text-primary-hover sm:text-sm"
+            >
+              <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <span className="sm:hidden">{topBar.ctaShort}</span>
+              <span className="hidden sm:inline">{topBar.cta}</span>
+            </button>
+          }
+        />
+      ) : (
+        <span className="flex shrink-0 items-center gap-1.5 text-[13px] font-medium leading-none text-primary-foreground sm:text-sm">
+          <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+          <span className="sm:hidden">{topBar.ctaShort}</span>
+          <span className="hidden sm:inline">{topBar.cta}</span>
+        </span>
+      )}
+    </>
   )
 }

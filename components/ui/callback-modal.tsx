@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Check, Phone } from 'lucide-react'
-import { callbackModal, site } from '@/lib/content'
+import { callbackModal } from '@/lib/content'
 import { useCallbackForm } from '@/lib/callback-form'
 import {
   Dialog,
@@ -124,9 +124,7 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
               {callbackModal.fields.submit}
             </button>
 
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
-              {callbackModal.microcopy} Отвечаю {site.responseTime}.
-            </p>
+            <p className="text-[14px] leading-relaxed text-muted-foreground">{callbackModal.microcopy}</p>
           </form>
         )}
       </DialogContent>
