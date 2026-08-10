@@ -30,7 +30,11 @@ export function Industries() {
                   иконка, а не как фото объекта. Паддинг возвращаем вручную
                   только для текстового блока под фото. */}
               <BentoCard tone="flat" className="h-full gap-0" padded={false}>
-                <div className="relative aspect-[16/10] w-full">
+                {/* rounded-b-2xl отделяет фото от текста мягкой кривой, а
+                    не прямой линией — те же 1rem, что и у самой плитки
+                    (rounded-2xl в bento-card.tsx), чтобы кривизна читалась
+                    как единый радиус, а не два разных скругления */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-b-2xl">
                   <Image
                     src={group.image}
                     alt={group.imageAlt}
@@ -54,7 +58,7 @@ export function Industries() {
         </ul>
 
         <Reveal>
-          <p className="text-pretty text-[16px] font-medium leading-relaxed sm:text-[17px]">
+          <p className="text-pretty text-center text-[16px] font-medium leading-relaxed sm:text-[17px]">
             {industries.fallback}
           </p>
         </Reveal>
