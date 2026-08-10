@@ -73,7 +73,11 @@ export function Pricing() {
 
           <div className="flex flex-col gap-4 md:gap-6 lg:col-span-5">
             <Reveal step={1} className="flex-1">
-              <BentoCard tone="secondary" className="h-full gap-4">
+              {/* bg-secondary-strong чуть темнее bg-secondary у блока
+                  «Если нужно ещё больше» ниже — так первый, более весомый
+                  блок визуально отделяется от второго, не прибегая к
+                  тени или рамке */}
+              <BentoCard tone="secondary" className="h-full gap-4 bg-secondary-strong">
                 <h3 className="text-[21px] font-medium leading-snug tracking-[-0.01em]">Если нужно больше</h3>
                 <dl className="flex flex-col divide-y divide-border">
                   {pricing.extras.map((extra) => (

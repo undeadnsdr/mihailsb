@@ -59,6 +59,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-strong: var(--secondary-strong);
   --color-muted: var(--secondary);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -91,6 +92,10 @@
   --primary-hover: #0f2945;
   --secondary: #eef1f5;
   --secondary-foreground: #111827;
+  /* Чуть темнее --secondary — только для блока «Если нужно больше» в
+     прайсинге: он идёт первым и весомее соседнего «Если нужно ещё
+     больше», а одинаковый bg-secondary на обоих стирал эту разницу */
+  --secondary-strong: #e2e6ec;
   --accent: #dce6f2;
   --accent-foreground: #163a5f;
   /* Единственный тёплый акцент на странице — только для цифры цены.
@@ -151,7 +156,7 @@
   }
 
   /* Горизонтальная ориентация — единственный случай, когда вырез камеры и
-     скругления корпуса забирают именно боковые края экрана. В портрете
+     скру��ления корпуса забирают именно боковые края экрана. В портрете
      эти вставки равны нулю, поэтому правило и ограничено ориентацией:
      на планшете и десктопе оно ничего не меняет, а на телефоне боком
      первая колонка текста больше не уезжает под «монобровь» */
