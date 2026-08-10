@@ -21,12 +21,12 @@ import { reachGoal } from '@/lib/analytics'
 export function Hero() {
   return (
     <Section id="hero" className="pt-8 md:pt-12 lg:pt-16" labelledBy="hero-title">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch">
         <Reveal className="lg:col-span-7">
           <PhotoCard />
         </Reveal>
 
-        <Reveal step={1} className="flex flex-col gap-4 lg:col-span-5">
+        <Reveal step={1} className="flex flex-col gap-4 lg:col-span-5 lg:h-full">
           <div className="grid grid-cols-2 gap-4">
             {hero.tiles.map((tile) => (
               <BentoCard key={tile.label} tone="primary" className="gap-1 p-5 md:p-6">
