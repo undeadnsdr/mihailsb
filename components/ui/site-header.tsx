@@ -25,8 +25,8 @@ export function SiteHeader() {
       {/* Плавающая стеклянная панель — одна из трёх зон, где стекло разрешено */}
       <div
         className={cn(
-          'mx-auto w-full max-w-[1400px] px-6 py-3 transition-all duration-300 md:px-10 lg:px-16',
-          floating && 'py-2',
+          'mx-auto w-full max-w-[1400px] px-6 py-2 transition-all duration-300 md:px-10 lg:px-16',
+          floating && 'py-1.5',
         )}
       >
         <nav
@@ -36,19 +36,19 @@ export function SiteHeader() {
             // До lg меню скрыто, поэтому правая колонка auto (не сжимается, номер телефона не режется).
             // С lg меню появляется, и обе боковые колонки становятся равными 1fr — тогда среднее меню
             // центрируется относительно всего хедера, а не свободного места между лого и кнопкой.
-            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-2.5 py-2.5 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
+            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-2 py-2 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
             floating ? 'glass' : 'bg-card',
           )}
         >
           <a href="#top" className="flex min-w-0 items-center gap-3 justify-self-start">
             {/* Фото автора — сайты делает реальный человек, не студия.
-                Круглый кроп по лицу, размер равен высоте кнопки «Написать на Авито» справа */}
+                Круглый кроп по лицу, размер пропорционален уменьшенной высоте панели */}
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={60}
-              height={60}
-              className="size-11 shrink-0 rounded-full border border-border object-cover sm:size-[60px]"
+              width={48}
+              height={48}
+              className="size-9 shrink-0 rounded-full border border-border object-cover sm:size-12"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
