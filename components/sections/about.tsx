@@ -18,17 +18,16 @@ export function About() {
         <div className="flex flex-col gap-6 md:col-span-7">
           {/* Фото рядом с заголовком подтверждает «сайт делает реальный
               человек», но не должно спорить с заголовком за внимание —
-              поэтому размер привязан к высоте заглавной буквы h2
-              (28px/44px, cap-height ≈ 0.7 от кегля), а не к росту строки
-              целиком, как было раньше (56/80px — вровень со всей строкой
-              с учётом межстрочного интервала) */}
+              поэтому размер держится чуть выше высоты заглавной буквы h2
+              (28px/44px, cap-height ≈ 0.7 от кегля), а не вровень со всей
+              строкой целиком, как было раньше (56/80px) */}
           <div className="flex items-center gap-4 md:gap-5">
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
               width={40}
               height={40}
-              className="size-5 shrink-0 rounded-full border border-border object-cover md:size-8"
+              className="size-6 shrink-0 rounded-full border border-border object-cover md:size-10"
             />
             <SectionHeading id="about-title" title={about.title} className="flex-1" />
           </div>
