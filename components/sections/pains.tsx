@@ -3,7 +3,7 @@ import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
 
-/** Узнавание себя. Ряд 8+4 / 4+4+4 — монотонной сетки нет. */
+/** Аргументы «почему сейчас», а не «когда-нибудь». Ряд 8+4 / 4+4+4 — монотонной сетки нет. */
 export function Pains() {
   return (
     <Section id="pains" labelledBy="pains-title">
