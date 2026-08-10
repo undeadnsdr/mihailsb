@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { MapPin, Check, Phone } from 'lucide-react'
-import { hero, site } from '@/lib/content'
+import { hero } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
@@ -128,9 +128,6 @@ function CallbackCard() {
       </div>
 
       <div className="flex flex-1 flex-col justify-end gap-3 p-5 pt-0 md:p-6 md:pt-0">
-        <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.callbackTitle}</h2>
-        <p className="text-pretty text-[14px] leading-relaxed text-muted-foreground">{hero.callbackText}</p>
-
         <CallbackModal
           place="hero"
           trigger={
@@ -147,7 +144,9 @@ function CallbackCard() {
           }
         />
 
-        <p className="text-[14px] text-muted-foreground">Отвечаю {site.responseTime}. Звонок за мой счёт.</p>
+        <h2 className="text-pretty text-center text-[19px] font-medium leading-snug tracking-[-0.01em]">
+          {hero.callbackTitle}
+        </h2>
       </div>
     </BentoCard>
   )
