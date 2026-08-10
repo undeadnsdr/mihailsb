@@ -62,13 +62,18 @@ export function Pricing() {
             </Reveal>
 
             <Reveal step={2}>
-              <BentoCard tone="outline" className="gap-3 border-destructive/25 bg-destructive/[0.04]">
-                <span className="flex items-center gap-2 text-[15px] font-medium tracking-[0.01em] text-destructive">
-                  <Info className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                  Важно про второй год
+              {/* Раньше этот блок был предупреждением про скрытый платёж
+                  (красная рамка, tone="outline"). Второй год — это не риск,
+                  а обычное продление, поэтому тон и цвет теперь такие же,
+                  как у «Если нужно больше» рядом: секция про цены не должна
+                  заканчиваться тревожной нотой */}
+              <BentoCard tone="secondary" className="gap-3">
+                <span className="flex items-center gap-2 text-[15px] font-medium tracking-[0.01em]">
+                  <Info className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} aria-hidden="true" />
+                  {pricing.renewal.title}
                 </span>
                 <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
-                  {pricing.warning}
+                  {pricing.renewal.text}
                 </p>
               </BentoCard>
             </Reveal>
