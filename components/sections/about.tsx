@@ -1,5 +1,5 @@
-import { ArrowUpRight, MapPin, Quote } from 'lucide-react'
-import { about, geo, site } from '@/lib/content'
+import { MapPin, Quote } from 'lucide-react'
+import { about, geo } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
@@ -38,20 +38,8 @@ export function About() {
             />
           </Reveal>
 
-          <Reveal step={3} className="flex">
-            <a
-              href={site.avitoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center gap-1.5 text-[17px] font-medium text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary"
-            >
-              {about.avitoLinkLabel}
-              <ArrowUpRight className="size-4" strokeWidth={1.75} aria-hidden="true" />
-            </a>
-          </Reveal>
-
           {about.review ? (
-            <Reveal step={4}>
+            <Reveal step={3}>
               <BentoCard tone="secondary" className="gap-3">
                 <Quote className="size-6 text-primary" strokeWidth={1.75} aria-hidden="true" />
                 <p className="text-pretty text-[17px] leading-relaxed">{about.review.text}</p>
