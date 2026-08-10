@@ -37,8 +37,12 @@ export function Pricing() {
                 </span>
                 {/* Главный аргумент страницы, поэтому кегль максимальный,
                     какой выдерживает ширина: на 300px это 52px, к планшету
-                    в портрете 76px, и только на десктопе заявленные 96px */}
-                <span className="tnum flex items-baseline gap-2 text-[52px] font-bold leading-none tracking-[-0.04em] text-primary sm:text-[64px] md:text-[76px] lg:text-[96px]">
+                    в портрете 76px, и только на десктопе заявленные 96px.
+                    Цвет — text-highlight, а не text-primary: primary тут же
+                    ниже носит кнопка «Написать на Авито», и одним цветом
+                    были размечены и «сколько стоит», и «нажми, чтобы
+                    купить» — два разных сообщения теряли разницу */}
+                <span className="tnum flex items-baseline gap-2 text-[52px] font-bold leading-none tracking-[-0.04em] text-highlight sm:text-[64px] md:text-[76px] lg:text-[96px]">
                   {pricing.main.price}
                   <span className="text-[26px] font-medium sm:text-[32px] md:text-[38px] lg:text-[44px]">
                     {pricing.main.currency}

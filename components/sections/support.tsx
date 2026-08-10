@@ -23,7 +23,9 @@ export function Support() {
               {/* Двухколоночная строка внутри карточки — только с lg:
                   на планшете 34% под заголовок давало 90px, и короткий
                   заголовок вставал в четыре строки рядом с текстом */}
-              <BentoCard className="gap-1.5 lg:flex-row lg:items-baseline lg:gap-6">
+              {/* flat: список того, что входит в сопровождение, — равные
+                  строки одного перечня (см. bento-card.tsx) */}
+              <BentoCard tone="flat" className="gap-1.5 lg:flex-row lg:items-baseline lg:gap-6">
                 <h3 className="shrink-0 text-[16px] font-medium leading-snug sm:text-[17px] lg:w-[34%]">
                   {item.title}
                 </h3>

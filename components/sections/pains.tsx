@@ -18,7 +18,11 @@ export function Pains() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
           {pains.items.map((item, index) => (
             <Reveal key={item.title} as="li" step={(index % 3) as 0 | 1 | 2}>
-              <BentoCard className="h-full gap-2">
+              {/* flat, не card: это четыре равных пункта одного списка,
+                  ни один не главнее другого — тень здесь не сигнал, а
+                  просто фон-шум. Тень оставлена только там, где на
+                  странице есть один главный аргумент (цена, кнопки) */}
+              <BentoCard tone="flat" className="h-full gap-2">
                 <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px] lg:text-[26px]">
                   {item.title}
                 </h3>

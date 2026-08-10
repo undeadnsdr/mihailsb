@@ -39,7 +39,10 @@ export function Includes() {
             const Icon = groupIcons[group.icon]
             return (
               <Reveal key={group.title} step={(index % 3) as 0 | 1 | 2}>
-                <BentoCard className="h-full gap-5">
+                {/* flat: три равные группы пунктов, не три отдельных
+                    предложения — тень тут читалась бы как «выбери одну
+                    из трёх», хотя нужны все три (см. bento-card.tsx) */}
+                <BentoCard tone="flat" className="h-full gap-5">
                   <div className="flex items-center gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
                       <Icon className="size-5 text-primary" strokeWidth={1.75} aria-hidden="true" />

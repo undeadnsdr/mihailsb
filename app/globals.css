@@ -63,6 +63,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -92,6 +93,13 @@
   --secondary-foreground: #111827;
   --accent: #dce6f2;
   --accent-foreground: #163a5f;
+  /* Единственный тёплый акцент на странице — только для цифры цены.
+     Everything else that acts (кнопки, ссылки, фокус) остаётся синим,
+     чтобы «нажми сюда» и «вот сколько это стоит» не читались одним
+     и тем же цветом. Amber, а не что-то ближе к красному: red занят
+     под --destructive, и рядом с ним тёплый акцент читался бы как
+     предупреждение, а не как выгодное предложение */
+  --highlight: #b45309;
   --muted-foreground: #667085;
   --destructive: #b42318;
   --destructive-foreground: #f5f6f8;

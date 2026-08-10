@@ -21,7 +21,9 @@ export function Industries() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {industries.groups.map((group, index) => (
             <Reveal key={group.title} as="li" step={(index % 3) as 0 | 1 | 2}>
-              <BentoCard className="h-full gap-2">
+              {/* flat: список ниш — равные пункты, тень не должна выделять
+                  ни одну сферу услуг над другой (см. bento-card.tsx) */}
+              <BentoCard tone="flat" className="h-full gap-2">
                 {/* text-pretty: названия ниш длинные («Кровля, фасады и
                     водосток»), в двух колонках на планшете без него в
                     последней строке оставалось одно слово */}

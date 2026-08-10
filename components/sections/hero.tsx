@@ -84,7 +84,12 @@ function PhotoCard() {
         fill
         sizes="(min-width: 1024px) 60vw, 100vw"
         priority
-        className="object-cover"
+        // saturate/contrast — общая цветокоррекция для обоих фото hero
+        // (см. такой же класс на callback-photo ниже). Сама фотография
+        // уже графична сама по себе, поэтому здесь только небольшая
+        // добавка, а не смена настроения — что-то держащее оба кадра
+        // в одной цветовой обработке
+        className="object-cover saturate-[1.05] contrast-[1.05]"
       />
       {/* Градиент только там, где лежит текст — не затемняет всё фото */}
       <div
@@ -185,11 +190,31 @@ function CallbackCard() {
           alt="Мастер на объекте отвечает на звонок"
           fill
           sizes="(min-width: 1024px) 25vw, 90vw"
-          className="object-cover"
+          // Это обычный дневной снимок без обработки — рядом с графичным
+          // закатным фото слева (см. master-photo, тот же класс saturate/
+          // contrast) он читался как чужой кадр, снятый другим человеком.
+          // contrast чуть выше, saturate чуть ниже: убирает плоский вид
+          // облачного дня, не перекрашивая сам снимок
+          className="object-cover saturate-[0.92] contrast-[1.08]"
+        />
+        {/* Тонкая холодная подложка поверх — тот же приём, что и в
+            градиенте на главном фото (затемнение сверху вниз), только
+            слабее и через multiply, чтобы не спорить с многослойной
+            картинкой. Она чуть смещает нейтральные тона облачного дня в
+            сторону primary, и оба фото начинают читаться одной рукой */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-primary/20 via-transparent to-transparent mix-blend-multiply"
         />
       </div>
 
       <div className="flex flex-1 flex-col justify-end gap-3 p-5 pt-0 md:p-6 md:pt-0">
+        {/* Обводка, а не сплошная заливка: сплошная кнопка «Написать на
+            Авито» уже стоит на фото слева, в той же первой прокрутке.
+            Два одинаково сплошных CTA рядом не говорят, с какого начать —
+            глаз читает их как один и тот же вес. Здесь звонок — запасной
+            путь для тех, кому проще ответить на входящий, чем писать,
+            поэтому и выглядит вторым: обводка вместо заливки */}
         <CallbackModal
           place="hero"
           trigger={
@@ -198,7 +223,7 @@ function CallbackCard() {
               data-goal="click_callback"
               data-place="hero"
               onClick={() => reachGoal('click_callback', { place: 'hero' })}
-              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-[16px] font-medium leading-none text-primary transition-colors hover:bg-secondary"
             >
               <Phone className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
               {hero.callbackCta}
