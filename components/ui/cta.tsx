@@ -19,11 +19,14 @@ const base =
 export function AvitoButton({
   children,
   className,
+  iconClassName,
   variant = 'primary',
   place,
 }: {
   children: ReactNode
   className?: string
+  /** Переопределяет размер иконки — нужно там, где сама кнопка мельче обычного (см. hero) */
+  iconClassName?: string
   variant?: 'primary' | 'outline'
   /** Откуда нажали — уходит в параметры цели Метрики */
   place: string
@@ -43,7 +46,7 @@ export function AvitoButton({
         className,
       )}
     >
-      <AvitoIcon className="size-5 shrink-0" />
+      <AvitoIcon className={cn('size-5 shrink-0', iconClassName)} />
       <span>{children}</span>
     </a>
   )
