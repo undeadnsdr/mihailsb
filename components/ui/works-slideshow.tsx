@@ -189,8 +189,10 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
         ))}
       </div>
 
-      {/* 2/5 сцена + 1/5 воздух + 2/5 описание */}
-      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[2fr_1fr_2fr] lg:gap-0">
+      {/* 6-колоночная сетка: 3/6 сцена + 1/6 воздух + 2/6 описание.
+          Сцена шире описания — она несёт основной вес блока, текст рядом
+          с ней остаётся компактной подписью, а не второй половиной макета */}
+      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[3fr_1fr_2fr] lg:gap-0">
         <div className="flex flex-col gap-4">
           <div
             ref={stageRef}
