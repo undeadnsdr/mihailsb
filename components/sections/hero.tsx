@@ -79,7 +79,7 @@ function PhotoCard() {
     // сама карточка тянется по контенту, если текст в пропорцию не влез
     <div className="relative overflow-hidden rounded-2xl border border-border lg:h-full">
       <Image
-        src="/hero/master-photo.webp"
+        src="/hero/master-photo.png"
         alt={hero.photoAlt}
         fill
         sizes="(min-width: 1024px) 60vw, 100vw"
