@@ -122,10 +122,15 @@ export function FinalCta() {
                 />
               </Field>
 
+              {/* Обводка вместо сплошной заливки — тот же приём, что и у
+                  кнопки «Перезвоните мне» в hero (см. hero.tsx): рядом,
+                  в левой плитке, уже стоит сплошная «Написать на Авито»,
+                  и форма — запасной путь для тех, кому проще заполнить
+                  поля, чем сразу писать или звонить */}
               <button
                 type="submit"
                 data-goal="form_submit"
-                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-[17px] font-medium leading-none text-primary transition-colors hover:bg-secondary"
               >
                 <Send className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 {finalCta.fields.submit}
