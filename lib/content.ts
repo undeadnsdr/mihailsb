@@ -162,7 +162,7 @@ export const howItWorks = {
  */
 export const includes = {
   title: 'Что входит в 6000 ₽',
-  subtitle: 'Полный список. Других платежей в первый год нет.',
+  subtitle: 'Полный с��исок. Других платежей в первый год нет.',
   groups: [
     {
       icon: 'site',
@@ -259,7 +259,7 @@ export const works: Work[] = [
       'Заголовок и кнопки заточил под срочность — «успеем до морозов», а цену показал за киловатт, а не за весь проект.',
     mock: {
       headline: 'Отопление и водоснабжение',
-      sub: 'Котлы, тёплый пол, разводка по дому. Успеем до морозов.',
+      sub: 'Котлы, тёплый пол, разводка по дому. Ус��еем до морозов.',
       priceLabel: 'Монтаж системы',
       price: 'от 1200 ₽/кВт',
       services: ['Газовые котлы', 'Тёплый пол', 'Радиаторы', 'Водоснабжение'],
@@ -603,10 +603,10 @@ export const finalCta = {
 } as const
 
 export const nav = [
-  { label: 'Что делать дальше', href: '#how-it-works' },
+  { label: 'Про меня', href: '#about' },
   { label: 'Работы', href: '#works' },
   { label: 'Цены', href: '#pricing' },
-  { label: 'Вопросы', href: '#faq' },
+  { label: 'Что делать дальше', href: '#how-it-works' },
 ] as const
 
 export const seo = {
