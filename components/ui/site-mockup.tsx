@@ -262,7 +262,9 @@ export function TabletMockup({ work, priority = false }: { work: Work; priority?
             </span>
           </div>
           <p className="text-[2.6cqw] leading-snug text-muted-foreground">
-            Замер бесплатно, смета в день обращения. Работаем по {work.city}.
+            {/* Город не подставляю: work.city в именительном падеже,
+                а здесь нужен предложный — вышло бы «по Тюмень» */}
+            Замер бесплатно, смета в день обращения. Выезжаем по городу и области.
           </p>
           <span className="mt-auto flex items-center justify-center rounded-lg bg-primary px-[2cqw] py-[2.6cqw] text-[2.9cqw] font-medium text-primary-foreground">
             Вызвать на замер
