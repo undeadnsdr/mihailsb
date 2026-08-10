@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { Check } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
 import { DeviceFrame, type DeviceKind } from '@/components/ui/device-frames'
@@ -33,7 +33,6 @@ import {
 type Slide = {
   kind: DeviceKind
   label: string
-  short: string
   /**
    * Высота полотна внутри кадра. h-auto — по содержимому: столько, сколько
    * занимает страница, и прокрутка проезжает ровно её излишек над кадром.
@@ -56,35 +55,31 @@ type Slide = {
  * телефоне, где адаптив укладывает страницу без прокрутки.
  */
 const slides: Slide[] = [
-  { kind: 'laptop', label: 'Ноутбук', short: 'Ноутбук', height: 'h-auto', pass: '7s', passMs: 7000 },
+  { kind: 'laptop', label: 'Ноутбук', height: 'h-auto', pass: '7s', passMs: 7000 },
   {
     kind: 'tablet-landscape',
-    label: 'Планшет горизонтально',
-    short: 'Планшет ↔',
+    label: 'Планшет ↔ горизонтально',
     height: 'h-auto',
     pass: '7s',
     passMs: 7000,
   },
   {
     kind: 'tablet-portrait',
-    label: 'Планшет вертикально',
-    short: 'Планшет ↕',
+    label: 'Планшет ↕ вертикально',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
   },
   {
     kind: 'phone-portrait',
-    label: 'Смартфон вертикально',
-    short: 'Смартфон ↕',
+    label: 'Смартфон ↕ вертикально',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
   },
   {
     kind: 'phone-landscape',
-    label: 'Смартфон горизонтально',
-    short: 'Смартфон ↔',
+    label: 'Смартфон ↔ горизонтально',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
@@ -169,7 +164,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
       {/* Выбор проекта: он же оглавление слайдшоу.
           justify-center: семь табов почти никогда не делятся на строки
           поровну, и последняя строка с одним-двумя табами слева выглядела
-          как случайный обрывок — по центру она читается как завершение
+          как случайный обры��ок — по центру она читается как завершение
           ряда, а не недоверстка */}
       <div role="group" aria-label="Проекты" className="flex flex-wrap justify-center gap-2">
         {works.map((item, itemIndex) => (
@@ -256,33 +251,67 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             />
           </div>
 
-          {/* Переключатель устройств: он же индикатор слайдшоу */}
+          {/* Переключатель устройств: он же индикатор слайдшоу.
+              Раньше это был ряд из пяти кнопок-пилюль — на десктопе он
+              умещался в строку, а на телефоне разваливался на 2-3 строки
+              и не собирал взгляд. Карусель со стрелками занимает ту же
+              компактную ширину везде, а название текущего устройства уже
+              несёт стрелку ориентации (↔ / ↕) — она и объясняет, что
+              значит «горизонтально/вертикально», без отдельной иконки
+              поворота. mx-auto центрирует блок по ширине родителя, а
+              родитель — та же колонка, что и сцена с макетом сайта, так
+              что стрелки оказываются по центру именно относительно неё */}
           <div
-            role="group"
             aria-label={`Устройства: ${work.niche}`}
-            className="flex flex-wrap justify-center gap-2"
+            className="mx-auto flex flex-col items-center gap-3"
           >
-            {slides.map((item, itemIndex) => (
+            <div className="flex items-center gap-3">
               <button
-                key={item.kind}
                 type="button"
-                aria-pressed={itemIndex === active}
-                onClick={() => setActive(itemIndex)}
-                className={cn(
-                  'inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors lg:min-h-0',
-                  itemIndex === active
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
-                )}
+                aria-label="Предыдущее устройство"
+                onClick={() => setActive((active - 1 + slides.length) % slides.length)}
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
               >
-                {/* Пять кнопок в ряд: полные подписи («Планшет горизонтально»)
-                    появляются только с lg, где на них есть ширина. До этого
-                    короткие «Планшет ↔» — на планшете в портрете полные
-                    названия занимали три строки кнопок вместо одной */}
-                <span className="hidden lg:inline">{item.label}</span>
-                <span className="lg:hidden">{item.short}</span>
+                <ChevronLeft className="size-4" strokeWidth={2} aria-hidden="true" />
               </button>
-            ))}
+              <span
+                aria-live="polite"
+                className="min-w-[15ch] text-center text-[13px] font-medium tnum text-foreground"
+              >
+                {slide.label}
+              </span>
+              <button
+                type="button"
+                aria-label="Следующее устройство"
+                onClick={() => setActive((active + 1) % slides.length)}
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+              >
+                <ChevronRight className="size-4" strokeWidth={2} aria-hidden="true" />
+              </button>
+            </div>
+
+            {/* Точки-индикатор: пять шагов слайдшоу, активная крупнее и
+                выделена цветом. Кликабельны — прямой переход к устройству
+                остаётся доступен, просто не отдельной подписанной кнопкой */}
+            <div className="flex items-center gap-1.5">
+              {slides.map((item, itemIndex) => (
+                <button
+                  key={item.kind}
+                  type="button"
+                  aria-label={item.label}
+                  aria-pressed={itemIndex === active}
+                  onClick={() => setActive(itemIndex)}
+                  className="p-1"
+                >
+                  <span
+                    className={cn(
+                      'block size-1.5 rounded-full transition-colors',
+                      itemIndex === active ? 'bg-primary' : 'bg-border hover:bg-foreground/40',
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
