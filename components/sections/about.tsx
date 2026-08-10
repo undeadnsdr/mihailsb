@@ -16,18 +16,19 @@ export function About() {
     <Section id="about" labelledBy="about-title">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
         <div className="flex flex-col gap-6 md:col-span-7">
-          {/* Крупное фото рядом с заголовком: в хедере аватар маленький и
-              служит просто опознавательным значком, здесь же он должен
-              подтверждать «сайт делает реальный человек» на весь рост
-              заголовка — поэтому размер привязан к строке h2 (44px на
-              десктопе), а не к произвольной константе */}
+          {/* Фото рядом с заголовком подтверждает «сайт делает реальный
+              человек», но не должно спорить с заголовком за внимание —
+              поэтому размер привязан к высоте заглавной буквы h2
+              (28px/44px, cap-height ≈ 0.7 от кегля), а не к росту строки
+              целиком, как было раньше (56/80px — вровень со всей строкой
+              с учётом межстрочного интервала) */}
           <div className="flex items-center gap-4 md:gap-5">
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={80}
-              height={80}
-              className="size-14 shrink-0 rounded-full border border-border object-cover md:size-20"
+              width={40}
+              height={40}
+              className="size-5 shrink-0 rounded-full border border-border object-cover md:size-8"
             />
             <SectionHeading id="about-title" title={about.title} className="flex-1" />
           </div>
