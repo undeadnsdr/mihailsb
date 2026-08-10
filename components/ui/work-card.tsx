@@ -3,21 +3,27 @@
 import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
-import { SiteMockup, PhoneMockup, BlurRegions } from '@/components/ui/site-mockup'
+import { SiteMockup, PhoneMockup, TabletMockup, BlurRegions } from '@/components/ui/site-mockup'
 
 /**
- * Карточка работы: кадр с макетом демо-сайта внутри.
+ * Карточка работы: демо-сайт в корпусе устройства.
  *
- * Три вида кадра — под три устройства:
- * - desktop (по умолчанию) и tablet-* показывают полный макет сайта
- *   (SiteMockup) со скроллом — по курсору на десктопе, по видимости
- *   на тач-устройствах;
- * - phone показывает мобильную вёрстку сайта (PhoneMockup) статично,
- *   без скролла — контент уже умещается на один экран.
+ * Два слоя, и это важно для выравнивания рядов:
+ * 1. Слот — невидимая область под устройство. У desktop и планшетов он
+ *    задан своим соотношением сторон, у телефона растянут на всю высоту
+ *    ряда (flex-1), поэтому телефонная плитка выходит ровно той же высоты,
+ *    что и крупная плитка рядом с ней в том же ряду.
+ * 2. Корпус — по центру слота, со своими честными пропорциями: телефон
+ *    9:19.5, планшет 4:3 (или 3:4 в портрете). Пропорции корпуса не зависят
+ *    от размеров слота, поэтому телефон не «раздувается» в квадрат.
  *
- * Кадр объявлен контейнером (container-type: size), поэтому весь текст
- * внутри макета задан в cqw/cqh и масштабируется вместе с кадром —
- * от плитки 300px до скриншота 1920px пропорции не меняются.
+ * Размеры рамки, кнопок и вырезов заданы в cqh — процентах высоты слота.
+ * За счёт этого корпус остаётся пропорциональным и в плитке 300px,
+ * и в скриншоте 1920px: толщина рамки и радиус скругления масштабируются
+ * вместе с устройством, а не остаются фиксированными пикселями.
+ *
+ * Экран объявлен вложенным контейнером, поэтому кегли внутри макета
+ * считаются от ширины экрана, а не от ширины карточки.
  */
 export function WorkCard({
   work,
@@ -58,102 +64,72 @@ export function WorkCard({
     return () => observer.disconnect()
   }, [onVisibility, work.id])
 
+  // Прокрутка нужна там, где в корпус помещён полный десктопный макет.
+  // Телефон и планшет в портрете показывают адаптивную вёрстку — она
+  // умещается на один экран целиком, прокручивать нечего.
+  const scrollable = device === 'desktop' || device === 'tablet-landscape'
   const running = (hovered || inView) && !noFx
-  const scrollable = device !== 'phone'
-
-  // Соотношения сторон кадра:
-  // - phone у heating и septic подобрано так, чтобы высота совпала с
-  //   соседней крупной плиткой (span-7 в 4:3) в том же ряду — 5 колонок
-  //   из 12 при высоте соседа дают ширину/высоту ≈ 20/21;
-  // - tablet-landscape ≈ 4:3 (классический iPad лёжа), tablet-portrait —
-  //   его же перевёрнутое соотношение.
-  const aspectRatio =
-    device === 'phone'
-      ? '20 / 21'
-      : device === 'tablet-portrait'
-        ? '3 / 4'
-        : device === 'tablet-landscape'
-          ? '4 / 3'
-          : '4 / 3'
 
   return (
     <article
       ref={ref}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group flex flex-col gap-4"
+      className="group flex h-full flex-col gap-4"
     >
-      <div className="relative">
-        <div
-          className={cn(
-            'relative [container-type:size]',
-            device === 'phone'
-              ? 'rounded-[9%] bg-foreground p-[3%] pt-[6%] card-shadow'
-              : device === 'tablet-landscape' || device === 'tablet-portrait'
-                ? 'rounded-[6%] bg-foreground p-[2.8%] card-shadow'
-                : 'overflow-hidden rounded-2xl border border-border bg-card card-shadow',
-          )}
-          style={{ aspectRatio }}
-        >
-          {device === 'phone' ? (
-            <>
-              {/* Динамик/камера — сверху экрана, поверх тёмного корпуса */}
-              <span
-                aria-hidden="true"
-                className="absolute left-1/2 top-[2%] z-10 h-[1%] w-[20%] -translate-x-1/2 rounded-full bg-background/35"
-              />
-              <div className="relative h-full w-full overflow-hidden rounded-[7%] bg-card">
-                <PhoneMockup work={work} priority={priority} />
-              </div>
-              {/* Домашняя полоска — снизу экрана */}
-              <span
-                aria-hidden="true"
-                className="absolute bottom-[1.4%] left-1/2 z-10 h-[0.8%] w-[28%] -translate-x-1/2 rounded-full bg-background/35"
-              />
-            </>
-          ) : device === 'tablet-landscape' || device === 'tablet-portrait' ? (
-            <>
-              {/* Камера планшета: на длинной кромке — слева в лендскейпе, сверху в портрете */}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  'absolute z-10 size-[1.6%] rounded-full bg-background/40',
-                  device === 'tablet-landscape'
-                    ? 'left-[1.2%] top-1/2 -translate-y-1/2'
-                    : 'left-1/2 top-[1.2%] -translate-x-1/2',
-                )}
-              />
-              <div className="relative h-full w-full overflow-hidden rounded-[4%] bg-card [container-type:size]">
-                <div className={cn('absolute inset-x-0 top-0', running && 'autoscroll-run')}>
-                  <SiteMockup work={work} priority={priority} />
-                </div>
-                <BlurRegions work={work} />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className={cn('absolute inset-x-0 top-0', running && 'autoscroll-run')}>
-                <SiteMockup work={work} priority={priority} />
-              </div>
-              <BlurRegions work={work} />
-            </>
-          )}
+      <div
+        className={cn(
+          'relative [container-type:size]',
+          // Телефон и планшет в портрете тянутся на всю высоту ряда — её
+          // задаёт широкая плитка рядом. На мобильном ряд из одной карточки,
+          // тянуться не за чем, поэтому там слот получает своё соотношение.
+          device === 'phone'
+            ? 'max-md:aspect-[2/3] md:min-h-0 md:flex-1'
+            : device === 'tablet-portrait'
+              ? 'max-md:aspect-[3/4] md:min-h-0 md:flex-1'
+              : 'aspect-[4/3]',
+        )}
+      >
+        {device === 'desktop' ? (
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card card-shadow [container-type:size]">
+            <div className={cn('absolute inset-x-0 top-0', running && 'autoscroll-run')}>
+              <SiteMockup work={work} priority={priority} />
+            </div>
+            <BlurRegions work={work} />
+          </div>
+        ) : device === 'phone' ? (
+          <DeviceBody kind="phone">
+            <PhoneMockup work={work} priority={priority} />
+          </DeviceBody>
+        ) : device === 'tablet-portrait' ? (
+          // В портрете планшет показывает планшетную вёрстку: десктопный
+          // макет дал бы на таком экране кегль в 6px, мобильный — не влез
+          // бы по высоте
+          <DeviceBody kind="tablet-portrait">
+            <TabletMockup work={work} priority={priority} />
+          </DeviceBody>
+        ) : (
+          <DeviceBody kind="tablet-landscape">
+            <div className={cn('absolute inset-x-0 top-0', running && 'autoscroll-run')}>
+              <SiteMockup work={work} priority={priority} />
+            </div>
+            <BlurRegions work={work} />
+          </DeviceBody>
+        )}
 
-          {/* Статус прокрутки — только там, где сайт действительно скроллится */}
-          {scrollable && (
-            <span
-              className={cn(
-                'glass-dark absolute bottom-3 right-3 z-10 rounded-full px-3 py-1.5 text-[13px] font-medium transition-opacity',
-                running ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
-              )}
-            >
-              {running ? 'прокручивается' : 'наведите'}
-            </span>
-          )}
-        </div>
+        {scrollable && (
+          <span
+            className={cn(
+              'glass-dark absolute bottom-3 right-3 z-20 rounded-full px-3 py-1.5 text-[13px] font-medium transition-opacity',
+              running ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+            )}
+          >
+            {running ? 'прокручивается' : 'наведите'}
+          </span>
+        )}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex shrink-0 flex-col gap-1">
         <h3 className={cn('font-semibold tracking-[-0.02em]', large ? 'text-xl' : 'text-lg')}>
           {work.niche} · {work.city}
         </h3>
@@ -162,5 +138,120 @@ export function WorkCard({
         </p>
       </div>
     </article>
+  )
+}
+
+/**
+ * Корпус устройства: рамка, вырез камеры и боковые кнопки.
+ *
+ * Все размеры — в cqh родительского слота, поэтому корпус пропорционален
+ * на любом размере карточки. Кнопки выступают за край рамки, поэтому
+ * overflow-hidden висит на экране, а не на корпусе.
+ */
+function DeviceBody({
+  kind,
+  children,
+}: {
+  kind: 'phone' | 'tablet-landscape' | 'tablet-portrait'
+  children: React.ReactNode
+}) {
+  const isPhone = kind === 'phone'
+
+  return (
+    <div
+      className={cn(
+        'absolute inset-y-0 left-1/2 -translate-x-1/2 bg-foreground card-shadow',
+        // Радиус и рамка: у телефона скругление ~13% ширины корпуса,
+        // у планшета ~5% короткой стороны — как у настоящих устройств
+        isPhone
+          ? 'aspect-[9/19.5] rounded-[6cqh] p-[0.9cqh]'
+          : kind === 'tablet-landscape'
+            ? 'aspect-[4/3] rounded-[4.5cqh] p-[1.6cqh]'
+            : 'aspect-[3/4] rounded-[4.5cqh] p-[1.6cqh]',
+      )}
+    >
+      {/* Металлический торец корпуса */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          'pointer-events-none absolute inset-0 ring-1 ring-inset ring-background/15',
+          isPhone ? 'rounded-[6cqh]' : 'rounded-[4.5cqh]',
+        )}
+      />
+
+      {/* Экран: вложенный контейнер, от его ширины считаются кегли макета */}
+      <div
+        className={cn(
+          'relative h-full w-full overflow-hidden bg-card [container-type:size]',
+          isPhone ? 'rounded-[5.2cqh]' : 'rounded-[3.2cqh]',
+        )}
+      >
+        {children}
+      </div>
+
+      {isPhone ? (
+        <>
+          {/* Островок с камерой поверх экрана */}
+          <span
+            aria-hidden="true"
+            className="absolute left-1/2 top-[1.7cqh] z-10 h-[3.2cqh] w-[13cqh] -translate-x-1/2 rounded-full bg-foreground"
+          />
+          {/* Полоска жеста «домой» */}
+          <span
+            aria-hidden="true"
+            className="absolute bottom-[1.1cqh] left-1/2 z-10 h-[0.5cqh] w-[13cqh] -translate-x-1/2 rounded-full bg-background/40"
+          />
+          {/* Качелька громкости и кнопка блокировки */}
+          <span
+            aria-hidden="true"
+            className="absolute -left-[0.5cqh] top-[17%] h-[4%] w-[0.5cqh] rounded-l-[0.3cqh] bg-foreground"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -left-[0.5cqh] top-[24%] h-[7%] w-[0.5cqh] rounded-l-[0.3cqh] bg-foreground"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -left-[0.5cqh] top-[33%] h-[7%] w-[0.5cqh] rounded-l-[0.3cqh] bg-foreground"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -right-[0.5cqh] top-[26%] h-[9%] w-[0.5cqh] rounded-r-[0.3cqh] bg-foreground"
+          />
+        </>
+      ) : (
+        <>
+          {/* Камера планшета — по центру длинной кромки */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              'absolute z-10 size-[0.8cqh] rounded-full bg-background/45',
+              kind === 'tablet-landscape'
+                ? 'left-[0.4cqh] top-1/2 -translate-y-1/2'
+                : 'left-1/2 top-[0.4cqh] -translate-x-1/2',
+            )}
+          />
+          {/* Кнопка включения и качелька громкости на верхней кромке */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              'absolute bg-foreground',
+              kind === 'tablet-landscape'
+                ? '-top-[0.5cqh] right-[12%] h-[0.5cqh] w-[7%] rounded-t-[0.3cqh]'
+                : '-top-[0.5cqh] right-[14%] h-[0.5cqh] w-[9%] rounded-t-[0.3cqh]',
+            )}
+          />
+          <span
+            aria-hidden="true"
+            className={cn(
+              'absolute bg-foreground',
+              kind === 'tablet-landscape'
+                ? '-right-[0.5cqh] top-[14%] h-[11%] w-[0.5cqh] rounded-r-[0.3cqh]'
+                : '-right-[0.5cqh] top-[9%] h-[9%] w-[0.5cqh] rounded-r-[0.3cqh]',
+            )}
+          />
+        </>
+      )}
+    </div>
   )
 }

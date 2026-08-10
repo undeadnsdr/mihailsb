@@ -156,7 +156,8 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
         </div>
 
         <div className="flex flex-col gap-[2.2cqw]">
-          {mock.services.slice(0, 3).map((service) => (
+          <p className="text-[3.4cqw] font-bold tracking-[-0.01em]">Что делаем</p>
+          {mock.services.map((service) => (
             <span key={service} className="flex items-center gap-[2cqw] text-[3.8cqw] font-medium">
               <Check className="size-[4cqw] shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
               {service}
@@ -164,14 +165,106 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
           ))}
         </div>
 
-        <div className="mt-auto flex flex-col gap-[2.4cqw]">
+        <div className="mt-auto flex flex-col gap-[2.4cqw] border-t border-border pt-[4cqw]">
           <div className="flex gap-[1cqw]" aria-hidden="true">
             {[0, 1, 2, 3, 4].map((i) => (
               <Star key={i} className="size-[3.6cqw] fill-primary text-primary" strokeWidth={1.75} />
             ))}
           </div>
-          <p className="text-[3.4cqw] leading-snug text-muted-foreground">{mock.guarantee}</p>
+          <p className="text-[3.4cqw] leading-snug text-muted-foreground">
+            «Приехали на замер в день звонка, сделали в срок.»
+          </p>
+          <p className="text-[3.4cqw] font-medium leading-snug">{mock.guarantee}</p>
           <span className="flex items-center justify-center rounded-lg bg-primary px-[4cqw] py-[3.6cqw] text-[4cqw] font-medium text-primary-foreground">
+            Вызвать на замер
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Планшетная версия макета — для корпуса планшета в портретной ориентации.
+ *
+ * Третья вёрстка нужна из-за геометрии: экран планшета в портрете имеет
+ * пропорции ~3:4, и ни один из двух готовых макетов в него не годится.
+ * Десктопный при ширине экрана 400px дал бы кегль в 6px, мобильный —
+ * не влез бы по высоте (в нём одна обложка 4:3 съедает половину экрана).
+ * Поэтому здесь обложка 16:9, а нижняя половина разложена в две колонки:
+ * услуги слева, цена и заявка справа. Так контент умещается на один экран
+ * целиком — прокручивать нечего, как и на настоящем планшете с адаптивом.
+ */
+export function TabletMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
+  const { mock } = work
+
+  return (
+    <div className="flex h-full w-full flex-col bg-card text-card-foreground">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-[5%] py-[2.4%]">
+        <span className="truncate text-[3.4cqw] font-bold tracking-[-0.01em] text-primary">
+          {work.niche}
+        </span>
+        <span className="flex items-center gap-[1cqw] rounded-full bg-primary px-[3cqw] py-[1.4cqw] text-[2.6cqw] font-medium text-primary-foreground">
+          <Phone className="size-[2.8cqw]" strokeWidth={1.75} aria-hidden="true" />
+          Позвонить
+        </span>
+      </div>
+
+      <div className="relative shrink-0" style={{ aspectRatio: '16 / 9' }}>
+        <Image
+          src={work.image}
+          alt={work.imageAlt}
+          fill
+          sizes="420px"
+          placeholder="blur"
+          blurDataURL={work.blurDataURL}
+          priority={priority}
+          loading={priority ? undefined : 'lazy'}
+          className="object-cover"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(0deg, rgba(17,24,39,0.85) 10%, rgba(17,24,39,0.2) 100%)' }}
+        />
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[1.6cqw] px-[5%] pb-[4%]">
+          <p className="text-[5cqw] font-bold leading-[1.1] tracking-[-0.03em] text-[#f5f6f8]">
+            {mock.headline}
+          </p>
+          <p className="max-w-[80%] text-[2.9cqw] leading-snug text-[#dce6f2]">{mock.sub}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-1 gap-[4cqw] px-[5%] py-[4%]">
+        <div className="flex flex-1 flex-col gap-[2.4cqw]">
+          <p className="text-[3cqw] font-bold tracking-[-0.01em]">Что делаем</p>
+          {mock.services.map((service) => (
+            <span key={service} className="flex items-center gap-[1.6cqw] text-[2.9cqw] font-medium">
+              <Check className="size-[3cqw] shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
+              {service}
+            </span>
+          ))}
+          <div className="mt-auto flex flex-col gap-[1.4cqw]">
+            <div className="flex gap-[0.8cqw]" aria-hidden="true">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} className="size-[2.8cqw] fill-primary text-primary" strokeWidth={1.75} />
+              ))}
+            </div>
+            <p className="text-[2.6cqw] leading-snug text-muted-foreground">{mock.guarantee}</p>
+          </div>
+        </div>
+
+        <div className="flex w-[42%] shrink-0 flex-col gap-[2.4cqw]">
+          <div className="flex flex-col gap-[0.8cqw] rounded-lg bg-accent px-[3cqw] py-[2.4cqw] text-accent-foreground">
+            <span className="text-[2.6cqw] font-medium">{mock.priceLabel}</span>
+            <span className="tnum text-[4.4cqw] font-bold leading-none tracking-[-0.02em]">
+              {mock.price}
+            </span>
+          </div>
+          <p className="text-[2.6cqw] leading-snug text-muted-foreground">
+            Замер бесплатно, смета в день обращения. Работаем по {work.city}.
+          </p>
+          <span className="mt-auto flex items-center justify-center rounded-lg bg-primary px-[2cqw] py-[2.6cqw] text-[2.9cqw] font-medium text-primary-foreground">
             Вызвать на замер
           </span>
         </div>
