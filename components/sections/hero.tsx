@@ -20,7 +20,7 @@ import { reachGoal } from '@/lib/analytics'
  */
 export function Hero() {
   return (
-    <Section id="hero" className="pt-8 md:pt-12 lg:pt-16" labelledBy="hero-title">
+    <Section id="hero" className="pt-2 md:pt-4 lg:pt-6" labelledBy="hero-title">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch">
         <Reveal className="lg:col-span-7">
           <PhotoCard />
