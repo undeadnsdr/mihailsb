@@ -12,6 +12,10 @@ import { benefitsMarquee } from '@/lib/content'
  * max-w-[1400px] и px-6/md:px-10/lg:px-16), поэтому овальная пилюля с
  * лентой ровно совпадает по ширине с пилюлей локации/звонка над ней.
  *
+ * pt-1.5 сверху — тот же зазор, что у TopBar до навигационной пилюли под
+ * ней (py-1.5 на обёртке nav в SiteHeader): расстояние строки до hero
+ * над ней визуально повторяет расстояние верхней строки до хедера.
+ *
  * Дорожка отрендерена дважды подряд (aria-hidden у второй копии), а CSS
  * анимация двигает контейнер на -50% его собственной ширины — ровно на
  * длину одной копии. Так стык между концом первой и началом второй копии
@@ -19,7 +23,7 @@ import { benefitsMarquee } from '@/lib/content'
  */
 export function BenefitsMarquee() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-6 md:px-10 lg:px-16">
+    <div className="mx-auto w-full max-w-[1400px] px-6 pt-1.5 md:px-10 lg:px-16">
       <div
         aria-label="Преимущества"
         className="w-full overflow-hidden rounded-full bg-primary py-2.5 text-primary-foreground"
