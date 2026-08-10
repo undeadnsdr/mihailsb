@@ -5,22 +5,20 @@ import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
 import { AvitoButton, PhoneButton } from '@/components/ui/cta'
-import { AvitoIcon } from '@/components/ui/avito-icon'
-import { useAvitoLeadForm } from '@/lib/lead-form'
-import { Check, Clock } from 'lucide-react'
+import { useTelegramLeadForm } from '@/lib/lead-form'
+import { Check, Clock, Send } from 'lucide-react'
 
 /**
  * Финальный экран.
  *
  * Форма сознательно без бэкенда: у страницы нет базы и почтового сервиса,
  * а заявка, ушедшая в никуда, хуже отсутствия формы. Поэтому по отправке
- * готовое сообщение копируется в буфер и открывается переписка на Авито —
- * человеку остаётся только вставить текст. Все переписки остаются в одном
- * месте, где лежат отзывы и рейтинг.
+ * открывается переписка в Телеграме с уже готовым текстом сообщения —
+ * человеку остаётся только нажать «Отправить» в самом мессенджере.
  */
 export function FinalCta() {
-  const { industry, setIndustry, name, setName, contact, setContact, copied, handleSubmit } =
-    useAvitoLeadForm('final')
+  const { industry, setIndustry, name, setName, contact, setContact, sent, handleSubmit } =
+    useTelegramLeadForm('final')
 
   return (
     <Section id="contact" labelledBy="contact-title">
@@ -120,15 +118,15 @@ export function FinalCta() {
                 data-goal="form_submit"
                 className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
               >
-                <AvitoIcon className="size-5 shrink-0" />
+                <Send className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 {finalCta.fields.submit}
               </button>
 
               <p aria-live="polite" className="text-[15px] leading-relaxed text-muted-foreground">
-                {copied ? (
+                {sent ? (
                   <span className="flex items-start gap-2 font-medium text-foreground">
                     <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
-                    Сообщение скопировано — вставьте его в переписку, там уже всё написано.
+                    Открылся Телеграм с готовым сообщением — нажмите «Отправить» там.
                   </span>
                 ) : (
                   finalCta.microcopy
