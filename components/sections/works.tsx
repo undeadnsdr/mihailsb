@@ -2,7 +2,6 @@ import { works, worksSection } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { WorksSlideshow } from '@/components/ui/works-slideshow'
-import { AvitoButton } from '@/components/ui/cta'
 
 /**
  * Работы: одна сцена на все проекты.
@@ -23,15 +22,6 @@ export function Works() {
 
         <Reveal>
           <WorksSlideshow works={works} />
-        </Reveal>
-
-        <Reveal className="flex flex-col gap-6">
-          <p className="max-w-[80ch] text-pretty text-sm leading-relaxed text-muted-foreground">
-            {worksSection.disclaimer}
-          </p>
-          <AvitoButton place="works" className="md:w-auto md:self-start">
-            {worksSection.cta}
-          </AvitoButton>
         </Reveal>
       </div>
     </Section>
