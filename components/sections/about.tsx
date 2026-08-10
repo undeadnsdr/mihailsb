@@ -27,10 +27,17 @@ export function About() {
               только мешал бы */}
           <Reveal step={1} className="text-muted-foreground">
             <details className="group sm:hidden">
-              <summary className="flex cursor-pointer list-none flex-col gap-2 [&::-webkit-details-marker]:hidden">
-                <p className="text-pretty line-clamp-3 group-open:hidden">{about.text.join(' ')}</p>
+              {/* relative + absolute шеврон вместо соседнего flex-элемента:
+                  раньше он лежал под текстом отдельной строкой. pr-6 на
+                  тексте — это padding самого -webkit-box, он подрезает
+                  все 3 строки одинаково справа, освобождая место под
+                  иконку только в правом нижнем углу блока, где заканчивается
+                  третья строка (bottom-0 right-0 совпадает с её концом,
+                  потому что line-clamp обрезает блок ровно по высоте 3 строк) */}
+              <summary className="relative block cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <p className="text-pretty line-clamp-3 pr-6 group-open:hidden">{about.text.join(' ')}</p>
                 <ChevronDown
-                  className="ml-auto size-5 shrink-0 text-primary transition-transform group-open:rotate-180"
+                  className="absolute bottom-0 right-0 size-5 shrink-0 text-primary transition-transform group-open:hidden"
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
