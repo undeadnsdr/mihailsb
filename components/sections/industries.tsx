@@ -42,6 +42,13 @@ export function Industries() {
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover"
                   />
+                  {/* Овальный лейбл-подкатегория поверх фото: короткое
+                      уточнение вида работ (например «Отопление» под
+                      заголовком «Инженерные системы»), которое не
+                      влезает в заголовок плитки без потери его лаконичности */}
+                  <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[13px] font-medium leading-none text-primary-foreground shadow-sm">
+                    {group.label}
+                  </span>
                 </div>
                 <div className="flex flex-col gap-2 p-6 md:p-8">
                   {/* text-pretty: названия ниш длинные («Кровля, фасады и
