@@ -6,6 +6,7 @@ import { Hero } from '@/components/sections/hero'
 import { Pains } from '@/components/sections/pains'
 import { HowItWorks } from '@/components/sections/how-it-works'
 import { Works } from '@/components/sections/works'
+import { Stack } from '@/components/sections/stack'
 import { Includes } from '@/components/sections/includes'
 import { Leads } from '@/components/sections/leads'
 import { PwaSection } from '@/components/sections/pwa-section'
@@ -38,6 +39,7 @@ export default function Page() {
         <About />
         <Pains />
         <Works />
+        <Stack />
         <HowItWorks />
         <Includes />
         <Leads />
