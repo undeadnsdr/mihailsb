@@ -160,7 +160,12 @@ export function VoiceNote({
                   key={index}
                   className={cn(
                     'flex-1 rounded-full transition-colors duration-150',
-                    played ? 'bg-primary' : 'bg-border',
+                    // bg-border (#e7e9ed) на белой карточке давал почти
+                    // нулевой контраст — неотыгранная часть волны
+                    // визуально пропадала. muted-foreground/35 держит
+                    // деления заметными, но всё ещё заметно тише
+                    // проигранных (сплошной primary)
+                    played ? 'bg-primary' : 'bg-muted-foreground/35',
                   )}
                   // Минимум 12%, иначе тишина превращается в невидимые пропуски
                   // и волна выглядит порванной
