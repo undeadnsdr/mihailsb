@@ -156,8 +156,29 @@
      Проценты в translateY считаются от высоты элемента, cqh — от кадра
      (у кадра container-type: size), так что доскролл всегда до конца и
      никогда не уезжает в пустоту, какой бы длины ни был макет. */
-  .autoscroll-run {
-    animation: autoscroll 9s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+  /* Один проход прокрутки: сверху донизу и стоп.
+     Раньше здесь был infinite alternate — макет ездил туда-обратно вечно.
+     Теперь проход конечный, потому что его конец — это сигнал слайдшоу
+     переключить устройство: JS слушает animationend, а не считает секунды
+     сам. Длительность приходит из --pass, у каждого устройства своя: у
+     ноутбука прокручивать 140% кадра, у планшета в портрете — 50%. */
+  .autoscroll-once {
+    animation: autoscroll var(--pass, 7s) cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  }
+
+  /* Полоска под сценой: показывает, сколько осталось до следующего кадра.
+     Живёт на той же --pass, поэтому не может разойтись с прокруткой */
+  .pass-progress {
+    animation: pass-progress var(--pass, 7s) linear forwards;
+  }
+
+  @keyframes pass-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
   }
 
   @keyframes autoscroll {
@@ -203,7 +224,12 @@
     transition: none !important;
   }
 
-  .autoscroll-run {
+  /* При отключённой анимации слайдшоу не крутится само: без прохода
+     прокрутки нет и события, по которому меняется устройство. Переключать
+     кадры остаётся кнопками — это ровно то поведение, которого ждёт
+     человек, попросивший систему не двигать содержимое без спроса */
+  .autoscroll-once,
+  .pass-progress {
     animation: none !important;
   }
 

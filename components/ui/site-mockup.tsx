@@ -8,13 +8,16 @@ import { cn } from '@/lib/utils'
  *
  * Собран вёрсткой, а не картинкой: текст остаётся резким на любом экране,
  * весит ноль байт (вместо 900 КБ видео на карточку) и правится в content.ts.
- * Высота ровно 240% кадра — под это рассчитана автопрокрутка.
+ *
+ * Высоту задаёт обёртка-скроллер, а не сам макет: слайдшоу считает по ней
+ * длительность прохода, поэтому высота должна быть в одном месте. Здесь
+ * h-full — макет просто занимает столько, сколько ему выделили.
  */
 export function SiteMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
   const { mock } = work
 
   return (
-    <div className="flex h-[240%] w-full flex-col bg-card text-card-foreground">
+    <div className="flex h-full w-full flex-col bg-card text-card-foreground">
       {/* Шапка демо-сайта */}
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-[4%] py-[1.6%]">
         <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-primary">
