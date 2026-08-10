@@ -22,7 +22,12 @@ export function Industries() {
           {industries.groups.map((group, index) => (
             <Reveal key={group.title} as="li" step={(index % 3) as 0 | 1 | 2}>
               <BentoCard className="h-full gap-2">
-                <h3 className="text-[21px] font-medium leading-snug tracking-[-0.01em]">{group.title}</h3>
+                {/* text-pretty: названия ниш длинные («Кровля, фасады и
+                    водосток»), в двух колонках на планшете без него в
+                    последней строке оставалось одно слово */}
+                <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
+                  {group.title}
+                </h3>
                 <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">{group.text}</p>
               </BentoCard>
             </Reveal>
@@ -30,7 +35,9 @@ export function Industries() {
         </ul>
 
         <Reveal>
-          <p className="text-pretty text-[17px] font-medium leading-relaxed">{industries.fallback}</p>
+          <p className="text-pretty text-[16px] font-medium leading-relaxed sm:text-[17px]">
+            {industries.fallback}
+          </p>
         </Reveal>
       </div>
     </Section>

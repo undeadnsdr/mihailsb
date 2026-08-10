@@ -66,9 +66,9 @@ export function FinalCta() {
           </BentoCard>
         </Reveal>
 
-        <Reveal step={1} className="md:col-span-6">
-          <BentoCard className="h-full gap-5 md:p-10">
-            <h3 className="text-pretty text-[21px] font-medium leading-snug tracking-[-0.01em]">
+        <Reveal step={1} className="lg:col-span-6">
+          <BentoCard className="h-full gap-5 md:p-8 lg:p-10">
+            <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
               {finalCta.formTitle}
             </h3>
 

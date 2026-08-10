@@ -7,8 +7,13 @@ import { site } from '@/lib/content'
 import { reachGoal } from '@/lib/analytics'
 import { AvitoIcon } from '@/components/ui/avito-icon'
 
+// max-sm, а не max-md: на всю ширину кнопка растягивается только на узком
+// смартфоне, где рядом с ней ничего не встанет. Раньше порог был md (768px),
+// и в горизонтальной ориентации смартфона две кнопки в ряду сохраняли
+// w-full каждая — flex-wrap разносил их по строкам, хотя ширины хватало
+// на обе. min-h 52px держит зону нажатия по всей вёрстке
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-full text-[17px] font-medium leading-none transition-colors min-h-[52px] px-6 max-md:w-full'
+  'inline-flex items-center justify-center gap-2 rounded-full text-[17px] font-medium leading-none transition-colors min-h-[52px] px-6 max-sm:w-full'
 
 /** Основная кнопка: ведёт в переписку на Авито */
 export function AvitoButton({

@@ -57,10 +57,10 @@ export function Pricing() {
 
               <p className="text-[17px] font-medium leading-relaxed">{pricing.main.note}</p>
 
-              {/* Порог md, а не sm: у самой кнопки в базовых классах стоит
-                  max-md:w-full, и переключать ширину раньше значило бы
-                  спорить с ним в диапазоне 640–767px */}
-              <AvitoButton place="pricing" className="md:w-auto md:self-start">
+              {/* Порог sm — тот же, на котором кнопка в базовых классах
+                  перестаёт быть во всю ширину: раньше она тянулась до 768px
+                  и в горизонтальной ориентации смартфона занимала всю строку */}
+              <AvitoButton place="pricing" className="sm:w-auto sm:self-start">
                 {pricing.main.cta}
               </AvitoButton>
             </BentoCard>

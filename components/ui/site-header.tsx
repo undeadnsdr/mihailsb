@@ -86,15 +86,18 @@ export function SiteHeader() {
               data-goal="click_phone"
               data-place="header"
               onClick={() => reachGoal('click_phone', { place: 'header' })}
-              className="flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
+              className="flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden short-landscape:flex"
             >
               <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}
             </a>
 
+            {/* В горизонтальной ориентации смартфона нижняя панель связи
+                остаётся на экране, и кнопка в шапке была бы третьим
+                «Написать на Авито» в одном кадре — там возвращаем телефон */}
             <AvitoButton
               place="header"
-              className="hidden min-h-10 shrink-0 px-4 text-[15px] max-md:w-auto sm:inline-flex"
+              className="hidden min-h-10 shrink-0 px-4 text-[15px] max-md:w-auto sm:inline-flex short-landscape:hidden"
             >
               Написать на Авито
             </AvitoButton>

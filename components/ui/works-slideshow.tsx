@@ -178,7 +178,10 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               setActive(0)
             }}
             className={cn(
-              'rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors',
+              // min-h-11 (44px) на смартфоне: выбор проекта — основной
+              // орган управления слайдшоу, и по вертикали он давал 38px,
+              // меньше пальца. С sm высоту задаёт padding
+              'inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors sm:min-h-0',
               itemIndex === workIndex
                 ? 'border-foreground bg-foreground text-background'
                 : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
@@ -200,7 +203,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             onMouseLeave={() => setHovered(false)}
             // Пропорции сцены одни для всех устройств: иначе при смене
             // кадра блок дёргал бы высоту и уводил страницу из-под пальца
-            className="relative aspect-square w-full sm:aspect-[4/3] [container-type:size]"
+            // В горизонтальной ориентации смартфона по ширине действует sm,
+            // и сцена брала пропорцию 4/3 — при 667px это 500px высоты,
+            // больше всего вьюпорта. 16/9 оставляет место переключателям
+            // устройств под сценой
+            className="relative aspect-square w-full sm:aspect-[4/3] [container-type:size] short-landscape:aspect-[16/9]"
           >
             <DeviceFrame kind={slide.kind}>
               {/* key — это перезапуск: у нового прохода новый элемент, а
@@ -253,7 +260,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 aria-pressed={itemIndex === active}
                 onClick={() => setActive(itemIndex)}
                 className={cn(
-                  'rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
+                  'inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-0',
                   itemIndex === active
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
@@ -274,17 +281,17 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             <span className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               {work.city} · {workIndex + 1} из {works.length}
             </span>
-            <h3 className="text-pretty text-[26px] font-bold leading-[1.15] tracking-[-0.02em] md:text-[34px]">
+            <h3 className="text-pretty text-[22px] font-bold leading-[1.15] tracking-[-0.02em] sm:text-[26px] lg:text-[30px] xl:text-[34px]">
               {work.niche}
             </h3>
           </div>
 
           <div className="flex max-w-[46ch] flex-col gap-3">
-            <p className="text-pretty text-[17px] leading-relaxed text-muted-foreground">
+            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
               <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
               {work.task}
             </p>
-            <p className="text-pretty text-[17px] leading-relaxed text-muted-foreground">
+            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
               <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
               {work.solution}
             </p>

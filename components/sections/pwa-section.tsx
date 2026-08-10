@@ -10,20 +10,23 @@ export function PwaSection() {
   return (
     <Section id="pwa" labelledBy="pwa-title">
       <Reveal>
-        <BentoCard tone="primary" className="gap-8 md:gap-10 md:p-10 lg:p-12">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center md:gap-6">
-            <div className="flex flex-col gap-5 md:col-span-7">
+        <BentoCard tone="primary" className="gap-8 md:gap-10 md:p-8 lg:p-10 xl:p-12">
+          {/* Макет домашнего экрана телефона (9:17) рядом с текстом в
+              половину планшета выглядел щепкой — до lg он уходит под текст
+              и центрируется, сохраняя свою ширину 280px */}
+          <div className="grid grid-cols-1 gap-8 md:gap-6 lg:grid-cols-12 lg:items-center">
+            <div className="flex flex-col gap-5 lg:col-span-7">
               <h2
                 id="pwa-title"
-                className="text-balance text-[28px] font-bold leading-[1.1] tracking-[-0.02em] md:text-[44px]"
+                className="text-balance text-[26px] font-bold leading-[1.1] tracking-[-0.02em] sm:text-[30px] md:text-[34px] lg:text-[44px]"
               >
                 {pwa.title}
               </h2>
-              <p className="max-w-[56ch] text-pretty text-[17px] leading-relaxed text-primary-foreground/85 md:text-lg">
+              <p className="max-w-[56ch] text-pretty text-[16px] leading-relaxed text-primary-foreground/85 sm:text-[17px] lg:text-lg">
                 {pwa.lead}
               </p>
 
-              <p className="flex items-start gap-3 rounded-xl bg-primary-foreground/10 p-4 text-pretty text-[17px] font-medium leading-relaxed">
+              <p className="flex items-start gap-3 rounded-xl bg-primary-foreground/10 p-4 text-pretty text-[16px] font-medium leading-relaxed sm:text-[17px]">
                 <WifiOff className="mt-0.5 size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 {pwa.keyLine}
               </p>
@@ -41,8 +44,11 @@ export function PwaSection() {
             </div>
 
             {/* Домашний экран телефона с иконкой сайта */}
-            <div className="md:col-span-5">
-              <div className="mx-auto w-full max-w-[280px]">
+            <div className="lg:col-span-5">
+              {/* В горизонтальной ориентации смартфона макет телефона 9:17
+                  высотой 500px+ выдавливал бы всё остальное из кадра —
+                  там он уменьшается до 200px */}
+              <div className="mx-auto w-full max-w-[280px] short-landscape:max-w-[200px]">
                 <HomeScreen />
               </div>
             </div>

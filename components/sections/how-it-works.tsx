@@ -21,23 +21,26 @@ export function HowItWorks() {
                 tone={index === 3 ? 'primary' : 'card'}
                 className="h-full gap-3"
               >
+                {/* Номер шага — навигация, а не заголовок: на четырёх
+                    колонках десктопа 40px нормально, но на смартфоне такая
+                    цифра весила больше самого шага, поэтому стартует с 32px */}
                 <span
                   className={
                     index === 3
-                      ? 'tnum text-[40px] font-bold leading-none tracking-[-0.04em] text-primary-foreground/45'
-                      : 'tnum text-[40px] font-bold leading-none tracking-[-0.04em] text-accent'
+                      ? 'tnum text-[32px] font-bold leading-none tracking-[-0.04em] text-primary-foreground/45 sm:text-[40px]'
+                      : 'tnum text-[32px] font-bold leading-none tracking-[-0.04em] text-accent sm:text-[40px]'
                   }
                 >
                   {index + 1}
                 </span>
-                <h3 className="text-pretty text-[21px] font-medium leading-snug tracking-[-0.01em]">
+                <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
                   {step.title}
                 </h3>
                 <p
                   className={
                     index === 3
-                      ? 'text-pretty text-[17px] leading-relaxed text-primary-foreground/85'
-                      : 'text-pretty text-[17px] leading-relaxed text-muted-foreground'
+                      ? 'text-pretty text-[16px] leading-relaxed text-primary-foreground/85 sm:text-[17px]'
+                      : 'text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]'
                   }
                 >
                   {step.text}

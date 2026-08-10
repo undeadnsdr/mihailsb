@@ -10,8 +10,12 @@ import { AvitoIcon } from '@/components/ui/avito-icon'
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-secondary">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-6 py-8 md:px-10 lg:px-16">
-        <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+      {/* px-4 на смартфоне — те же боковые отступы, что у секций выше:
+          иначе подвал визуально «шире» страницы. Три колонки в ряд только
+          с lg: на планшете 768px телефон, Авито, часы и меню из 10 ссылок
+          не укладывались в одну строку и слипались */}
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-8 sm:px-6 md:px-10 lg:px-16">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex flex-col gap-1.5">
             <span className="text-[18px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
             <p className="max-w-[40ch] text-[14px] leading-relaxed text-muted-foreground">

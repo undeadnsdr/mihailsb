@@ -13,8 +13,11 @@ import { VoiceNote } from '@/components/ui/voice-note'
 export function About() {
   return (
     <Section id="about" labelledBy="about-title">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
-        <div className="flex flex-col gap-6 md:col-span-7">
+      {/* Колонка гео уезжает под текст до lg: на планшете в портрете она
+          получала 300px, и список городов рассыпался в столбик по одному
+          тегу в строке. Внизу на всю ширину теги укладываются в две строки */}
+      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
+        <div className="flex flex-col gap-6 lg:col-span-7">
           <SectionHeading id="about-title" title={about.title} />
 
           {/* Текст теперь два коротких абзаца — «Читать дальше» тут только мешает,
@@ -51,9 +54,9 @@ export function About() {
           ) : null}
         </div>
 
-        <Reveal step={2} className="md:col-span-5">
+        <Reveal step={2} className="lg:col-span-5">
           <BentoCard tone="secondary" className="h-full gap-4">
-            <h3 className="flex items-center gap-2 text-[21px] font-medium leading-snug tracking-[-0.01em]">
+            <h3 className="flex items-center gap-2 text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
               <MapPin className="size-5 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
               {geo.title}
             </h3>

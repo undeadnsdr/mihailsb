@@ -8,8 +8,11 @@ import { BentoCard } from '@/components/ui/bento-card'
 export function Leads() {
   return (
     <Section id="leads" labelledBy="leads-title">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center md:gap-6">
-        <div className="flex flex-col gap-6 md:col-span-6 lg:col-span-7">
+      {/* Карточка уведомления — это скриншот телефона: рядом с текстом в
+          половину планшетной ширины она сжималась до 340px и подписи полей
+          («Чем занимается») начинали переноситься. До lg идёт под текстом */}
+      <div className="grid grid-cols-1 gap-8 md:gap-6 lg:grid-cols-12 lg:items-center">
+        <div className="flex flex-col gap-6 lg:col-span-7">
           <SectionHeading id="leads-title" title={leads.title} subtitle={leads.subtitle} />
           <Reveal step={1}>
             <ul className="flex flex-col gap-3">
@@ -18,17 +21,20 @@ export function Leads() {
                   <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent">
                     <Check className="size-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
                   </span>
-                  <span className="text-[17px] leading-relaxed">{bullet}</span>
+                  <span className="text-[16px] leading-relaxed sm:text-[17px]">{bullet}</span>
                 </li>
               ))}
             </ul>
           </Reveal>
         </div>
 
-        <Reveal step={2} className="md:col-span-6 lg:col-span-5">
-          <BentoCard tone="secondary" padded={false} className="gap-0 p-5 md:p-6">
+        {/* max-w: это макет телефонного уведомления, растянутый на 768px
+            он перестаёт читаться как экран телефона. На lg ограничение
+            снимается — там колонка сама задаёт ширину */}
+        <Reveal step={2} className="mx-auto w-full max-w-[520px] lg:col-span-5 lg:mx-0 lg:max-w-none">
+          <BentoCard tone="secondary" padded={false} className="gap-0 p-4 sm:p-5 md:p-6">
             {/* Карточка уведомления */}
-            <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 card-shadow">
+            <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 card-shadow sm:p-5">
               <div className="flex items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                   <BellRing className="size-5" strokeWidth={1.75} aria-hidden="true" />

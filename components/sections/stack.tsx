@@ -64,12 +64,12 @@ function StackCard({
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
           <Icon className="size-5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         </span>
-        <h3 className="text-pretty text-[21px] font-medium leading-snug tracking-[-0.01em] md:text-[26px]">
+        <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px] lg:text-[26px]">
           {title}
         </h3>
       </div>
 
-      <p className="text-pretty text-[17px] leading-relaxed text-muted-foreground">{lead}</p>
+      <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">{lead}</p>
 
       {/* Широкая плитка получает вторую колонку с md и четыре с lg —
           иначе четыре пункта растягиваются в одну длинную кишку */}
