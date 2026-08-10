@@ -180,7 +180,17 @@ function CircularMetric({ label, value, animKey }: { label: string; value: numbe
           {value}%
         </span>
       </div>
-      <span className="text-[13px] font-medium text-foreground">{label}</span>
+      {/* w-[68px] держит подпись не шире самого кольца: "Производительность"
+          не влезает в это кольцо одним словом на телефоне, где вьюпорт
+          уже, чем сама метка — без ограничения ширины строка не
+          переносилась и раздвигала три кольца за края экрана */}
+      {/* w-20 шире самого кольца (68px): "Производительность" не влезает
+          в 68px даже на две строки без уродливого разрыва посреди слова,
+          а на 80px укладывается в две ровные строки. items-center у
+          родителя всё равно держит подпись центрированной под кольцом */}
+      <span className="w-20 break-words text-center text-[12px] font-medium leading-snug text-foreground">
+        {label}
+      </span>
     </div>
   )
 }
@@ -431,10 +441,18 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             </p>
           </div>
 
+          {/* Та же тонкая полоска-разделитель, что лежит под сценой слева
+              (там она — хронометр слайдшоу, здесь — просто статичная
+              линия): она отделяет текст "Задача/Решение" от диаграмм тем
+              же приёмом, каким левая колонка отделяет сцену от кнопок
+              устройств под ней */}
+          <div aria-hidden="true" className="h-0.5 w-full rounded-full bg-border" />
+
           {/* Три круговые диаграммы вместо чек-листа услуг: тот же набор
               услуг уже виден на самом макете сайта слева, повторять его
-              текстом рядом было избыточно */}
-          <div className="flex items-center gap-6 sm:gap-8">
+              текстом рядом было избыточно. justify-center — они держатся
+              по центру этой колонки, а не прижаты к её левому краю */}
+          <div className="flex items-center justify-center gap-4 sm:gap-8">
             {metrics.map((metric) => (
               <CircularMetric
                 key={metric.key}
