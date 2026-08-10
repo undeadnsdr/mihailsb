@@ -70,7 +70,14 @@ export function Includes() {
                         />
                         <span className="flex flex-col gap-1">
                           <span className="text-[16px] font-medium leading-snug">{item.title}</span>
-                          <span className="text-[15px] leading-relaxed text-muted-foreground">{item.text}</span>
+                          {/* min-h-[3lh] держит одинаковую высоту под описание на
+                              смартфоне: тексты разной длины — от одной строки до
+                              трёх — иначе пункты внутри карточки визуально
+                              «прыгали» бы по высоте. От sm высоту уже держит
+                              min-h на самом <li>, поэтому здесь его убираем */}
+                          <span className="min-h-[3lh] text-[15px] leading-relaxed text-muted-foreground sm:min-h-0">
+                            {item.text}
+                          </span>
                         </span>
                       </li>
                     ))}
