@@ -1,6 +1,6 @@
 'use client'
 
-import { finalCta, site } from '@/lib/content'
+import { finalCta } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
@@ -61,7 +61,7 @@ export function FinalCta() {
 
             <p className="flex items-center gap-2 text-[15px] text-primary-foreground/70">
               <Clock className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              {site.workingHours} · отвечаю {site.responseTime}
+              Отвечаю в течении часа
             </p>
           </BentoCard>
         </Reveal>
