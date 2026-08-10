@@ -16,6 +16,11 @@ const groupIcons = {
  * Пункты разложены по трём плиткам-группам, а не одним списком на девять
  * строк: так видно не «сколько всего дают», а что закрыт весь путь клиента —
  * сайт есть, вас находят, с вами связываются.
+ *
+ * У каждого пункта свой min-h: три карточки — это три независимых flex-
+ * колонки (не общая сетка), поэтому без явной высоты строка с однострочным
+ * текстом в одной карточке не совпадёт по высоте со строкой с текстом
+ * на два переноса в соседней, и разделители между пунктами разъедутся.
  */
 export function Includes() {
   return (
@@ -40,7 +45,10 @@ export function Includes() {
 
                   <ul className="flex flex-col divide-y divide-border border-t border-border">
                     {group.items.map((item) => (
-                      <li key={item.title} className="flex items-start gap-3 pt-4 [&:not(:last-child)]:pb-4">
+                      <li
+                        key={item.title}
+                        className="flex min-h-[108px] items-start gap-3 pt-4 [&:not(:last-child)]:pb-4"
+                      >
                         <Check
                           className="mt-1 size-4 shrink-0 text-primary"
                           strokeWidth={2.25}
