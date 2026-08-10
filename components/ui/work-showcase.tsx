@@ -88,15 +88,23 @@ export function WorkShowcase({
 
   return (
     <article
-      className={cn(
-        'grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-14',
-        // Порядок колонок в шахматном порядке меняется только на десктопе:
-        // на мобильном устройство всегда сверху, описание под ним, иначе
-        // половина проектов начиналась бы с текста без картинки
-        reversed && 'lg:[&>*:first-child]:order-2',
-      )}
+      // На десктопе сетка не 50/50: между слайдшоу и описанием нужен явный
+      // воздух, а не просто gap, поэтому средняя колонка — пустой спейсер
+      // шириной 1/5. Итого 2/5 картинка + 1/5 воздух + 2/5 текст. На
+      // мобильном это одна колонка, спейсер там просто скрыт (иначе
+      // добавил бы пустой блок между устройством и текстом)
+      className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[2fr_1fr_2fr] lg:gap-0"
     >
-      <div className="flex flex-col gap-4">
+      <div
+        className={cn(
+          'flex flex-col gap-4',
+          // На мобильном порядок не трогаем — устройство всегда сверху,
+          // описание под ним. На десктопе шахматный порядок переключает
+          // именно эта колонка, а не общий grid — иначе спейсер посередине
+          // тоже пришлось бы переставлять
+          reversed ? 'lg:order-3' : 'lg:order-1',
+        )}
+      >
         <div
           ref={stageRef}
           onMouseEnter={() => setHovered(true)}
@@ -150,7 +158,10 @@ export function WorkShowcase({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5">
+      {/* Пустая колонка-отступ: только на десктопе, только для ширины сетки */}
+      <div aria-hidden="true" className="hidden lg:order-2 lg:block" />
+
+      <div className={cn('flex flex-col gap-5', reversed ? 'lg:order-1' : 'lg:order-3')}>
         <div className="flex flex-col gap-2">
           <span className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             {work.city}
