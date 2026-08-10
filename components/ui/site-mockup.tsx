@@ -1,0 +1,129 @@
+import Image from 'next/image'
+import { Phone, Check, Star } from 'lucide-react'
+import type { Work } from '@/lib/content'
+import { cn } from '@/lib/utils'
+
+/**
+ * Демо-макет сайта подрядчика.
+ *
+ * Собран вёрсткой, а не картинкой: текст остаётся резким на любом экране,
+ * весит ноль байт (вместо 900 КБ видео на карточку) и правится в content.ts.
+ * Высота ровно 240% кадра — под это рассчитана автопрокрутка.
+ */
+export function SiteMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
+  const { mock } = work
+
+  return (
+    <div className="flex h-[240%] w-full flex-col bg-card text-card-foreground">
+      {/* Шапка демо-сайта */}
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-[4%] py-[1.6%]">
+        <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-primary">
+          {mock.headline}
+        </span>
+        <span className="flex items-center gap-1 rounded-full bg-primary px-[1.6cqw] py-[0.8cqw] text-[1.2cqw] font-medium text-primary-foreground">
+          <Phone className="size-[1.4cqw]" strokeWidth={1.75} aria-hidden="true" />
+          Позвонить
+        </span>
+      </div>
+
+      {/* Первый экран демо-сайта */}
+      <div className="relative shrink-0" style={{ aspectRatio: '16 / 9' }}>
+        <Image
+          src={work.image}
+          alt={work.imageAlt}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          placeholder="blur"
+          blurDataURL={work.blurDataURL}
+          priority={priority}
+          loading={priority ? undefined : 'lazy'}
+          className="object-cover"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(90deg, rgba(17,24,39,0.78) 0%, rgba(17,24,39,0.25) 100%)' }}
+        />
+        <div className="absolute inset-0 flex flex-col justify-center gap-[1.4cqw] px-[4%]">
+          <p className="max-w-[62%] text-[2.6cqw] font-bold leading-[1.1] tracking-[-0.02em] text-[#f5f6f8]">
+            {mock.headline}
+          </p>
+          <p className="max-w-[52%] text-[1.4cqw] leading-snug text-[#dce6f2]">{mock.sub}</p>
+          <span className="w-fit rounded-md bg-[#f5f6f8] px-[2cqw] py-[1cqw] text-[1.3cqw] font-medium text-[#163a5f]">
+            Бесплатный замер
+          </span>
+        </div>
+      </div>
+
+      {/* Услуги */}
+      <div className="flex flex-1 flex-col gap-[1.4cqw] px-[4%] py-[2.4%]">
+        <p className="text-[1.7cqw] font-bold tracking-[-0.01em]">Что делаем</p>
+        <div className="flex flex-wrap gap-[1.2cqw]">
+          {mock.services.map((service) => (
+            <span
+              key={service}
+              className="flex items-center gap-[0.6cqw] rounded-md bg-secondary px-[1.6cqw] py-[1cqw] text-[1.25cqw] font-medium text-secondary-foreground"
+            >
+              <Check className="size-[1.3cqw] text-primary" strokeWidth={1.75} aria-hidden="true" />
+              {service}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Цена */}
+      <div className="mx-[4%] flex shrink-0 items-end justify-between gap-2 rounded-lg bg-accent px-[3cqw] py-[2cqw] text-accent-foreground">
+        <span className="text-[1.4cqw] font-medium">{mock.priceLabel}</span>
+        <span className="text-[2.4cqw] font-bold tracking-[-0.02em] tnum">{mock.price}</span>
+      </div>
+
+      {/* Отзыв и гарантия */}
+      <div className="flex flex-1 flex-col justify-center gap-[1cqw] px-[4%] py-[2.4%]">
+        <div className="flex gap-[0.4cqw]" aria-hidden="true">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Star key={i} className="size-[1.4cqw] fill-primary text-primary" strokeWidth={1.75} />
+          ))}
+        </div>
+        <p className="text-[1.3cqw] leading-snug text-muted-foreground">
+          «Приехали на замер в день звонка, сделали в срок, мусор вывезли.»
+        </p>
+        <p className="text-[1.25cqw] font-medium">{mock.guarantee}</p>
+      </div>
+
+      {/* Подвал демо-сайта */}
+      <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-[4%] py-[1.6%]">
+        <span className="text-[1.2cqw] text-muted-foreground">
+          {work.niche} · {work.city}
+        </span>
+        <span className="rounded-md bg-primary px-[1.6cqw] py-[0.9cqw] text-[1.2cqw] font-medium text-primary-foreground">
+          Оставить заявку
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/** Слой размытия поверх макета: закрывает название и домен заказчика */
+export function BlurRegions({ work, className }: { work: Work; className?: string }) {
+  if (!work.blurRegions?.length) return null
+  return (
+    <div aria-hidden="true" className={cn('pointer-events-none absolute inset-0', className)}>
+      {work.blurRegions.map((region, index) => (
+        <div
+          key={index}
+          className="absolute"
+          style={{
+            top: `${region.top}%`,
+            left: `${region.left}%`,
+            width: `${region.width}%`,
+            height: `${region.height}%`,
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            background: 'rgba(238, 241, 245, 0.35)',
+            borderRadius: '4px',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
