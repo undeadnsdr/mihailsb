@@ -92,7 +92,7 @@ export function WorkCard({
         )}
       >
         {device === 'desktop' ? (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card card-shadow [container-type:size]">
+          <div className="absolute inset-0 overflow-hidden rounded-xl border border-border bg-card [container-type:size]">
             <div className={cn('absolute inset-x-0 top-0', running && 'autoscroll-run')}>
               <SiteMockup work={work} priority={priority} />
             </div>

@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 import { works, worksSection } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { BentoCard } from '@/components/ui/bento-card'
 import { WorkCard } from '@/components/ui/work-card'
 import { AvitoButton } from '@/components/ui/cta'
 
@@ -52,12 +53,18 @@ export function Works() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {works.map((work, index) => (
             <Reveal key={work.id} step={(index % 2) as 0 | 1} className={spans[index]}>
-              <WorkCard
-                work={work}
-                large={index === 0 || index === 3}
-                inView={activeId === work.id}
-                onVisibility={onVisibility}
-              />
+              {/* Каждая работа — своя плитка бенто. Паддинг задаём здесь,
+                  а не через padded: у плитки с макетом устройства он меньше
+                  штатного p-6/p-8, иначе корпус в узкой колонке остаётся
+                  без запаса высоты */}
+              <BentoCard className="h-full p-4 md:p-5" padded={false}>
+                <WorkCard
+                  work={work}
+                  large={index === 0 || index === 3}
+                  inView={activeId === work.id}
+                  onVisibility={onVisibility}
+                />
+              </BentoCard>
             </Reveal>
           ))}
         </div>
