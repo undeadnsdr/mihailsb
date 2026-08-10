@@ -1,16 +1,52 @@
-export default function Home() {
+import { SiteHeader } from '@/components/ui/site-header'
+import { SiteFooter } from '@/components/ui/site-footer'
+import { StickyActions } from '@/components/ui/sticky-actions'
+import { Hero } from '@/components/sections/hero'
+import { Promo } from '@/components/sections/promo'
+import { Pains } from '@/components/sections/pains'
+import { HowItWorks } from '@/components/sections/how-it-works'
+import { Works } from '@/components/sections/works'
+import { Includes } from '@/components/sections/includes'
+import { Leads } from '@/components/sections/leads'
+import { PwaSection } from '@/components/sections/pwa-section'
+import { Industries } from '@/components/sections/industries'
+import { Pricing } from '@/components/sections/pricing'
+import { Support } from '@/components/sections/support'
+import { About } from '@/components/sections/about'
+import { Faq } from '@/components/sections/faq'
+import { FinalCta } from '@/components/sections/final-cta'
+import { JsonLd } from '@/components/json-ld'
+
+/**
+ * Порядок секций = порядок снятия возражений:
+ * узнавание (боли) → доказательство (работы) → механика (как это работает,
+ * что входит) → цена → снятие рисков (сопровождение, про меня, FAQ) → заявка.
+ * Акция стоит сразу под первым экраном, пока внимание максимально.
+ */
+export default function Page() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-16 text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            ?
-          </h1>
-          <p className="max-w-md text-lg text-muted-foreground">
-            To get started, send a prompt or modify this page directly.
-          </p>
-        </div>
+    <>
+      <JsonLd />
+      <div id="top" />
+      <SiteHeader />
+      <main>
+        <Hero />
+        <Promo />
+        <Pains />
+        <Works />
+        <HowItWorks />
+        <Includes />
+        <Leads />
+        <PwaSection />
+        <Pricing />
+        <Industries />
+        <Support />
+        <About />
+        <Faq />
+        <FinalCta />
       </main>
-    </div>
-  );
+      <SiteFooter />
+      <StickyActions />
+    </>
+  )
 }

@@ -27,7 +27,7 @@ export function StickyActions() {
   }, [])
 
   useEffect(() => {
-    const target = document.getElementById('final-cta')
+    const target = document.getElementById('contact')
     if (!target) return
     const observer = new IntersectionObserver((entries) => setHidden(entries[0]?.isIntersecting ?? false), {
       threshold: 0.12,
