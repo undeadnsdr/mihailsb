@@ -110,27 +110,41 @@ function PhotoCard() {
  */
 function CallbackCard() {
   return (
-    <BentoCard className="flex-1 justify-end gap-3 p-5 md:p-6">
-      <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.callbackTitle}</h2>
-      <p className="text-pretty text-[14px] leading-relaxed text-muted-foreground">{hero.callbackText}</p>
+    <BentoCard className="flex-1 justify-end gap-3 p-5 md:p-6" padded={false}>
+      {/* Фото задаёт контекст блока с первого взгляда: те же лица и стройки,
+          что и на фото-заявке слева, — звонок ведёт к тому же мастеру */}
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-2xl">
+        <Image
+          src="/hero/callback-photo.png"
+          alt="Мастер на объекте отвечает на звонок"
+          fill
+          sizes="(min-width: 1024px) 25vw, 90vw"
+          className="object-cover"
+        />
+      </div>
 
-      <CallbackModal
-        place="hero"
-        trigger={
-          <button
-            type="button"
-            data-goal="click_callback"
-            data-place="hero"
-            onClick={() => reachGoal('click_callback', { place: 'hero' })}
-            className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
-          >
-            <Phone className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-            {hero.callbackCta}
-          </button>
-        }
-      />
+      <div className="flex flex-1 flex-col justify-end gap-3 p-5 pt-0 md:p-6 md:pt-0">
+        <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.callbackTitle}</h2>
+        <p className="text-pretty text-[14px] leading-relaxed text-muted-foreground">{hero.callbackText}</p>
 
-      <p className="text-[14px] text-muted-foreground">Отвечаю {site.responseTime}. Звонок за мой счёт.</p>
+        <CallbackModal
+          place="hero"
+          trigger={
+            <button
+              type="button"
+              data-goal="click_callback"
+              data-place="hero"
+              onClick={() => reachGoal('click_callback', { place: 'hero' })}
+              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+            >
+              <Phone className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              {hero.callbackCta}
+            </button>
+          }
+        />
+
+        <p className="text-[14px] text-muted-foreground">Отвечаю {site.responseTime}. Звонок за мой счёт.</p>
+      </div>
     </BentoCard>
   )
 }
