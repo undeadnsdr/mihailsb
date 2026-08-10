@@ -42,16 +42,17 @@ export function HowItWorks() {
                 >
                   {step.text}
                 </p>
+                {/* Кнопка живёт внутри последней карточки, а не отдельным
+                    блоком под сеткой — «Приступайте!» и есть сам призыв нажать. */}
+                {index === 3 ? (
+                  <AvitoButton place="how-it-works" className="mt-1 border-primary-foreground/30 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                    {howItWorks.cta}
+                  </AvitoButton>
+                ) : null}
               </BentoCard>
             </Reveal>
           ))}
         </ol>
-
-        <Reveal className="flex">
-          <AvitoButton place="how-it-works" className="md:w-auto">
-            {howItWorks.cta}
-          </AvitoButton>
-        </Reveal>
       </div>
     </Section>
   )
