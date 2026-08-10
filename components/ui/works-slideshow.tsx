@@ -161,7 +161,7 @@ function CircularMetric({ label, value, animKey }: { label: string; value: numbe
             cy="22"
             r={RING_RADIUS}
             fill="none"
-            strokeWidth="4"
+            strokeWidth="2"
             className="stroke-border"
           />
           <circle
@@ -169,18 +169,18 @@ function CircularMetric({ label, value, animKey }: { label: string; value: numbe
             cy="22"
             r={RING_RADIUS}
             fill="none"
-            strokeWidth="4"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray={RING_CIRCUMFERENCE}
             strokeDashoffset={offset}
-            className="stroke-primary transition-[stroke-dashoffset] duration-1000 ease-out"
+            className="stroke-primary transition-[stroke-dashoffset] duration-[1400ms] ease-out"
           />
         </svg>
         <span className="absolute inset-0 flex items-center justify-center text-[14px] font-semibold tnum">
           {value}%
         </span>
       </div>
-      <span className="text-[13px] text-muted-foreground">{label}</span>
+      <span className="text-[13px] font-medium text-foreground">{label}</span>
     </div>
   )
 }
@@ -393,7 +393,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
         <div aria-hidden="true" className="hidden lg:block" />
 
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
+          {/* min-h держит место под заголовок стабильным: у "Кровля и
+              фасады" одна строка, у более длинных ниш — потенциально две,
+              и без брони под вторую строку сцена слева при переключении
+              проекта сдвигалась бы по вертикали вместе с описанием */}
+          <div className="flex min-h-[76px] flex-col gap-2 sm:min-h-[84px] lg:min-h-[96px]">
             <span className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               {work.city} · {workIndex + 1} из {works.length}
             </span>
@@ -402,7 +406,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             </h3>
           </div>
 
-          <div className="flex max-w-[46ch] flex-col gap-3">
+          {/* min-h забронирован под самый длинный текст из всех проектов
+              (септик: 4 строки задачи + решение из этой же панели) — так
+              высота панели с описанием не меняется между проектами и не
+              двигает сцену со слайдшоу слева */}
+          <div className="flex min-h-[250px] max-w-[46ch] flex-col gap-3 sm:min-h-[176px] lg:min-h-[262px]">
             {/* Иконка сидит в одном inline-flex со словом "Задача"/"Решение"
                 (а не рядом со всем абзацем) и центрируется items-center
                 именно по высоте этого слова — независимо от того, на
@@ -435,12 +443,6 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 animKey={`${work.id}:${metric.key}`}
               />
             ))}
-          </div>
-
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-border pt-4">
-            <span className="text-[15px] text-muted-foreground">{work.mock.priceLabel}</span>
-            <span className="tnum text-xl font-bold tracking-[-0.02em]">{work.mock.price}</span>
-            <span className="w-full text-[15px] text-muted-foreground">{work.mock.guarantee}</span>
           </div>
         </div>
       </div>
