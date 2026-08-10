@@ -56,12 +56,15 @@ export function SiteHeader() {
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={40}
-              height={40}
-              // Аватар задаёт высоту всей панели: в горизонтальной
-              // ориентации смартфона он возвращается к мелкому размеру,
-              // хотя по ширине экран уже прошёл sm
-              className="size-8 shrink-0 rounded-full border border-border object-cover sm:size-10 short-landscape:size-8"
+              width={44}
+              height={44}
+              // На смартфоне (портрет) аватар крупнее, чем на sm+ — там
+              // дескриптор рядом стал короче («за 1 день и 6000 ₽» вместо
+              // полного названия услуги), и панель хедера может позволить
+              // себе более заметное фото автора. В горизонтальной
+              // ориентации смартфона он возвращается к мелкому размеру —
+              // там высота панели зажата short-landscape-отступами
+              className="size-11 shrink-0 rounded-full border border-border object-cover sm:size-10 short-landscape:size-8"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
@@ -131,7 +134,7 @@ export function SiteHeader() {
             {/* Номер остаётся только в горизонтальной ориентации: там
                 нижняя панель связи скрыта, а кнопка «Написать на Авито»
                 тоже не показывается — без номера не осталось бы ни одной
-                точки контакта в кадре */}
+                точки конта��та в кадре */}
             <a
               href={`tel:${site.phoneRaw}`}
               data-goal="click_phone"
