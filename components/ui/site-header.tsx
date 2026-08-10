@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Phone } from 'lucide-react'
 import { nav, site } from '@/lib/content'
 import { TopBar } from '@/components/ui/top-bar'
@@ -35,7 +36,17 @@ export function SiteHeader() {
             floating ? 'glass' : 'border border-transparent',
           )}
         >
-          <a href="#top" className="flex items-baseline gap-2 whitespace-nowrap">
+          <a href="#top" className="flex items-center gap-2.5 whitespace-nowrap">
+            {/* Фото автора — сайты делает реальный человек, не студия.
+                Круглый кроп по лицу, фиксированный размер вне сетки текста */}
+            <Image
+              src="/avatar.webp"
+              alt="Илья, автор сайта"
+              width={32}
+              height={32}
+              className="size-8 shrink-0 rounded-full border border-border object-cover"
+              priority
+            />
             <span className="text-[17px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
           </a>
 
