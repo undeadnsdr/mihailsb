@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Phone } from 'lucide-react'
+import { Menu, Phone } from 'lucide-react'
 import { nav, site } from '@/lib/content'
 import { TopBar } from '@/components/ui/top-bar'
 import { AvitoButton } from '@/components/ui/cta'
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { reachGoal } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
@@ -64,8 +65,13 @@ export function SiteHeader() {
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-[17px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
-              <span className="hidden truncate text-[13px] font-medium text-muted-foreground sm:block">
+              {/* На смартфоне название мельче: рядом появляется дескриптор,
+                  и двум строкам вместе нужно на несколько пикселей меньше,
+                  чем одному крупному названию раньше */}
+              <span className="truncate text-[15px] font-bold tracking-[-0.02em] text-primary sm:text-[17px]">
+                {site.domain}
+              </span>
+              <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-[13px]">
                 {site.headerTagline}
               </span>
             </span>
@@ -89,19 +95,49 @@ export function SiteHeader() {
           </ul>
 
           <div className="flex items-center justify-self-end">
-            {/* На смартфоне вместо кнопки — номер: кнопка «Написать»
-                дублировала бы нижнюю панель, а телефона в ней нет подписанного */}
+            {/* Портрет смартфона: бургер с якорями вместо номера — разделы
+                страницы теперь достижимы и без десктопного меню, а связь
+                и так всегда на виду в нижней панели */}
+            <Sheet>
+              <SheetTrigger
+                aria-label="Открыть меню разделов"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:text-primary sm:hidden short-landscape:hidden"
+              >
+                <Menu className="size-5" strokeWidth={1.75} aria-hidden="true" />
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full max-w-xs">
+                <SheetHeader>
+                  <SheetTitle>Разделы страницы</SheetTitle>
+                </SheetHeader>
+                <nav aria-label="Мобильная навигация" className="flex flex-col gap-1 px-2 pb-4">
+                  {nav.map((item) => (
+                    <SheetClose
+                      key={item.href}
+                      nativeButton={false}
+                      render={
+                        <a
+                          href={item.href}
+                          className="flex min-h-12 items-center rounded-lg px-3 text-[16px] font-medium text-foreground transition-colors hover:bg-secondary"
+                        />
+                      }
+                    >
+                      {item.label}
+                    </SheetClose>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+
+            {/* Номер остаётся только в горизонтальной ориентации: там
+                нижняя панель связи скрыта, а кнопка «Написать на Авито»
+                тоже не показывается — без номера не осталось бы ни одной
+                точки контакта в кадре */}
             <a
               href={`tel:${site.phoneRaw}`}
               data-goal="click_phone"
               data-place="header"
               onClick={() => reachGoal('click_phone', { place: 'header' })}
-              // Номер неразрывный и занимает 166px. Порог 420px — ширина,
-              // на которой домену остаётся 134px при нужных ему 119px:
-              // ниже он начинал обрезаться в «ильясайты.р…». Там номер
-              // скрыт, и позвонить можно из «Звонка» в верхней полоске
-              // или кнопкой с трубкой в нижней панели связи
-              className="hidden min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover min-[420px]:flex sm:hidden short-landscape:flex"
+              className="hidden min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover short-landscape:flex"
             >
               <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}
