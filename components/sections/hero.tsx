@@ -65,8 +65,8 @@ function PhotoCard() {
         style={{ background: 'linear-gradient(0deg, rgba(17,24,39,0.88) 0%, rgba(17,24,39,0.35) 45%, transparent 70%)' }}
       />
 
-      <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-card/90 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm">
-        <MapPin className="size-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
+      <span className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm">
+        <MapPin className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         {hero.badge}
       </span>
 
