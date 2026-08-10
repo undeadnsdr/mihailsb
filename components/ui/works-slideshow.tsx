@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
 import { DeviceFrame, type DeviceKind } from '@/components/ui/device-frames'
@@ -85,6 +85,85 @@ const slides: Slide[] = [
     passMs: 4500,
   },
 ]
+
+/**
+ * Метрики под описанием проекта: три круговые диаграммы вместо чек-листа
+ * услуг (тот дублировал список внутри самого макета сайта). Значения
+ * псевдослучайные, но детерминированные — от id проекта и ключа метрики,
+ * чтобы при каждой перерисовке (например по таймеру слайдшоу) число не
+ * прыгало, а оставалось одним и тем же для конкретного проекта.
+ */
+const metrics = [
+  { key: 'speed', label: 'Скорость' },
+  { key: 'performance', label: 'Производительность' },
+  { key: 'optimization', label: 'Оптимизация' },
+] as const
+
+function metricValue(workId: string, key: string) {
+  const seed = `${workId}:${key}`
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0
+  // 95–98: узкий разброс "почти у всех отлично", а не точная метрика
+  return 95 + (hash % 4)
+}
+
+const RING_RADIUS = 18
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS
+
+function CircularMetric({ label, value, animKey }: { label: string; value: number; animKey: string }) {
+  const [filled, setFilled] = useState(false)
+  const rafRef = useRef(0)
+
+  useEffect(() => {
+    // Сбрасываем на 0 при смене проекта и отпускаем к цели кадром позже —
+    // так CSS-transition играет заново, а не перескакивает без движения.
+    // Один rAF здесь недостаточен: React может закоммитить "false" и
+    // следующий "true" в одном и том же кадре до отрисовки, и браузер
+    // тогда красит только конечное состояние. Второй вложенный rAF
+    // гарантирует, что нулевое состояние успело отрисоваться
+    setFilled(false)
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => setFilled(true))
+      rafRef.current = raf2
+    })
+    rafRef.current = raf1
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [animKey])
+
+  const offset = RING_CIRCUMFERENCE * (1 - (filled ? value : 0) / 100)
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="relative size-[68px]">
+        <svg viewBox="0 0 44 44" className="size-[68px] -rotate-90">
+          <circle
+            cx="22"
+            cy="22"
+            r={RING_RADIUS}
+            fill="none"
+            strokeWidth="4"
+            className="stroke-border"
+          />
+          <circle
+            cx="22"
+            cy="22"
+            r={RING_RADIUS}
+            fill="none"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray={RING_CIRCUMFERENCE}
+            strokeDashoffset={offset}
+            className="stroke-primary transition-[stroke-dashoffset] duration-1000 ease-out"
+          />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-[14px] font-semibold tnum">
+          {value}%
+        </span>
+      </div>
+      <span className="text-[13px] text-muted-foreground">{label}</span>
+    </div>
+  )
+}
 
 export function WorksSlideshow({ works }: { works: readonly Work[] }) {
   const [workIndex, setWorkIndex] = useState(0)
@@ -292,7 +371,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
 
             {/* Точки-индикатор: пять шагов слайдшоу, активная крупнее и
                 выделена цветом. Кликабельны — прямой переход к устройству
-                остаётся доступен, просто не отдельной подписанной кнопкой */}
+                остаётся доступен, просто не отдельной подписанн��й кнопкой */}
             <div className="flex items-center gap-1.5">
               {slides.map((item, itemIndex) => (
                 <button
@@ -329,24 +408,39 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           </div>
 
           <div className="flex max-w-[46ch] flex-col gap-3">
-            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
-              {work.task}
-            </p>
-            <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
-              {work.solution}
-            </p>
+            <div className="flex items-start gap-2.5">
+              <HelpCircle
+                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
+                <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
+                {work.task}
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <Check className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={2.5} aria-hidden="true" />
+              <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
+                <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
+                {work.solution}
+              </p>
+            </div>
           </div>
 
-          <ul className="flex flex-col gap-2">
-            {work.mock.services.map((service) => (
-              <li key={service} className="flex items-center gap-2.5 text-[15px]">
-                <Check className="size-4 shrink-0 text-primary" strokeWidth={2} aria-hidden="true" />
-                {service}
-              </li>
+          {/* Три круговые диаграммы вместо чек-листа услуг: тот же набор
+              услуг уже виден на самом макете сайта слева, повторять его
+              текстом рядом было избыточно */}
+          <div className="flex items-center gap-6 sm:gap-8">
+            {metrics.map((metric) => (
+              <CircularMetric
+                key={metric.key}
+                label={metric.label}
+                value={metricValue(work.id, metric.key)}
+                animKey={`${work.id}:${metric.key}`}
+              />
             ))}
-          </ul>
+          </div>
 
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-border pt-4">
             <span className="text-[15px] text-muted-foreground">{work.mock.priceLabel}</span>
