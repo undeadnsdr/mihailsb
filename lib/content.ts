@@ -156,7 +156,7 @@ export type Work = {
   }
   blurRegions?: { top: number; left: number; width: number; height: number }[]
   /** Устройство, на котором показан макет в карточке. По умолчанию — desktop */
-  device?: 'phone' | 'tablet-landscape' | 'tablet-portrait'
+  device?: 'phone' | 'tablet-landscape' | 'tablet-portrait' | 'laptop' | 'monitor'
 }
 
 export const works: Work[] = [
@@ -176,6 +176,7 @@ export const works: Work[] = [
       services: ['Металлочерепица', 'Профнастил', 'Ремонт протечек', 'Мансардные окна'],
       guarantee: 'Гарантия 3 года на работы',
     },
+    device: 'laptop',
   },
   {
     id: 'heating',
@@ -229,6 +230,7 @@ export const works: Work[] = [
       services: ['Профнастил', 'Евроштакетник', 'Откатные ворота', 'Навесы'],
       guarantee: 'Гарантия 2 года',
     },
+    device: 'monitor',
   },
   {
     id: 'house',
