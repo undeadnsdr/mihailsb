@@ -118,7 +118,7 @@ export function FinalCta() {
               <button
                 type="submit"
                 data-goal="form_submit"
-                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
               >
                 <AvitoIcon className="size-5 shrink-0" />
                 {finalCta.fields.submit}

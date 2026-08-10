@@ -8,7 +8,7 @@ import { AvitoIcon } from '@/components/ui/avito-icon'
 import { cn } from '@/lib/utils'
 
 const fab =
-  'glass flex size-12 items-center justify-center rounded-xl text-primary transition-colors hover:text-primary-hover'
+  'glass flex size-12 items-center justify-center rounded-full text-primary transition-colors hover:text-primary-hover'
 
 /**
  * Постоянный доступ к связи.
@@ -59,7 +59,7 @@ export function StickyActions() {
             data-goal="click_avito"
             data-place="sticky"
             onClick={() => reachGoal('click_avito', { place: 'sticky' })}
-            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             <AvitoIcon className="size-5" />
             Написать на Авито
@@ -70,7 +70,7 @@ export function StickyActions() {
             data-goal="click_phone"
             data-place="sticky"
             onClick={() => reachGoal('click_phone', { place: 'sticky' })}
-            className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary text-primary transition-colors hover:text-primary-hover"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary transition-colors hover:text-primary-hover"
           >
             <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
           </a>

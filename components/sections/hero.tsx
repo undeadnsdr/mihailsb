@@ -122,7 +122,7 @@ function CallbackCard() {
             data-goal="click_callback"
             data-place="hero"
             onClick={() => reachGoal('click_callback', { place: 'hero' })}
-            className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+            className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             <Phone className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
             {hero.callbackCta}

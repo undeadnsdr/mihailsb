@@ -8,7 +8,7 @@ import { reachGoal } from '@/lib/analytics'
 import { AvitoIcon } from '@/components/ui/avito-icon'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl text-[17px] font-medium leading-none transition-colors min-h-[52px] px-6 max-md:w-full'
+  'inline-flex items-center justify-center gap-2 rounded-full text-[17px] font-medium leading-none transition-colors min-h-[52px] px-6 max-md:w-full'
 
 /** Основная кнопка: ведёт в переписку на Авито */
 export function AvitoButton({

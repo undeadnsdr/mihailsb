@@ -32,7 +32,7 @@ export function SiteHeader() {
         <nav
           aria-label="Основная навигация"
           className={cn(
-            'flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-2.5 shadow-sm transition-all duration-300',
+            'flex items-center justify-between gap-4 rounded-full border border-border px-5 py-2.5 shadow-sm transition-all duration-300',
             floating ? 'glass' : 'bg-card',
           )}
         >

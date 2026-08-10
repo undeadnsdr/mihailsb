@@ -117,7 +117,7 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
               data-goal="form_submit"
               data-place={place}
               className={cn(
-                'inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover',
+                'inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover',
               )}
             >
               <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
