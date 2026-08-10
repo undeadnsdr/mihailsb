@@ -1,8 +1,8 @@
 import { SiteHeader } from '@/components/ui/site-header'
 import { SiteFooter } from '@/components/ui/site-footer'
 import { StickyActions } from '@/components/ui/sticky-actions'
+import { BenefitsMarquee } from '@/components/ui/benefits-marquee'
 import { Hero } from '@/components/sections/hero'
-import { Promo } from '@/components/sections/promo'
 import { Pains } from '@/components/sections/pains'
 import { HowItWorks } from '@/components/sections/how-it-works'
 import { Works } from '@/components/sections/works'
@@ -21,9 +21,10 @@ import { JsonLd } from '@/components/json-ld'
  * Порядок секций = порядок снятия возражений:
  * узнавание (боли) → доказательство (работы) → механика (как это работает,
  * что входит) → цена → снятие рисков (сопровождение, про меня, FAQ) → заявка.
- * Акция стоит сразу под первым экраном, пока внимание максимально, а «Про
- * меня» — сразу за ней: тот, кто заинтересовался скидкой, дальше спрашивает
- * «а кто мне это сделает».
+ * Бегущая строка с преимуществами идёт сразу под хедером — она заменила
+ * блок акции с таймером, но, в отличие от него, не истекает и не занимает
+ * отдельный экран прокрутки. «Про меня» стоит сразу за первым экраном: тот,
+ * кто заинтересовался предложением, дальше спрашивает «а кто мне это сделает».
  */
 export default function Page() {
   return (
@@ -31,9 +32,9 @@ export default function Page() {
       <JsonLd />
       <div id="top" />
       <SiteHeader />
+      <BenefitsMarquee />
       <main>
         <Hero />
-        <Promo />
         <About />
         <Pains />
         <Works />

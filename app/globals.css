@@ -170,6 +170,23 @@
       transform: translateY(calc(-100% + 100cqh));
     }
   }
+
+  /* Бегущая строка преимуществ под хедером.
+     Дорожка дублирована ровно 2 раза в разметке, поэтому -50% — это конец
+     первой копии: к моменту, когда она уезжает за левый край, вторая копия
+     занимает её место пиксель в пиксель и цикл не виден. */
+  .marquee-track {
+    animation: marquee 26s linear infinite;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -187,6 +204,10 @@
   }
 
   .autoscroll-run {
+    animation: none !important;
+  }
+
+  .marquee-track {
     animation: none !important;
   }
 }
