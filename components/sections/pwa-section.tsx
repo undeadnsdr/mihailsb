@@ -31,7 +31,10 @@ export function PwaSection() {
                 {pwa.keyLine}
               </p>
 
-              <ul className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-x-6">
+              {/* Три коротких пункта теперь помещаются в одну строку даже
+                  на телефоне — justify-center держит их по центру блока,
+                  а не прижатыми к левому краю */}
+              <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                 {pwa.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-center gap-2 text-[15px] text-primary-foreground/85">
                     <Check className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
