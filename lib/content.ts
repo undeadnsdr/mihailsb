@@ -16,6 +16,8 @@ export const site = {
   domainPunycode: 'xn--80adfa1beb3aq0a.xn--p1ai',
   url: 'https://xn--80adfa1beb3aq0a.xn--p1ai',
   name: 'Илья Сайты',
+  /** Подпись под доменом в хедере — короткая суть предложения на видном месте */
+  headerTagline: 'Сайт-лэндинг за 1 день и 6000 ₽',
   ownerName: 'Илья', // TODO: полное имя, как в профиле Авито
   city: 'Тюмень',
   region: 'Тюменская область',

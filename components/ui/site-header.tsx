@@ -36,21 +36,26 @@ export function SiteHeader() {
             floating ? 'glass' : 'bg-card',
           )}
         >
-          <a href="#top" className="flex items-center gap-2.5 whitespace-nowrap">
+          <a href="#top" className="flex min-w-0 flex-1 items-center gap-3">
             {/* Фото автора — сайты делает реальный человек, не студия.
-                Круглый кроп по лицу, фиксированный размер вне сетки текста */}
+                Круглый кроп по лицу, размер равен высоте кнопки «Написать на Авито» справа */}
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={32}
-              height={32}
-              className="size-8 shrink-0 rounded-full border border-border object-cover"
+              width={44}
+              height={44}
+              className="size-9 shrink-0 rounded-full border border-border object-cover sm:size-11"
               priority
             />
-            <span className="text-[17px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
+            <span className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate text-[17px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
+              <span className="hidden truncate text-[13px] font-medium text-muted-foreground sm:block">
+                {site.headerTagline}
+              </span>
+            </span>
           </a>
 
-          <ul className="hidden items-center gap-6 lg:flex">
+          <ul className="hidden shrink-0 items-center gap-6 lg:flex">
             {nav.map((item) => (
               <li key={item.href}>
                 <a
@@ -70,7 +75,7 @@ export function SiteHeader() {
             data-goal="click_phone"
             data-place="header"
             onClick={() => reachGoal('click_phone', { place: 'header' })}
-            className="flex min-h-[44px] items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
+            className="flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
           >
             <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
             {site.phone}
@@ -78,9 +83,9 @@ export function SiteHeader() {
 
           <AvitoButton
             place="header"
-            className="hidden min-h-[44px] px-4 text-[15px] max-md:w-auto sm:inline-flex"
+            className="hidden min-h-[44px] shrink-0 px-4 text-[15px] max-md:w-auto sm:inline-flex"
           >
-            Написать
+            Написать на Авито
           </AvitoButton>
         </nav>
       </div>

@@ -110,7 +110,7 @@ function PhotoCard() {
  */
 function CallbackCard() {
   return (
-    <BentoCard className="flex-1 justify-center gap-3 p-5 md:p-6">
+    <BentoCard className="flex-1 justify-end gap-3 p-5 md:p-6">
       <h2 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em]">{hero.callbackTitle}</h2>
       <p className="text-pretty text-[14px] leading-relaxed text-muted-foreground">{hero.callbackText}</p>
 

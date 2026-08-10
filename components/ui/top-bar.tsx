@@ -58,7 +58,12 @@ export function TopBar({ floating }: { floating: boolean }) {
         floating && 'pt-2',
       )}
     >
-      <div className="relative isolate flex h-11 items-center justify-between gap-4 overflow-hidden rounded-full border border-border bg-card px-5 shadow-sm">
+      <div
+        className={cn(
+          'relative isolate flex h-9 items-center justify-between gap-4 overflow-hidden rounded-full border border-border px-5 shadow-sm transition-all duration-300',
+          floating ? 'glass' : 'bg-card',
+        )}
+      >
         {/* Базовый слой — обычные цвета, здесь же живёт реальная интерактивная кнопка */}
         <BarContent tone="muted" />
 
