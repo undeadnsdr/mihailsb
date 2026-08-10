@@ -20,7 +20,12 @@ import { reachGoal } from '@/lib/analytics'
  */
 export function Hero() {
   return (
-    <Section id="hero" className="pt-2 md:pt-4 lg:pt-6" labelledBy="hero-title">
+    // Section даёт снизу тот же большой отступ, что и сверху (48/56/70px) —
+    // он рассчитан на переход между двумя обычными секциями. Сюда следом
+    // идёт тонкая бегущая строка с преимуществами, а не полноценная секция,
+    // поэтому запас снизу здесь избыточен и визуально отрывает карточки
+    // hero от ленты. Переопределяем pb отдельно от pt.
+    <Section id="hero" className="pt-2 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-10" labelledBy="hero-title">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch">
         <Reveal className="lg:col-span-7">
           <PhotoCard />
