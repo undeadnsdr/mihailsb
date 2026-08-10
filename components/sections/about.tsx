@@ -97,15 +97,16 @@ export function About() {
               {geo.title}
             </h3>
             <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">{geo.text}</p>
-            {/* На смартфоне теги мельче и с уже паддингами — так в строку с
-                переносом помещается по 3-4 штуки вместо двух, и список
-                читается компактным облаком, а не столбиком пар. От sm
-                возвращается прежний, более крупный размер */}
-            <ul className="flex flex-wrap gap-1.5 sm:gap-2">
+            {/* На смартфоне теги ещё мельче и с совсем узкими паддингами —
+                так в строку с переносом помещается по 4-5 штук вместо
+                2-3, и список читается компактным плотным облаком, а не
+                россыпью крупных таблеток. От sm возвращается прежний,
+                более крупный размер */}
+            <ul className="flex flex-wrap gap-1 sm:gap-2">
               {geo.places.map((place) => (
                 <li
                   key={place}
-                  className="rounded-lg border border-border bg-card px-2 py-1 text-[13px] font-medium sm:px-3 sm:py-1.5 sm:text-[15px]"
+                  className="rounded-md border border-border bg-card px-1.5 py-0.5 text-[11px] font-medium sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-[15px]"
                 >
                   {place}
                 </li>
