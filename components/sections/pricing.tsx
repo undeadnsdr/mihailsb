@@ -7,8 +7,15 @@ import { AvitoButton } from '@/components/ui/cta'
 
 /**
  * Кадр 10. Цифра 6000 набрана 96px — это главный аргумент страницы.
- * Продление со второго года вынесено в явное предупреждение, а не в сноску:
- * скрытый платёж, найденный через год, стоит дороже, чем честная строка сейчас.
+ *
+ * Правая колонка — это два блока друг под другом («Если нужно больше» +
+ * «Если нужно ещё больше»), их суммарная высота почти всегда больше, чем
+ * естественная высота левой плитки с ценой. Grid по умолчанию тянет все
+ * колонки строки на одинаковую высоту (stretch), поэтому левая плитка
+ * растягивается сама — h-full на BentoCard просто использует эту высоту.
+ * А вот содержимое внутри неё без явного justify-end осталось бы прижатым
+ * к верху с пустым полем снизу, поэтому контент внутри плитки выровнен
+ * по нижней границе.
  */
 export function Pricing() {
   return (
@@ -18,7 +25,7 @@ export function Pricing() {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
           <Reveal className="md:col-span-7">
-            <BentoCard className="h-full gap-6 md:p-10">
+            <BentoCard className="h-full justify-end gap-6 md:p-10">
               <div className="flex flex-col gap-1">
                 <span className="text-[15px] font-medium tracking-[0.01em] text-muted-foreground">
                   {pricing.main.title}
