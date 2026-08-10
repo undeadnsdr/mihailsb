@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { MapPin, Quote } from 'lucide-react'
 import { about, geo } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
@@ -16,21 +15,7 @@ export function About() {
     <Section id="about" labelledBy="about-title">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
         <div className="flex flex-col gap-6 md:col-span-7">
-          {/* Фото рядом с заголовком подтверждает «сайт делает реальный
-              человек», но не должно спорить с заголовком за внимание —
-              поэтому размер держится чуть выше высоты заглавной буквы h2
-              (28px/44px, cap-height ≈ 0.7 от кегля), а не вровень со всей
-              строкой целиком, как было раньше (56/80px) */}
-          <div className="flex items-center gap-4 md:gap-5">
-            <Image
-              src="/avatar.webp"
-              alt="Илья, автор сайта"
-              width={40}
-              height={40}
-              className="size-6 shrink-0 rounded-full border border-border object-cover md:size-10"
-            />
-            <SectionHeading id="about-title" title={about.title} className="flex-1" />
-          </div>
+          <SectionHeading id="about-title" title={about.title} />
 
           {/* Текст теперь два коротких абзаца — «Читать дальше» тут только мешает,
               прятать нечего, а лишний тап отделял бы читателя от голосового ниже */}
