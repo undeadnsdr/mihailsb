@@ -25,7 +25,7 @@ export function Hero() {
     // идёт тонкая бегущая строка с преимуществами, а не полноценная секция,
     // поэтому запас снизу здесь избыточен и визуально отрывает карточки
     // hero от ленты. Переопределяем pb отдельно от pt.
-    <Section id="hero" className="pt-2 pb-4 md:pt-4 md:pb-6 lg:pt-6 lg:pb-8" labelledBy="hero-title">
+    <Section id="hero" className="pt-2 pb-2 md:pt-4 md:pb-3 lg:pt-6 lg:pb-4" labelledBy="hero-title">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch">
         <Reveal className="lg:col-span-7">
           <PhotoCard />
