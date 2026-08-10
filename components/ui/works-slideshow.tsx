@@ -115,11 +115,7 @@ const slides: Slide[] = [
  */
 const metrics = [
   { key: 'speed', label: 'Скорость' },
-  // Мягкий перенос (\u00AD) — единственное надёжное место разрыва: без
-  // него браузер выбирает точку сам и режет слово где попало, без дефиса
-  // и по слогам. С ним разрыв виден только там, где явно указан, и всегда
-  // с дефисом
-  { key: 'performance', label: 'Производи\u00ADтельность' },
+  { key: 'performance', label: 'Производительность' },
   { key: 'optimization', label: 'Оптимизация' },
 ] as const
 
@@ -184,11 +180,12 @@ function CircularMetric({ label, value, animKey }: { label: string; value: numbe
           {value}%
         </span>
       </div>
-      {/* w-20 шире самого кольца (68px), потому что "Производительность"
-          не влезает в 68px даже на две строки. lang="ru" + hyphens-auto —
-          браузер переносит слово по слогам с дефисом ("произ-водитель-
-          ность"), а не разрывает его как попало без break-words */}
-      <span className="w-20 break-words text-center text-[12px] font-medium leading-snug text-foreground">
+      {/* whitespace-nowrap держит подпись в одну строку даже у самого
+          длинного слова "Производительность" — 10px хватает по ширине
+          на самом узком экране, где строке достаётся только 268px на все
+          три метрики. От sm колонке с описанием отведено больше места, и
+          подпись возвращается к комфортному размеру */}
+      <span className="whitespace-nowrap text-center text-[10px] font-medium text-foreground sm:text-[12px]">
         {label}
       </span>
     </div>
@@ -450,9 +447,10 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
 
           {/* Три круговые диаграммы вместо чек-листа услуг: тот же набор
               услуг уже виден на самом макете сайта слева, повторять его
-              текстом рядом было избыточно. justify-center — они держатся
-              по центру этой колонки, а не прижаты к её левому краю */}
-          <div className="flex items-center justify-center gap-4 sm:gap-8">
+              текстом рядом было избыточно. justify-between растягивает
+              три одинаковых кольца на всю ширину колонки с описанием —
+              крайние прижаты к её краям, а не сбиты в кучку по центру */}
+          <div className="flex items-center justify-between gap-2 sm:gap-8">
             {metrics.map((metric) => (
               <CircularMetric
                 key={metric.key}
