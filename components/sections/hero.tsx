@@ -2,12 +2,14 @@
 
 import Image from 'next/image'
 import { MapPin, Phone } from 'lucide-react'
-import { hero } from '@/lib/content'
+import { hero, works } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
 import { AvitoButton, ScrollLink } from '@/components/ui/cta'
 import { CallbackModal } from '@/components/ui/callback-modal'
+import { DeviceFrame } from '@/components/ui/device-frames'
+import { SiteMockup, TabletMockup, PhoneMockup } from '@/components/ui/site-mockup'
 import { reachGoal } from '@/lib/analytics'
 
 /**
@@ -124,7 +126,7 @@ function PhotoCard() {
           aria-hidden="true"
           // md (планшет в портрете): 16/10 давало 440px высоты, и вместе с
           // плитками-цифрами и карточкой звонка первый экран 1024px
-          // заканчивался посередине фото — кнопка «Перезвоните мне» в кадр
+          // заканчивался посередине фото — кнопка «Перезвоните мне» в ��адр
           // не попадала. 16/9 отдаёт эти 44px вниз, ничего не меняя по смыслу
           // Горизонтальная ориентация: 16/7 при ширине 932px (iPhone 15 Pro
           // Max боком) — это 407px высоты фото на вьюпорте 430px, и нижняя
@@ -167,50 +169,51 @@ function PhotoCard() {
  * сценарий: звонок, для тех, кому проще ответить на входящий, чем писать.
  */
 function CallbackCard() {
+  // Один и тот же демо-сайт, что и в слайдшоу работ ниже — тот же продукт,
+  // просто показанный крупным планом на трёх экранах сразу, а не по одному
+  const work = works[0]
+
   return (
-    // hidden sm:flex — на смартфоне звонок и так один тап в нижней панели
-    // связи (см. sticky-actions), которая занимает весь первый экран.
-    // Карточка с тем же CTA рядом дублирует её и отнимает место у H1 и
-    // кнопок на самом узком экране, где оно на счету. С sm нижняя панель
-    // уступает место десктопной колонке связи, и карточка возвращается.
-    <BentoCard className="hidden flex-1 justify-end gap-3 sm:flex" padded={false}>
-      {/* Фото задаёт контекст блока с первого взгляда: те же лица и стройки,
-          что и на фото-заявке слева, — звонок ведёт к тому же мастеру.
-          Без паддинга у карточки — оно вплотную прилегает к верхней и
-          боковым границам. Нижние углы скруглены явно на самом фото:
-          если текстовый блок под ним не дотягивается до низа карточки
-          (короткий текст + flex-1), overflow-hidden родителя не подхватит
-          скругление у нижнего края фото, поэтому оно задано здесь напрямую. */}
-      {/* Пропорция зависит от того, во всю ширину лежит карточка или в
-          колонке. До lg она растянута на весь экран, и 16/9 давало 396px
-          высоты на планшете в портрете: кнопка «Перезвоните мне» уходила
-          за нижний край первого экрана, а фото занимало больше места, чем
-          главное фото мастера выше. С lg карточка возвращается в узкую
-          колонку справа, где 16/9 — нормальный кадр.
-          В горизонтальной ориентации смартфона полоса ещё ниже: там от
-          вьюпорта в 375px на фото нельзя тратить больше сотни пикселей */}
-      <div className="relative aspect-[21/9] w-full shrink-0 overflow-hidden rounded-b-2xl md:aspect-[3/1] lg:aspect-[16/9] short-landscape:aspect-[32/9]">
-        <Image
-          src="/hero/callback-photo.png"
-          alt="Мастер на объекте отвечает на звонок"
-          fill
-          sizes="(min-width: 1024px) 25vw, 90vw"
-          // Это обычный дневной снимок без обработки — рядом с графичным
-          // закатным фото слева (см. master-photo, тот же класс saturate/
-          // contrast) он читался как чужой кадр, снятый другим человеком.
-          // contrast чуть выше, saturate чуть ниже: убирает плоский вид
-          // облачного дня, не перекрашивая сам снимок
-          className="object-cover saturate-[0.92] contrast-[1.08]"
-        />
-        {/* Тонкая холодная подложка поверх — тот же приём, что и в
-            градиенте на главном фото (затемнение сверху вниз), только
-            слабее и через multiply, чтобы не спорить с многослойной
-            картинкой. Она чуть смещает нейтральные тона облачного дня в
-            сторону primary, и оба фото начинают читаться одной рукой */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-primary/20 via-transparent to-transparent mix-blend-multiply"
-        />
+    <BentoCard className="flex-1 justify-end gap-3" padded={false}>
+      {/* Три устройства вместо фото: планшет, ноутбук и смартфон с тем же
+          демо-сайтом, но в своей вёрстке под каждый экран — наглядно
+          показывает то, что фото само по себе не объясняло: сайт
+          выглядит завершённым на любом устройстве клиента. Порядок —
+          планшет-ноутбук-смартфон, средний по размеру между двумя
+          крайними, а не по возрастанию/убыванию.
+          bg-secondary/60 отделяет панель от фото главного кадра слева —
+          это не снимок, а витрина. rounded-t-2xl вместо родительского
+          overflow-hidden: у карточки нет паддинга, и без явного скругления
+          здесь были бы острые верхние углы поверх скруглённой карточки. */}
+      <div className="flex shrink-0 items-end justify-center gap-2.5 rounded-t-2xl bg-secondary/60 px-3 pt-5 pb-4 sm:gap-4 sm:px-5 sm:pt-6 sm:pb-5">
+        {/* Планшет — портрет 3:4, тот же корпус и та же вёрстка, что и в
+            слайдшоу работ (TabletMockup), просто без анимации и в статике */}
+        <div className="relative h-16 shrink-0 sm:h-[72px] md:h-20" style={{ aspectRatio: '3 / 4' }}>
+          <DeviceFrame kind="tablet-portrait">
+            <TabletMockup work={work} />
+          </DeviceFrame>
+        </div>
+
+        {/* Ноутбук — самый широкий из трёх, поэтому и самый заметный.
+            13/8 — не точная пропорция экрана 16/10, а пропорция всего
+            корпуса целиком (крышка с рамкой + основание с петлёй),
+            подобранная так, чтобы корпус в высоту H давал ширину без
+            зазоров сверху/снизу внутри рамки. SiteMockup выше кадра —
+            обрезается overflow-hidden экрана ровно как в слайдшоу, здесь
+            статикой виден только первый экран сайта */}
+        <div className="relative h-[74px] shrink-0 sm:h-[92px] md:h-[104px]" style={{ aspectRatio: '13 / 8' }}>
+          <DeviceFrame kind="laptop">
+            <SiteMockup work={work} />
+          </DeviceFrame>
+        </div>
+
+        {/* Смартфон — уже планшета: 9/19.5, тот же корпус, что и в
+            слайдшоу. Самый узкий из трёх, стоит с краю справа */}
+        <div className="relative h-16 shrink-0 sm:h-[72px] md:h-20" style={{ aspectRatio: '9 / 19.5' }}>
+          <DeviceFrame kind="phone-portrait">
+            <PhoneMockup work={work} />
+          </DeviceFrame>
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col justify-end gap-3 p-5 pt-0 md:p-6 md:pt-0">
