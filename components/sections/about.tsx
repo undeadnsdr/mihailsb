@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { MapPin, Quote } from 'lucide-react'
 import { about, geo } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
@@ -15,7 +16,21 @@ export function About() {
     <Section id="about" labelledBy="about-title">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
         <div className="flex flex-col gap-6 md:col-span-7">
-          <SectionHeading id="about-title" title={about.title} />
+          {/* Крупное фото рядом с заголовком: в хедере аватар маленький и
+              служит просто опознавательным значком, здесь же он должен
+              подтверждать «сайт делает реальный человек» на весь рост
+              заголовка — поэтому размер привязан к строке h2 (44px на
+              десктопе), а не к произвольной константе */}
+          <div className="flex items-center gap-4 md:gap-5">
+            <Image
+              src="/avatar.webp"
+              alt="Илья, автор сайта"
+              width={80}
+              height={80}
+              className="size-14 shrink-0 rounded-full border border-border object-cover md:size-20"
+            />
+            <SectionHeading id="about-title" title={about.title} className="flex-1" />
+          </div>
 
           {/* Текст теперь два коротких абзаца — «Читать дальше» тут только мешает,
               прятать нечего, а лишний тап отделял бы читателя от голосового ниже */}
