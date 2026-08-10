@@ -28,7 +28,9 @@ const box: Record<DeviceKind, string> = {
   // поэтому крышка получает 84% ширины сцены, а не всю
   laptop: 'inset-x-0 top-1/2 -translate-y-1/2',
   'tablet-portrait': 'inset-y-0 left-1/2 -translate-x-1/2 aspect-[3/4]',
-  'tablet-landscape': 'inset-y-0 left-1/2 -translate-x-1/2 aspect-[4/3]',
+  // По ширине, а не по высоте: на телефоне сцена квадратная, и планшет,
+  // вписанный по высоте, вылезал бы за края экрана на треть своей ширины
+  'tablet-landscape': 'inset-x-0 top-1/2 -translate-y-1/2 aspect-[4/3]',
   'phone-portrait': 'inset-y-0 left-1/2 -translate-x-1/2 aspect-[9/19.5]',
   'phone-landscape': 'inset-x-0 top-1/2 -translate-y-1/2 aspect-[19.5/9]',
 }

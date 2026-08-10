@@ -9,15 +9,18 @@ import { cn } from '@/lib/utils'
  * Собран вёрсткой, а не картинкой: текст остаётся резким на любом экране,
  * весит ноль байт (вместо 900 КБ видео на карточку) и правится в content.ts.
  *
- * Высоту задаёт обёртка-скроллер, а не сам макет: слайдшоу считает по ней
- * длительность прохода, поэтому высота должна быть в одном месте. Здесь
- * h-full — макет просто занимает столько, сколько ему выделили.
+ * Высота — по содержимому, ни одного flex-1 и ни одного процента от кадра.
+ * Раньше макет растягивали до 240% высоты кадра, но тянулись при этом не
+ * блоки с текстом, а промежутки между ними: в середине прокрутки посетитель
+ * несколько секунд смотрел в пустое белое поле. Теперь длина макета равна
+ * сумме его блоков, а прокрутка проезжает ровно этот излишек — сколько
+ * реального сайта не влезло в экран, столько и едет.
  */
 export function SiteMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
   const { mock } = work
 
   return (
-    <div className="flex h-full w-full flex-col bg-card text-card-foreground">
+    <div className="flex w-full flex-col bg-card text-card-foreground">
       {/* Шапка демо-сайта */}
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-[4%] py-[1.6%]">
         <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-primary">
@@ -59,7 +62,7 @@ export function SiteMockup({ work, priority = false }: { work: Work; priority?: 
       </div>
 
       {/* Услуги */}
-      <div className="flex flex-1 flex-col gap-[1.4cqw] px-[4%] py-[2.4%]">
+      <div className="flex shrink-0 flex-col gap-[1.4cqw] px-[4%] py-[2.4%]">
         <p className="text-[1.7cqw] font-bold tracking-[-0.01em]">Что делаем</p>
         <div className="flex flex-wrap gap-[1.2cqw]">
           {mock.services.map((service) => (
@@ -80,8 +83,29 @@ export function SiteMockup({ work, priority = false }: { work: Work; priority?: 
         <span className="text-[2.4cqw] font-bold tracking-[-0.02em] tnum">{mock.price}</span>
       </div>
 
+      {/* Этапы работы.
+          Блок нужен не для красоты: без него у демо-сайта нечего прокручивать —
+          шапка, первый экран, услуги и цена умещаются в экран ноутбука целиком.
+          Порядок здесь настоящая последовательность, поэтому и нумерация */}
+      <div className="flex shrink-0 flex-col gap-[1.4cqw] px-[4%] py-[2.4%]">
+        <p className="text-[1.7cqw] font-bold tracking-[-0.01em]">Как работаем</p>
+        <div className="grid grid-cols-4 gap-[1.2cqw]">
+          {['Заявка', 'Замер', 'Смета', 'Работы'].map((stage, stageIndex) => (
+            <div
+              key={stage}
+              className="flex flex-col gap-[0.6cqw] border-t-2 border-primary pt-[1cqw]"
+            >
+              <span className="text-[1.1cqw] font-medium tnum text-muted-foreground">
+                Шаг {stageIndex + 1}
+              </span>
+              <span className="text-[1.3cqw] font-medium">{stage}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Отзыв и гарантия */}
-      <div className="flex flex-1 flex-col justify-center gap-[1cqw] px-[4%] py-[2.4%]">
+      <div className="flex shrink-0 flex-col gap-[1cqw] px-[4%] py-[2.4%]">
         <div className="flex gap-[0.4cqw]" aria-hidden="true">
           {[0, 1, 2, 3, 4].map((i) => (
             <Star key={i} className="size-[1.4cqw] fill-primary text-primary" strokeWidth={1.75} />
@@ -93,8 +117,22 @@ export function SiteMockup({ work, priority = false }: { work: Work; priority?: 
         <p className="text-[1.25cqw] font-medium">{mock.guarantee}</p>
       </div>
 
+      {/* Блок заявки: у настоящего лендинга подрядчика он всегда внизу —
+          посетитель дочитал до конца, значит готов оставить телефон */}
+      <div className="mx-[4%] flex shrink-0 flex-col gap-[1.2cqw] rounded-lg bg-secondary px-[3cqw] py-[2.4cqw] text-secondary-foreground">
+        <p className="text-[1.5cqw] font-bold tracking-[-0.01em]">Рассчитать стоимость</p>
+        <div className="flex items-center gap-[1cqw]">
+          <span className="flex-1 rounded-md border border-border bg-card px-[1.6cqw] py-[1cqw] text-[1.2cqw] text-muted-foreground">
+            Телефон для связи
+          </span>
+          <span className="rounded-md bg-primary px-[2cqw] py-[1cqw] text-[1.2cqw] font-medium text-primary-foreground">
+            Отправить
+          </span>
+        </div>
+      </div>
+
       {/* Подвал демо-сайта */}
-      <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-[4%] py-[1.6%]">
+      <div className="mt-[2.4%] flex shrink-0 items-center justify-between gap-2 border-t border-border px-[4%] py-[1.6%]">
         <span className="text-[1.2cqw] text-muted-foreground">
           {work.niche} · {work.city}
         </span>
