@@ -301,6 +301,19 @@
       transform: translateX(-50%);
     }
   }
+
+  /* Полоса-слайдер с табами проектов на смартфоне (works-slideshow):
+     скролл горизонтальный и по свайпу, но полоска скроллбара под ним
+     не нужна — сам факт скролла уже читается через обрезанный край
+     первой/последней кнопки */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

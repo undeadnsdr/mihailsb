@@ -200,9 +200,14 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
   const [noFx, setNoFx] = useState(false)
   const [reduced, setReduced] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
+  const tabsRef = useRef<HTMLDivElement>(null)
   // Какой проход уже зачтён: страховочный таймер и animationend могут
   // сработать оба, а шаг должен случиться один
   const steppedRef = useRef('')
+  // Подсказку-свайп показываем один раз за жизнь компонента, а не при
+  // каждом входе полосы табов в кадр — иначе она дёргалась бы при любом
+  // скролле вверх-вниз мимо секции
+  const hintedRef = useRef(false)
 
   const work = works[workIndex]
   const slide = slides[active]
@@ -228,6 +233,35 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
         for (const entry of entries) setInView(entry.intersectionRatio > 0.3)
       },
       { threshold: [0, 0.3, 0.6] },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  // На смартфоне полоса табов — горизонтальный слайдер без видимого
+  // скроллбара, и сам факт того, что её можно свайпнуть, не считывается
+  // с первого взгляда. Как только полоса докручивается в кадр, слегка
+  // толкаем её вправо и обратно нативным smooth-скроллом — это и есть
+  // подсказка, без танцев с transform и лишней анимационной обвязки
+  useEffect(() => {
+    const node = tabsRef.current
+    if (!node) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!hintedRef.current && entry.intersectionRatio > 0.6) {
+            hintedRef.current = true
+            const isMobile = window.matchMedia('(max-width: 639px)').matches
+            const reducesMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            if (isMobile && !reducesMotion && node.scrollWidth > node.clientWidth) {
+              window.setTimeout(() => node.scrollTo({ left: 64, behavior: 'smooth' }), 300)
+              window.setTimeout(() => node.scrollTo({ left: 0, behavior: 'smooth' }), 900)
+            }
+            observer.disconnect()
+          }
+        }
+      },
+      { threshold: [0, 0.6] },
     )
     observer.observe(node)
     return () => observer.disconnect()
@@ -268,11 +302,23 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
   return (
     <div className="flex flex-col gap-8 md:gap-10">
       {/* Выбор проекта: он же оглавление слайдшоу.
-          justify-center: семь табов почти никогда не делятся на строки
-          поровну, и последняя строка с одним-двумя табами слева выглядела
-          как случайный обры��ок — по центру она читается как завершение
-          ряда, а не недоверстка */}
-      <div role="group" aria-label="Проекты" className="flex flex-wrap justify-center gap-2">
+          На смартфоне (до sm) семь табов не влезают в ширину экрана —
+          вместо переноса строк это горизонтальный слайдер: flex-nowrap +
+          overflow-x-auto, скроллбар скрыт (no-scrollbar), а -mx-4/px-4
+          растягивают зону скролла на всю ширину экрана, включая боковые
+          поля секции, — иначе первая и последняя кнопка съезжали под
+          обрезанный край контейнера, а не самого экрана.
+          От sm ширины хватает — там прежняя раскладка: перенос строк и
+          justify-center, потому что семь табов почти никогда не делятся
+          на строки поровну, и последняя строка с одним-двумя табами
+          слева выглядела как случайный обрывок — по центру она читается
+          как завершение ряда, а не недоверстка */}
+      <div
+        ref={tabsRef}
+        role="group"
+        aria-label="Проекты"
+        className="-mx-4 flex flex-nowrap gap-1.5 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-2 sm:overflow-visible sm:px-0"
+      >
         {works.map((item, itemIndex) => (
           <button
             key={item.id}
@@ -283,11 +329,15 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               setActive(0)
             }}
             className={cn(
-              // min-h-11 (44px): выбор проекта — основной орган управления
-              // слайдшоу, а по вертикали он давал 38px, меньше пальца.
-              // Порог lg, а не sm: планшет в обеих ориентациях — тоже тач,
-              // и 38px там так же неудобны, как на смартфоне
-              'inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors lg:min-h-0',
+              // На смартфоне кнопки чуть мельче (min-h-10, меньше паддингов
+              // и шрифта), чем от sm — там места под перенос строк с лихвой,
+              // и прежний более крупный размер возвращается. min-h-10 (40px)
+              // — минимум ниже 44px, который обычно берут за порог пальца,
+              // но выбор проекта здесь один из многих табов слайдера, а не
+              // единственный орган управления: соседние кнопки страхуют друг
+              // друга по промаху. Порог lg, а не sm — планшет в обеих
+              // ориентациях тоже тач, и там сохраняется тач-высота
+              'inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[13px] lg:min-h-0',
               itemIndex === workIndex
                 ? 'border-foreground bg-foreground text-background'
                 : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
@@ -449,7 +499,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               услуг уже виден на самом макете сайта слева, повторять его
               текстом рядом было избыточно. justify-between растягивает
               три одинаковых кольца на всю ширину колонки с описанием —
-              крайние прижаты к её краям, а не сбиты в кучку по центру */}
+              крайние прижа��ы к её краям, а не сбиты в кучку по центру */}
           <div className="flex items-center justify-between gap-2 sm:gap-8">
             {metrics.map((metric) => (
               <CircularMetric
