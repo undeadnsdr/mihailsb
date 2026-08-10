@@ -25,8 +25,8 @@ export function SiteHeader() {
       {/* Плавающая стеклянная панель — одна из трёх зон, где стекло разрешено */}
       <div
         className={cn(
-          'mx-auto w-full max-w-[1400px] px-6 py-2 transition-all duration-300 md:px-10 lg:px-16',
-          floating && 'py-1.5',
+          'mx-auto w-full max-w-[1400px] px-6 py-1.5 transition-all duration-300 md:px-10 lg:px-16',
+          floating && 'py-1',
         )}
       >
         <nav
@@ -36,7 +36,7 @@ export function SiteHeader() {
             // До lg меню скрыто, поэтому правая колонка auto (не сжимается, номер телефона не режется).
             // С lg меню появляется, и обе боковые колонки становятся равными 1fr — тогда среднее меню
             // центрируется относительно всего хедера, а не свободного места между лого и кнопкой.
-            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-2 py-2 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
+            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-1.5 py-1.5 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
             floating ? 'glass' : 'bg-card',
           )}
         >
@@ -46,9 +46,9 @@ export function SiteHeader() {
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={48}
-              height={48}
-              className="size-9 shrink-0 rounded-full border border-border object-cover sm:size-12"
+              width={40}
+              height={40}
+              className="size-8 shrink-0 rounded-full border border-border object-cover sm:size-10"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
@@ -80,7 +80,7 @@ export function SiteHeader() {
               data-goal="click_phone"
               data-place="header"
               onClick={() => reachGoal('click_phone', { place: 'header' })}
-              className="flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
+              className="flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover sm:hidden"
             >
               <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}
@@ -88,7 +88,7 @@ export function SiteHeader() {
 
             <AvitoButton
               place="header"
-              className="hidden min-h-[44px] shrink-0 px-4 text-[15px] max-md:w-auto sm:inline-flex"
+              className="hidden min-h-10 shrink-0 px-4 text-[15px] max-md:w-auto sm:inline-flex"
             >
               Написать на Авито
             </AvitoButton>
