@@ -13,9 +13,10 @@ import { AvitoButton } from '@/components/ui/cta'
  * естественная высота левой плитки с ценой. Grid по умолчанию тянет все
  * колонки строки на одинаковую высоту (stretch), поэтому левая плитка
  * растягивается сама — h-full на BentoCard просто использует эту высоту.
- * А вот содержимое внутри неё без явного justify-end осталось бы прижатым
- * к верху с пустым полем снизу, поэтому контент внутри плитки выровнен
- * по нижней границе.
+ * Цена, разбивка и приписка должны прижиматься к верху (первое, что видит
+ * взгляд), а лишнюю высоту съедает mt-auto на кнопке: она остаётся там же,
+ * где стояла раньше, просто теперь её позиция определяется отступом сверху,
+ * а не justify-end на всём блоке.
  */
 export function Pricing() {
   return (
@@ -30,7 +31,7 @@ export function Pricing() {
             друг под другом: цена получает всю ширину, растягивать нечего */}
         <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
           <Reveal className="lg:col-span-7">
-            <BentoCard className="h-full justify-end gap-6 lg:p-10">
+            <BentoCard className="h-full gap-6 lg:p-10">
               <div className="flex flex-col gap-1">
                 <span className="text-[15px] font-medium tracking-[0.01em] text-muted-foreground">
                   {pricing.main.title}
@@ -64,7 +65,7 @@ export function Pricing() {
               {/* Порог sm — тот же, на котором кнопка в базовых классах
                   перестаёт быть во всю ширину: раньше она тянулась до 768px
                   и в горизонтальной ориентации смартфона занимала всю строку */}
-              <AvitoButton place="pricing" className="sm:w-auto sm:self-start">
+              <AvitoButton place="pricing" className="mt-auto sm:w-auto sm:self-start">
                 {pricing.main.cta}
               </AvitoButton>
             </BentoCard>
