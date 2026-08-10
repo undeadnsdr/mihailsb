@@ -34,13 +34,26 @@ export function Industries() {
                     не прямой линией — те же 1rem, что и у самой плитки
                     (rounded-2xl в bento-card.tsx), чтобы кривизна читалась
                     как единый радиус, а не два разных скругления */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-b-2xl">
+                {/* На смартфоне фото — отдельный портретный кадр 3:4
+                    (imagePortrait), а не тот же 16:10-снимок, сжатый по
+                    высоте: под каждую нишу сгенерирован свой вертикальный
+                    кадр, скомпонованный на вертикаль (стройка, котёл,
+                    сварка и т.д.), а не обрезка широкого кадра сбоку.
+                    От sm возвращается прежний 16/10 и горизонтальное фото. */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-b-2xl sm:aspect-[16/10]">
+                  <Image
+                    src={group.imagePortrait}
+                    alt={group.imageAlt}
+                    fill
+                    sizes="100vw"
+                    className="object-cover sm:hidden"
+                  />
                   <Image
                     src={group.image}
                     alt={group.imageAlt}
                     fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
+                    sizes="(min-width: 1024px) 33vw, 50vw"
+                    className="hidden object-cover sm:block"
                   />
                   {/* Овальный лейбл-подкатегория поверх фото: короткое
                       уточнение вида работ (например «Отопление» под
