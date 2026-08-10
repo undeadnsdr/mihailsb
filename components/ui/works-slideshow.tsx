@@ -279,9 +279,16 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             </h3>
           </div>
 
-          <p className="max-w-[46ch] text-pretty text-[17px] leading-relaxed text-muted-foreground">
-            {work.about}
-          </p>
+          <div className="flex max-w-[46ch] flex-col gap-3">
+            <p className="text-pretty text-[17px] leading-relaxed text-muted-foreground">
+              <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
+              {work.task}
+            </p>
+            <p className="text-pretty text-[17px] leading-relaxed text-muted-foreground">
+              <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
+              {work.solution}
+            </p>
+          </div>
 
           <ul className="flex flex-col gap-2">
             {work.mock.services.map((service) => (

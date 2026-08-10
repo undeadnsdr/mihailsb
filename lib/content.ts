@@ -126,7 +126,7 @@ export const pains = {
     },
     {
       title: 'Одни и те же вопросы отнимают время',
-      text: 'Цены, сроки, состав сметы, условия гарантии — типовые вопросы, на которые вы отвечаете вручную к��ждому обратившемуся. Эту нагрузку закрывает один раз оформленная страница.',
+      text: 'Цены, сроки, состав сметы, условия гарантии — типовые вопросы, на которые вы отвечаете вручную к����ждому обратившемуся. Эту нагрузку закрывает один раз оформленная страница.',
     },
   ],
 } as const
@@ -210,8 +210,10 @@ export type Work = {
   image: string
   blurDataURL: string
   imageAlt: string
-  /** Описание проекта в колонке рядом со слайдшоу устройств */
-  about: string
+  /** Задача и решение в колонке рядом со слайдшоу устройств — не описание
+   *  готового сайта, а то, какую проблему сферы он закрывает и как */
+  task: string
+  solution: string
   mock: {
     headline: string
     sub: string
@@ -232,8 +234,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAAAQBQCdASoUABQAPtFao02oJSMiKA1RABoJZQC/7BIvfkt1WcwljH9ThC49tgHpfK+gAN5iFhro/jQYxRbykjgSqXkkrlIe1zpG9Mdx+pLjeZELwPoGH8tF4JvnsCjEoT2C+mQYIMopj9i4rHmas+LQf5TpFQgJhnIOrn2SB73NkvaUb/SF2p/nJi4iO5LUDYTrLj93r52oAA==',
     imageAlt: 'Металлическая кровля частного дома после монтажа',
-    about:
-      'Кровельщик работает с крыши и смотрит заявки с телефона. Поэтому первым экраном идёт кнопка звонка, а цены за квадрат стоят выше отзывов: клиент решает по цене и скорости выезда.',
+    task: 'Кровельщик берёт заявки прямо с крыши, между работами, с телефона — сайту нужно продавать в одно касание, без лишних экранов и раздумий.',
+    solution:
+      'Кнопку звонка вывел на первый экран, а цену за квадрат — выше отзывов: на этом рынке решает цена и скорость выезда, а не репутация.',
     mock: {
       headline: 'Кровля под ключ в Тюмени',
       sub: 'Монтаж, ремонт, гидроизоляция. Выезд на замер бесплатно.',
@@ -251,8 +254,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBQCdASoUABQAPtFgqE+oJSOiKAgBABoJZQDOOA9mXvo6uoDyrko0WXyocb6am1yXeAi4APww3tfTS5/lsLnMm59ZUZ1x726JgoWya0V9kMyqyXd1W+Fxz52Z+C1jfJwwn+NjxWJYMfpcl6u3XHIzCgI1hFNwLAN3tRz/L7yWfSo0ouvnqndt4e6oxGBH5gAAAA==',
     imageAlt: 'Котельная частного дома с настенным котлом и коллектором',
-    about:
-      'Сезонная сфера: осенью звонят каждый день, летом почти не звонят. Заголовок и кнопки заточены под срочность — «успеем до морозов», а цена показана за киловатт, чтобы не пугать общей суммой.',
+    task: 'Спрос сезонный: осенью телефон разрывается, летом молчит. Сайту нужно ловить именно горячий поток и не отпугивать общей суммой в шапке.',
+    solution:
+      'Заголовок и кнопки заточил под срочность — «успеем до морозов», а цену показал за киловатт, а не за весь проект.',
     mock: {
       headline: 'Отопление и водоснабжение',
       sub: 'Котлы, тёплый пол, разводка по дому. Успеем до морозов.',
@@ -270,8 +274,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAQBQCdASoUABQAPtFgqU+oJSOiKAgBABoJZQDA3YyeXBwcQuRvVPnRm2bGbIiYOP5kAP6tOWS5Z1086VzdM0Kc33wCLq8P62uUW6nTH8tP6kev4eW1ZHmMWmcm0LdFaAn60se4ZtBasNUkz5q2g6ZlhysVxk2gUH0KC3EpCcZ5AG50Qdje178S2lzfTBET6cPr4HRCJdOfvJ0XtUpusOSrbPXPM8bA+2ntqAAA',
     imageAlt: 'Монтаж септика на частном участке, экскаватор и пластиковая станция',
-    about:
-      'Заявки идут с участков за городом, где связь ловит через раз. Поэтому страница лёгкая и открывается на 3G, а телефон и мессенджер вынесены так, чтобы дозвониться можно было в один тап.',
+    task: 'Заявки идут с дачных участков за городом, где связь ловит через раз — тяжёлый сайт там просто не откроется до конца.',
+    solution:
+      'Сделал лёгкую страницу без тяжёлой графики, а кнопки звонка и мессенджера вынес так, чтобы дозвониться получалось в один тап даже на плохом интернете.',
     mock: {
       headline: 'Септик и скважина под ключ',
       sub: 'Монтаж за один день. Работаем по всему Тюменскому району.',
@@ -289,8 +294,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAACwBACdASoUABQAPtFgqU+oJSOiKAgBABoJZQC90BFB96o7T/3GFojNuI1GzksoAP7we5s4lR4OSWpJB+l91W/BHBpf9MAGAM30mhyRY6tliE+9hzvZV+ITZMVr1gehbNhE6h6agEigd/NXfI8NO9+DOb0p8nBeOwJZy/sxO9xRPRfqwKEjDRSJcnXuwRDdGF7CciAA',
     imageAlt: 'Смонтированный забор из профнастила с откатными воротами',
-    about:
-      'Здесь всё решает цена за метр: клиент сравнивает три-четыре подрядчика подряд. Цена стоит на первом экране открыто — так меньше пустых звонков «а сколько стоит» и больше заявок с готовым решением.',
+    task: 'Клиент за один вечер обходит три-четыре подрядчика и сравнивает цену за метр — скрытая цена означает потерянную заявку в пользу конкурента.',
+    solution:
+      'Цену вывел на первый экран открыто: меньше пустых звонков «а сколько стоит» и больше заявок с уже принятым решением.',
     mock: {
       headline: 'Заборы, ворота, навесы',
       sub: 'Профнастил, штакетник, откатные ворота. Замер в день обращения.',
@@ -308,8 +314,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAABwBQCdASoUABQAPtFgqU+oJSOiKAgBABoJYwC7AdwAeqGA09inyExQ8CEPi74SWHzRZMlAAPyPzKCT9YheFW7ZrNh2kic+ribXW83o0VsL4bcIwgCKua+TxtUauhwxGnZIyDNMYqgZc53ncPKbhiPUJrOFsPogqHzyagaVrnRAl+QBIx8lchmBCIpnUsAAJeE9XthfvVwZ3AXI/WmL9awMBVB9RZorgerBA+M2ZJmkt27AAAA=',
     imageAlt: 'Каркасный дом на этапе строительства',
-    about:
-      'Дом выбирают долго и вдумчиво, часто вечером с планшета вместе с женой. Поэтому упор на смету и график: их видно до звонка, а не «рассчитаем индивидуально» после заполнения формы.',
+    task: 'Дом выбирают не с одного взгляда, решение обсуждают дома вечером, часто вдвоём с планшета — тут работает расчёт, а не эмоция.',
+    solution:
+      'Сделал акцент на смету и график и вывел их до звонка, а не спрятал за фразой «рассчитаем индивидуально» после заполнения формы.',
     mock: {
       headline: 'Дома, бани, пристройки',
       sub: 'Каркас и брус. Проект, смета и график — до начала работ.',
@@ -327,8 +334,9 @@ export const works: Work[] = [
     blurDataURL:
       'data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAADQBQCdASoUABQAPtFaqE4oJSQiKAqpABoJYwC1GyMv/2P+AzbDC6MmJXQQUBLc8NC8sXumjfnAAP5pYNFJs64NZJKW7A+fVUNGQ8CdS+HjU6Lhs5uZCa2mPXENjtB9RGegMklmK3f639OhCKl1ko5eCLW22H/Sr5BqjMlVfeXktzqt5lrmgGFKJpoOKVRKZ2ueJhzMC73RsE1ArM1kfo1JmOQ0ap8WFU4roNAAAAA=',
     imageAlt: 'Кухня на заказ с матовыми фасадами в частном доме',
-    about:
-      'Мебель выбирают глазами, поэтому фото занимают больше места, чем текст, и не режутся на телефоне. Свой цех и монтаж за день вынесены в первый экран — это главное отличие от перекупщиков.',
+    task: 'Мебель выбирают глазами: если фото мало или они режутся на телефоне, клиент уходит смотреть каталог у другого мастера.',
+    solution:
+      'Отдал фото больше места, чем тексту, и вывел в первый экран свой цех и монтаж за день — это то, что отличает от перекупщиков.',
     mock: {
       headline: 'Кухни и мебель на заказ',
       sub: 'Свой цех. Замер, проект в 3D, монтаж за один день.',
@@ -477,7 +485,7 @@ export const pricing = {
 
 export const support = {
   title: 'Менят�� текс�� и ф��то буду я',
-  lead: 'Админку учить не надо, и это осознанно: в конструкторах люди сами ломают вёрстку, а потом сайт кр����во выглядит на телефонах и заявки теряются.',
+  lead: 'Админку учить не надо, и это осознанно: в конструкторах люди сами ломают вёрстку, а потом сайт кр����во выглядит на телефонах и заявки ��еряются.',
   items: [
     { title: 'Первый месяц', text: 'Мелкие правки — цены, телефон, тексты, добавить фото — бесплатно.' },
     { title: 'Дальше по необходимости', text: 'Разовая правка 500 ₽. Написали в переписке — через час готово.' },
