@@ -32,8 +32,8 @@ export function SiteHeader() {
         <nav
           aria-label="Основная навигация"
           className={cn(
-            'flex items-center justify-between gap-4 rounded-xl px-4 py-2.5 transition-all duration-300',
-            floating ? 'glass' : 'border border-transparent',
+            'flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-2.5 shadow-sm transition-all duration-300',
+            floating ? 'glass' : 'bg-card',
           )}
         >
           <a href="#top" className="flex items-center gap-2.5 whitespace-nowrap">
