@@ -43,8 +43,6 @@ export function PwaSection() {
                   </li>
                 ))}
               </ul>
-
-              <p className="text-[15px] leading-relaxed text-primary-foreground/70">{pwa.note}</p>
             </div>
 
             {/* Домашний экран телефона с иконкой сайта */}
