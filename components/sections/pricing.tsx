@@ -23,16 +23,26 @@ export function Pricing() {
       <div className="flex flex-col gap-8 md:gap-10">
         <SectionHeading id="pricing-title" title={pricing.title} subtitle={pricing.subtitle} />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
-          <Reveal className="md:col-span-7">
-            <BentoCard className="h-full justify-end gap-6 md:p-10">
+        {/* Раскладка 7/5 включалась на md — на планшете в портрете плитка
+            цены получала 390px, цифра 96px почти упиралась в края, а
+            grid растягивал плитку под высоту правой колонки, из-за чего
+            сверху зияло пустое поле в треть карточки. До lg колонки идут
+            друг под другом: цена получает всю ширину, растягивать нечего */}
+        <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <BentoCard className="h-full justify-end gap-6 lg:p-10">
               <div className="flex flex-col gap-1">
                 <span className="text-[15px] font-medium tracking-[0.01em] text-muted-foreground">
                   {pricing.main.title}
                 </span>
-                <span className="tnum flex items-baseline gap-2 text-[64px] font-bold leading-none tracking-[-0.04em] text-primary md:text-[96px]">
+                {/* Главный аргумент страницы, поэтому кегль максимальный,
+                    какой выдерживает ширина: на 300px это 52px, к планшету
+                    в портрете 76px, и только на десктопе заявленные 96px */}
+                <span className="tnum flex items-baseline gap-2 text-[52px] font-bold leading-none tracking-[-0.04em] text-primary sm:text-[64px] md:text-[76px] lg:text-[96px]">
                   {pricing.main.price}
-                  <span className="text-[32px] font-medium md:text-[44px]">{pricing.main.currency}</span>
+                  <span className="text-[26px] font-medium sm:text-[32px] md:text-[38px] lg:text-[44px]">
+                    {pricing.main.currency}
+                  </span>
                 </span>
               </div>
 
@@ -47,13 +57,16 @@ export function Pricing() {
 
               <p className="text-[17px] font-medium leading-relaxed">{pricing.main.note}</p>
 
+              {/* Порог md, а не sm: у самой кнопки в базовых классах стоит
+                  max-md:w-full, и переключать ширину раньше значило бы
+                  спорить с ним в диапазоне 640–767px */}
               <AvitoButton place="pricing" className="md:w-auto md:self-start">
                 {pricing.main.cta}
               </AvitoButton>
             </BentoCard>
           </Reveal>
 
-          <div className="flex flex-col gap-4 md:col-span-5 md:gap-6">
+          <div className="flex flex-col gap-4 md:gap-6 lg:col-span-5">
             <Reveal step={1} className="flex-1">
               <BentoCard tone="secondary" className="h-full gap-4">
                 <h3 className="text-[21px] font-medium leading-snug tracking-[-0.01em]">Если нужно больше</h3>

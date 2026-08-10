@@ -51,7 +51,11 @@ export function StickyActions() {
         )}
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
-        <div className="flex items-center gap-3 px-4 py-3">
+        {/* В горизонтальной ориентации смартфона панель занимала 73px из
+            375px высоты экрана — вместе с шапкой это было 47% вьюпорта.
+            Кнопка остаётся подписанной и остаётся в зоне пальца (40px),
+            но панель худеет до ~52px */}
+        <div className="flex items-center gap-3 px-4 py-3 short-landscape:py-1.5">
           <a
             href={site.avitoUrl}
             target="_blank"
@@ -59,7 +63,7 @@ export function StickyActions() {
             data-goal="click_avito"
             data-place="sticky"
             onClick={() => reachGoal('click_avito', { place: 'sticky' })}
-            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover short-landscape:h-10"
           >
             <AvitoIcon className="size-5" />
             Написать на Авито
@@ -70,7 +74,7 @@ export function StickyActions() {
             data-goal="click_phone"
             data-place="sticky"
             onClick={() => reachGoal('click_phone', { place: 'sticky' })}
-            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary transition-colors hover:text-primary-hover"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary transition-colors hover:text-primary-hover short-landscape:size-10"
           >
             <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
           </a>

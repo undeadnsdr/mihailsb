@@ -25,8 +25,11 @@ export function SiteHeader() {
       {/* Плавающая стеклянная панель — одна из трёх зон, где стекло разрешено */}
       <div
         className={cn(
-          'mx-auto w-full max-w-[1400px] px-6 py-1.5 transition-all duration-300 md:px-10 lg:px-16',
+          'mx-auto w-full max-w-[1400px] px-4 py-1.5 transition-all duration-300 sm:px-6 md:px-10 lg:px-16',
           floating && 'py-1',
+          // Верхняя полоска в горизонтальной ориентации скрыта, поэтому
+          // шапка сама прижимается к краю экрана — свой отступ ей нужен
+          'short-landscape:py-1',
         )}
       >
         <nav
@@ -48,7 +51,10 @@ export function SiteHeader() {
               alt="Илья, автор сайта"
               width={40}
               height={40}
-              className="size-8 shrink-0 rounded-full border border-border object-cover sm:size-10"
+              // Аватар задаёт высоту всей панели: в горизонтальной
+              // ориентации смартфона он возвращается к мелкому размеру,
+              // хотя по ширине экран уже прошёл sm
+              className="size-8 shrink-0 rounded-full border border-border object-cover sm:size-10 short-landscape:size-8"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">

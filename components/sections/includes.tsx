@@ -28,11 +28,17 @@ export function Includes() {
       <div className="flex flex-col gap-8 md:gap-10">
         <SectionHeading id="includes-title" title={includes.title} subtitle={includes.subtitle} />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
+        {/* Три колонки включались на md, то есть ровно на планшете в
+            портрете: 768px минус отступы делилось на три по ~200px, из-за
+            чего «Чтобы вас находили» ломалось на три строки, а описания
+            переносились по два слова. Третья колонка теперь появляется
+            только с lg (планшет боком и десктоп), а планшет в портрете
+            получает две — там на карточку приходится ~340px */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {includes.groups.map((group, index) => {
             const Icon = groupIcons[group.icon]
             return (
-              <Reveal key={group.title} step={(index % 3) as 0 | 1 | 2} className="md:col-span-4">
+              <Reveal key={group.title} step={(index % 3) as 0 | 1 | 2}>
                 <BentoCard className="h-full gap-5">
                   <div className="flex items-center gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
@@ -47,7 +53,12 @@ export function Includes() {
                     {group.items.map((item) => (
                       <li
                         key={item.title}
-                        className="flex min-h-[108px] items-start gap-3 pt-4 [&:not(:last-child)]:pb-4"
+                        // min-h нужен только когда карточки стоят рядом:
+                        // он держит разделители на одной линии в соседних
+                        // колонках. На смартфоне карточки идут друг под
+                        // другом — выравнивать не с чем, а фиксированная
+                        // высота добавляла к каждому пункту пустое поле
+                        className="flex items-start gap-3 pt-4 sm:min-h-[132px] lg:min-h-[108px] [&:not(:last-child)]:pb-4"
                       >
                         <Check
                           className="mt-1 size-4 shrink-0 text-primary"

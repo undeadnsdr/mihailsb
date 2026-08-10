@@ -34,12 +34,17 @@ export function Hero() {
         <Reveal step={1} className="flex flex-col gap-4 lg:col-span-5 lg:h-full">
           <div className="grid grid-cols-2 gap-4">
             {hero.tiles.map((tile) => (
-              <BentoCard key={tile.label} tone="primary" className="gap-1 p-5 md:p-6">
-                <span className="tnum text-[32px] font-bold leading-none tracking-[-0.03em] md:text-[40px]">
+              <BentoCard key={tile.label} tone="primary" className="gap-1 p-4 sm:p-5 md:p-6">
+                {/* Две плитки в ряд: на экране 300px каждая получает ~126px,
+                    поэтому цифра стартует с 28px и добирает кегль по мере
+                    роста экрана, а не сразу упирается в края плитки */}
+                <span className="tnum text-[28px] font-bold leading-none tracking-[-0.03em] sm:text-[32px] md:text-[36px] lg:text-[40px]">
                   {tile.value}
-                  <span className="ml-1 text-lg font-medium">{tile.unit}</span>
+                  <span className="ml-1 text-base font-medium sm:text-lg">{tile.unit}</span>
                 </span>
-                <span className="text-[14px] leading-snug text-primary-foreground/75">{tile.label}</span>
+                <span className="text-[13px] leading-snug text-primary-foreground/75 sm:text-[14px]">
+                  {tile.label}
+                </span>
               </BentoCard>
             ))}
           </div>
@@ -60,7 +65,12 @@ function PhotoCard() {
     // грид-строкой ровно до высоты правой колонки (плитки-цифры + карточка
     // звонка), а не по собственным пропорциям — так обе колонки совпадают
     // по высоте вплоть до пикселя.
-    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border sm:aspect-[16/10] lg:aspect-auto lg:h-full">
+    // В горизонтальной ориентации смартфона по ширине уже действует sm,
+    // и фото получало пропорцию 16/10 — на экране 667×375 это 387px
+    // высоты, то есть картинка одна была выше всего вьюпорта, и H1 с
+    // кнопками уходили за нижний край. 16/7 укладывает карточку ровно
+    // в высоту, оставшуюся от шапки и панели связи
+    <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border sm:aspect-[16/10] lg:aspect-auto lg:h-full short-landscape:aspect-[16/7]">
       <Image
         src="/hero/master-photo.webp"
         alt={hero.photoAlt}
@@ -84,11 +94,11 @@ function PhotoCard() {
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-5 md:p-8">
         <h1
           id="hero-title"
-          className="text-balance text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-background md:text-[44px] lg:text-[48px]"
+          className="text-balance text-[27px] font-bold leading-[1.1] tracking-[-0.03em] text-background sm:text-[32px] md:text-[38px] lg:text-[48px] short-landscape:text-[26px]"
         >
           {hero.h1}
         </h1>
-        <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-background/85 md:text-lg">
+        <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-background/85 lg:text-lg short-landscape:text-[15px]">
           {hero.subtitle}
         </p>
 

@@ -27,16 +27,20 @@ export function FinalCta() {
 
   return (
     <Section id="contact" labelledBy="contact-title">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
-        <Reveal className="md:col-span-6">
-          <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-10 lg:p-12">
+      {/* Две колонки по половине включались на md: на планшете в портрете
+          форма с полями по 52px и подписями оставалась в 340px, а рядом
+          с ней — сжатый призыв. До lg блоки идут друг под другом, форма
+          получает всю ширину, и оба блока читаются в полный размер */}
+      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
+        <Reveal className="lg:col-span-6">
+          <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-8 lg:p-10 xl:p-12">
             <h2
               id="contact-title"
-              className="text-balance text-[28px] font-bold leading-[1.1] tracking-[-0.02em] md:text-[44px]"
+              className="text-balance text-[26px] font-bold leading-[1.1] tracking-[-0.02em] sm:text-[30px] md:text-[34px] lg:text-[44px]"
             >
               {finalCta.title}
             </h2>
-            <p className="max-w-[46ch] text-pretty text-[17px] leading-relaxed text-primary-foreground/85 md:text-lg">
+            <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-primary-foreground/85 sm:text-[17px] lg:text-lg">
               {finalCta.subtitle}
             </p>
 

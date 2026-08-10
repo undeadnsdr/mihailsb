@@ -54,13 +54,19 @@ export function TopBar({ floating }: { floating: boolean }) {
   return (
     <div
       className={cn(
-        'mx-auto w-full max-w-[1400px] px-6 pt-2 transition-[padding] duration-300 md:px-10 lg:px-16',
+        'mx-auto w-full max-w-[1400px] px-4 pt-2 transition-[padding] duration-300 sm:px-6 md:px-10 lg:px-16',
         floating && 'pt-1.5',
+        // В горизонтальной ориентации смартфона высота экрана 320–430px:
+        // полоска скрывается целиком. Оба её элемента дублируются рядом —
+        // город есть в бейдже на фото первого экрана, а «Перезвоните мне»
+        // в нижней панели связи, — поэтому потери смысла нет, а шапка
+        // становится ниже на 36px, это почти 10% такого экрана
+        'short-landscape:hidden',
       )}
     >
       <div
         className={cn(
-          'relative isolate flex h-7 items-center justify-between gap-4 overflow-hidden rounded-full border border-border px-4 shadow-sm transition-all duration-300',
+          'relative isolate flex h-7 items-center justify-between gap-2 overflow-hidden rounded-full border border-border px-4 shadow-sm transition-all duration-300 sm:gap-4',
           floating ? 'glass' : 'bg-card',
         )}
       >
@@ -71,7 +77,11 @@ export function TopBar({ floating }: { floating: boolean }) {
             раскрывается слева направо на ширину прогресса скролла */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 flex items-center justify-between gap-4 rounded-full bg-primary px-5 text-primary-foreground"
+          // gap и px обязаны совпадать с базовым слоем до пикселя, иначе
+          // заливка съезжает относительно текста под ней. Раньше здесь
+          // стояло px-5 против px-4 у базы — на узком экране разница
+          // в 4px была видна как дребезг текста на границе заливки
+          className="pointer-events-none absolute inset-0 flex items-center justify-between gap-2 rounded-full bg-primary px-4 text-primary-foreground sm:gap-4"
           style={{ clipPath: `inset(0 ${(1 - progress) * 100}% 0 0)` }}
         >
           <BarContent tone="filled" />
@@ -93,7 +103,13 @@ function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
     <>
       <p
         className={cn(
-          'flex items-center gap-1 text-xs font-medium leading-none sm:text-[13px]',
+          // min-w-0 — то, из-за чего на экране 300px кнопка «Звонок»
+          // уезжала на 20px за правый край. У flex-элемента min-width
+          // по умолчанию auto, поэтому этот блок отказывался сжиматься
+          // ниже длины «Тюмень и Тюменская область», truncate не имел
+          // никакого эффекта, а кнопка справа (shrink-0) выдавливалась
+          // наружу. С min-w-0 обрезка наконец работает
+          'flex min-w-0 items-center gap-1 text-xs font-medium leading-none sm:text-[13px]',
           muted ? 'text-muted-foreground' : 'text-primary-foreground',
         )}
       >
