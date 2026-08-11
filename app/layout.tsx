@@ -1,20 +1,38 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Manrope, Oswald } from 'next/font/google'
 import { seo, site } from '@/lib/content'
 import { Metrika } from '@/components/metrika'
 import { ServiceWorker } from '@/components/service-worker'
 import './globals.css'
 
 /**
- * Inter — единственный шрифт страницы: у него полный русский набор,
- * табличные цифры для цен и таймера, и он не тянет второй файл под
- * заголовки. Кириллица подгружается вместе с латиницей.
+ * Пара шрифтов, оба с полной кириллицей.
+ *
+ * Oswald — заголовки и цифры цен. Узкий индустриальный гротеск: в него
+ * влезает «СТРОИТЕЛЬСТВО ФУНДАМЕНТА» одной строкой там, где обычный
+ * гротеск ломается на две, — а прайс-лист состоит именно из таких
+ * длинных названий работ. Характер тоже по делу: это шрифт строительной
+ * вывески и трафарета, а не корпоративной презентации.
+ *
+ * Manrope — весь текст, прайсы и FAQ. Гуманистический гротеск с открытыми
+ * формами: он читается в длинных абзацах, чего Oswald не умеет, и не
+ * спорит с ним по рисунку, потому что решает другую задачу.
+ *
+ * Два шрифта — предел: третий пришлось бы тянуть отдельным файлом,
+ * а сайт открывают с телефона в поле, на мобильном интернете.
  */
-const inter = Inter({
+const oswald = Oswald({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-oswald',
+})
+
+const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-manrope',
 })
 
 export const metadata: Metadata = {
@@ -45,11 +63,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // Масштабирование не запрещаем: подрядчики читают прайс, увеличивая цифры
+  // Масштабирование не запрещаем: прайс-лист читают, увеличивая цифры
   maximumScale: 5,
   userScalable: true,
-  colorScheme: 'light',
-  themeColor: '#163a5f',
+  colorScheme: 'dark',
+  themeColor: '#161717',
 }
 
 export default function RootLayout({
@@ -58,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={`${inter.variable} bg-background`}>
+    <html lang="ru" className={`${manrope.variable} ${oswald.variable} bg-background`}>
       {/* Запас снизу под панель связи вынесен в globals.css, а не задан
           классами: он обязан включаться ровно тем же условием, что и сама
           панель, а у трёх конкурирующих утилит (pb-[72px] / md:pb-0 /
