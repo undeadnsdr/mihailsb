@@ -1,13 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { Check, MapPin, Phone } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import { hero, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
-import { CallbackModal } from '@/components/ui/callback-modal'
-import { reachGoal } from '@/lib/analytics'
 
 /**
  * Первый экран.
@@ -63,6 +61,11 @@ export function Hero() {
             </p>
           </Reveal>
 
+          {/* Обратный звонок здесь не дублируется: тот же сценарий уже
+              доступен в липкой шапке (top-bar), а факты про гарантию,
+              бесплатный замер и стаж — в trust-bar сразу под первым
+              экраном. Первый экран оставлен только с прямыми действиями:
+              позвонить или написать */}
           <Reveal step={1} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <PhoneButton place="hero" variant="primary">
               {hero.primaryCta}
@@ -70,39 +73,6 @@ export function Hero() {
             <TelegramButton place="hero" variant="outline">
               {hero.secondaryCta}
             </TelegramButton>
-            {/* Третий вариант связи — для тех, кому проще ответить на
-                входящий, чем звонить или писать самому. Он текстовый, а не
-                кнопка: два CTA одинакового веса рядом не говорят, с какого
-                начать, а третий сплошной превратил бы блок в кашу */}
-            <CallbackModal
-              place="hero"
-              trigger={
-                <button
-                  type="button"
-                  data-goal="click_callback"
-                  data-place="hero"
-                  onClick={() => reachGoal('click_callback', { place: 'hero' })}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 px-2 text-[16px] font-medium leading-none text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground max-sm:w-full"
-                >
-                  <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                  Перезвоните мне
-                </button>
-              }
-            />
-          </Reveal>
-
-          <Reveal step={2}>
-            <ul className="flex flex-wrap gap-x-5 gap-y-2">
-              {hero.facts.map((fact) => (
-                <li
-                  key={fact}
-                  className="flex items-center gap-1.5 text-[14px] font-medium text-muted-foreground sm:text-[15px]"
-                >
-                  <Check className="size-4 shrink-0 text-primary" strokeWidth={2.25} aria-hidden="true" />
-                  {fact}
-                </li>
-              ))}
-            </ul>
           </Reveal>
         </div>
 
