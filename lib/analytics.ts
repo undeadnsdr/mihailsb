@@ -11,14 +11,12 @@
 export const YM_ID = process.env.NEXT_PUBLIC_YM_ID
 
 export type Goal =
-  | 'click_avito'
   | 'click_phone'
   | 'click_telegram'
   | 'click_callback'
   | 'form_submit'
-  | 'scroll_75'
-  | 'view_pricing'
-  | 'pwa_install'
+  /** Раскрытие прайса направления — видно, какие работы реально считают */
+  | 'open_price'
 
 declare global {
   interface Window {

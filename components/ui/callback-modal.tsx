@@ -12,21 +12,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
 import type { ReactNode } from 'react'
 
 /**
- * Модалка обратного звонка. Заменяет собой мини-виджет на первом экране —
- * тот вёл в переписку на Авито и дублировал соседнюю кнопку «Написать»,
- * не давая ничего сверх неё.
+ * Модалка обратного звонка.
  *
- * Триггер передаётся снаружи (кнопка в TopBar или в Hero), поэтому
- * форма и её состояние переиспользуются, а внешний вид кнопки — нет.
+ * Триггер приходит снаружи (кнопка в верхней полоске или на первом экране),
+ * поэтому логика и состояние формы переиспользуются, а внешний вид кнопки —
+ * нет: в полоске это текстовая ссылка, на первом экране — кнопка.
  */
 export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: string }) {
   const [open, setOpen] = useState(false)
-  const { name, setName, industry, setIndustry, industryOther, setIndustryOther, phone, setPhone, isOther, sent, handleSubmit, reset } =
-    useCallbackForm(place)
+  const {
+    name,
+    setName,
+    service,
+    setService,
+    serviceOther,
+    setServiceOther,
+    phone,
+    setPhone,
+    isOther,
+    sent,
+    handleSubmit,
+    reset,
+  } = useCallbackForm(place)
 
   return (
     <Dialog
@@ -39,7 +49,9 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
       <DialogTrigger render={trigger as React.ReactElement} />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-[21px] font-medium tracking-[-0.01em]">{callbackModal.title}</DialogTitle>
+          <DialogTitle className="display-caps text-[21px] tracking-[0.01em]">
+            {callbackModal.title}
+          </DialogTitle>
           <DialogDescription>{callbackModal.subtitle}</DialogDescription>
         </DialogHeader>
 
@@ -63,19 +75,19 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
               />
             </Field>
 
-            <Field label={callbackModal.fields.industryLabel} htmlFor="callback-industry">
+            <Field label={callbackModal.fields.serviceLabel} htmlFor="callback-service">
               <select
-                id="callback-industry"
-                name="industry"
+                id="callback-service"
+                name="service"
                 required
-                value={industry}
-                onChange={(event) => setIndustry(event.target.value)}
+                value={service}
+                onChange={(event) => setService(event.target.value)}
                 className="min-h-[48px] w-full rounded-xl border border-border bg-card px-4 text-[16px] text-foreground"
               >
                 <option value="" disabled>
-                  {callbackModal.fields.industryPlaceholder}
+                  {callbackModal.fields.servicePlaceholder}
                 </option>
-                {callbackModal.industryOptions.map((option) => (
+                {callbackModal.serviceOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -84,14 +96,14 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
             </Field>
 
             {isOther ? (
-              <Field label={callbackModal.fields.industryOtherLabel} htmlFor="callback-industry-other">
+              <Field label={callbackModal.fields.serviceOtherLabel} htmlFor="callback-service-other">
                 <input
-                  id="callback-industry-other"
-                  name="industryOther"
+                  id="callback-service-other"
+                  name="serviceOther"
                   required
-                  placeholder={callbackModal.fields.industryOtherPlaceholder}
-                  value={industryOther}
-                  onChange={(event) => setIndustryOther(event.target.value)}
+                  placeholder={callbackModal.fields.serviceOtherPlaceholder}
+                  value={serviceOther}
+                  onChange={(event) => setServiceOther(event.target.value)}
                   className="min-h-[48px] w-full rounded-xl border border-border bg-card px-4 text-[16px] text-foreground placeholder:text-muted-foreground"
                 />
               </Field>
@@ -116,9 +128,7 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
               type="submit"
               data-goal="form_submit"
               data-place={place}
-              className={cn(
-                'inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover',
-              )}
+              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[16px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
             >
               <Phone className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
               {callbackModal.fields.submit}

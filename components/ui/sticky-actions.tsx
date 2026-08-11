@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { ArrowUp, Phone } from 'lucide-react'
-import { site } from '@/lib/content'
+import { site, telegramLink } from '@/lib/content'
 import { reachGoal } from '@/lib/analytics'
-import { AvitoIcon } from '@/components/ui/avito-icon'
 import { TelegramIcon } from '@/components/ui/telegram-icon'
 import { cn } from '@/lib/utils'
 
@@ -14,12 +13,12 @@ const fab =
 /**
  * Постоянный доступ к связи.
  *
- * На смартфоне это нижняя панель с подписанной кнопкой: круглые иконки
- * у правого края накрывали контент карточек и не объясняли, куда ведут.
- * На десктопе — колонка иконок справа, там места хватает.
+ * На смартфоне это нижняя панель с подписанной кнопкой звонка: круглые
+ * иконки у правого края накрывали контент карточек и не объясняли, куда
+ * ведут. На десктопе — колонка иконок справа, там места хватает.
  *
- * Когда форма во вьюпорте, панель прячется: две конкурирующие точки
- * входа в одном экране только мешают.
+ * Когда форма во вьюпорте, панель прячется: две конкурирующие точки входа
+ * в одном экране только мешают.
  */
 export function StickyActions() {
   const [showTop, setShowTop] = useState(false)
@@ -47,46 +46,38 @@ export function StickyActions() {
       {/* Смартфон в портрете и боком: нижняя панель.
           Условие no-bottom-bar вместо md: по ширине смартфон боком (932×430
           у iPhone 15 Pro Max, 892×412 у Pixel 8 Pro) попадал за порог md и
-          терял панель. При этом шапка в горизонтальной ориентации осознанно
-          убирает свою кнопку «Написать на Авито», рассчитывая, что панель на
-          месте, — в итоге на экране не оставалось ни одной кнопки перехода
-          в переписку. Разбор самого условия — в globals.css */}
+          терял панель, а шапка в горизонтальной ориентации осознанно убирает
+          свою кнопку, рассчитывая, что панель на месте. Разбор самого
+          условия — в globals.css */}
       <div
         className={cn(
           'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 no-bottom-bar:hidden',
           hidden && 'translate-y-full',
         )}
-        // Боковые вырезы: в горизонтальной ориентации «монобровь» и скругления
-        // корпуса забирают края экрана именно по бокам, а не снизу
+        // Боковые вырезы: в горизонтальной ориентации «монобровь» и
+        // скругления корпуса забирают края экрана по бокам, а не снизу
         style={{
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
           paddingLeft: 'env(safe-area-inset-left, 0px)',
           paddingRight: 'env(safe-area-inset-right, 0px)',
         }}
       >
-        {/* В горизонтальной ориентации смартфона панель занимала 73px из
-            375px высоты экрана — вместе с шапкой это было 47% вьюпорта.
-            Кнопка остаётся подписанной и остаётся в зоне пальца (40px),
-            но панель худеет до ~52px */}
         <div className="flex items-center gap-3 px-4 py-3 short-landscape:py-1.5">
+          {/* Широкая кнопка — звонок, а не переписка: у строительной задачи
+              («течёт крыша», «пошла трещина») цена ожидания выше, чем
+              неудобство звонка незнакомому номеру, и человек звонит */}
           <a
-            href={site.avitoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-goal="click_avito"
+            href={`tel:${site.phoneRaw}`}
+            data-goal="click_phone"
             data-place="sticky"
-            onClick={() => reachGoal('click_avito', { place: 'sticky' })}
+            onClick={() => reachGoal('click_phone', { place: 'sticky' })}
             className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover short-landscape:h-10"
           >
-            <AvitoIcon className="size-5" />
-            Написать на Авито
+            <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
+            Позвонить
           </a>
-          {/* Вторая кнопка панели на смартфоне — переход в Телеграм, а не
-              звонок: аудитория этого лендинга чаще пишет, чем звонит
-              незнакомому номеру, и Телеграм рядом с Авито даёт два разных
-              канала переписки вместо звонка и переписки */}
           <a
-            href={site.telegramUrl}
+            href={telegramLink()}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Написать в Телеграм"
@@ -101,28 +92,15 @@ export function StickyActions() {
       </div>
 
       {/* Широкий экран: колонка справа.
-          Порог 1500px, а не md: контент шириной 1400px и на 1200–1400
+          Порог 1500px, а не md: контент шириной 1400px, и на 1200–1400
           колонка ложилась поверх правого края карточек. На таких экранах
-          связь и так на виду — в липкой шапке есть кнопка «Написать» */}
+          связь и так на виду — в липкой шапке стоит номер */}
       <div
         className={cn(
           'fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 transition-opacity duration-300 min-[1500px]:flex',
           hidden && 'pointer-events-none opacity-0',
         )}
       >
-        <a
-          href={site.avitoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Написать мне на Авито"
-          data-goal="click_avito"
-          data-place="sticky"
-          onClick={() => reachGoal('click_avito', { place: 'sticky' })}
-          className={fab}
-        >
-          <AvitoIcon className="size-6" />
-        </a>
-
         <a
           href={`tel:${site.phoneRaw}`}
           aria-label={`Позвонить по номеру ${site.phone}`}
@@ -134,14 +112,24 @@ export function StickyActions() {
           <Phone className="size-6" strokeWidth={1.75} aria-hidden="true" />
         </a>
 
+        <a
+          href={telegramLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Написать в Телеграм"
+          data-goal="click_telegram"
+          data-place="sticky"
+          onClick={() => reachGoal('click_telegram', { place: 'sticky' })}
+          className={fab}
+        >
+          <TelegramIcon className="size-6" />
+        </a>
       </div>
 
-      {/* «Наверх» — отдельно от колонки: она появляется только с 1500px,
-          а на обычном ноутбуке страница длинная и кнопка нужна.
-          Условие ровно обратное панели: обе живут в правом нижнем углу, и
-          на смартфоне боком кнопка садилась поверх панели, накрывая
-          телефонную трубку. Теперь «Наверх» появляется только там, где
-          нижней панели нет */}
+      {/* «Наверх» — отдельно от колонки: она появляется только с 1500px, а
+          на обычном ноутбуке страница длинная и кнопка нужна. Условие ровно
+          обратное панели: обе живут в правом нижнем углу, и на смартфоне
+          боком кнопка садилась поверх панели, накрывая иконку Телеграма */}
       <button
         type="button"
         aria-label="Наверх страницы"

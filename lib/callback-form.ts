@@ -4,30 +4,30 @@ import { useState } from 'react'
 import { callbackModal, site } from '@/lib/content'
 import { reachGoal, getUtmSuffix } from '@/lib/analytics'
 
-const OTHER_OPTION = callbackModal.industryOptions[callbackModal.industryOptions.length - 1]
+const OTHER_OPTION = callbackModal.serviceOptions[callbackModal.serviceOptions.length - 1]
 
 /**
- * Логика формы обратного звонка — общая для модалки, которая вызывается
- * и из верхней полоски, и из первого экрана.
+ * Логика формы обратного звонка — общая для модалки, которую вызывают
+ * и из верхней полоски, и с первого экрана.
  *
- * В отличие от Авито (там нельзя предзаполнить сообщение, только скопировать
- * текст в буфер и надеяться, что человек его вставит), Телеграм поддерживает
- * параметр text в ссылке на диалог — сообщение реально появляется в поле
- * ввода готовым, отправить его — одно нажатие.
+ * Бэкенда у сайта нет, поэтому заявка уходит через deep-link Телеграма
+ * с параметром text: сообщение появляется в поле ввода уже готовым,
+ * отправить его — одно нажатие. Пустых заявок «позвоните мне» без
+ * контакта при этом не бывает: телефон и имя уходят в том же тексте.
  */
 export function useCallbackForm(place: string) {
   const [name, setName] = useState('')
-  const [industry, setIndustry] = useState('')
-  const [industryOther, setIndustryOther] = useState('')
+  const [service, setService] = useState('')
+  const [serviceOther, setServiceOther] = useState('')
   const [phone, setPhone] = useState('')
   const [sent, setSent] = useState(false)
 
-  const isOther = industry === OTHER_OPTION
+  const isOther = service === OTHER_OPTION
 
   function reset() {
     setName('')
-    setIndustry('')
-    setIndustryOther('')
+    setService('')
+    setServiceOther('')
     setPhone('')
     setSent(false)
   }
@@ -35,18 +35,20 @@ export function useCallbackForm(place: string) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const industryText = isOther ? industryOther.trim() || OTHER_OPTION : industry
+    const serviceText = isOther ? serviceOther.trim() || OTHER_OPTION : service
 
+    // UTM подставляется в текст сообщения: Телеграм не передаёт реферер
+    // в переписку, и без этого не узнать, из какого объявления пришёл человек
     const message = [
       callbackModal.messageIntro + getUtmSuffix() + '.',
       name ? `Меня зовут ${name}.` : '',
-      industryText ? `Ниша: ${industryText}.` : '',
+      serviceText ? `Направление: ${serviceText}.` : '',
       phone ? `Телефон: ${phone}.` : '',
     ]
       .filter(Boolean)
       .join(' ')
 
-    reachGoal('form_submit', { industry: industryText || 'не выбрана', place })
+    reachGoal('form_submit', { service: serviceText || 'не выбрано', place })
     window.open(`${site.telegramUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
 
     setSent(true)
@@ -55,10 +57,10 @@ export function useCallbackForm(place: string) {
   return {
     name,
     setName,
-    industry,
-    setIndustry,
-    industryOther,
-    setIndustryOther,
+    service,
+    setService,
+    serviceOther,
+    setServiceOther,
     phone,
     setPhone,
     isOther,

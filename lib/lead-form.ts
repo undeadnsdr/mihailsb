@@ -1,40 +1,55 @@
 'use client'
 
 import { useState } from 'react'
-import { avitoMessage, site } from '@/lib/content'
+import { finalCta, site } from '@/lib/content'
 import { reachGoal, getUtmSuffix } from '@/lib/analytics'
 
 /**
- * Логика финальной формы заявки — без бэкенда: у сайта нет базы и почты,
- * поэтому сообщение уходит через deep-link Телеграма с параметром text —
- * в отличие от Авито, который не умеет предзаполнять переписку, у
- * Телеграма текст появляется в поле ввода готовым, остаётся только нажать
- * «Отправить» уже в самом мессенджере.
+ * Логика финальной формы заявки. Как и у обратного звонка, бэкенда нет:
+ * сообщение уходит через deep-link Телеграма с параметром text.
+ *
+ * Отличие от формы звонка — поле «что нужно сделать»: на замер выезжают
+ * по конкретной задаче, и строка «дом 8×10, нужна кровля» экономит
+ * созвон-уточнение, который иначе идёт до выезда.
+ *
+ * Направление работ можно предзадать (defaultService) — тогда форма,
+ * открытая из блока конкретной услуги, приходит уже заполненной.
  */
-export function useTelegramLeadForm(place: string) {
-  const [industry, setIndustry] = useState('')
+export function useTelegramLeadForm(place: string, defaultService = '') {
+  const [service, setService] = useState(defaultService)
   const [name, setName] = useState('')
-  const [contact, setContact] = useState('')
+  const [phone, setPhone] = useState('')
+  const [comment, setComment] = useState('')
   const [sent, setSent] = useState(false)
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    // UTM попадает в текст сообщения — только так видно, из какого
-    // объявления пришёл человек: Телеграм не передаёт рефереры в переписку
     const message = [
-      avitoMessage + getUtmSuffix() + '.',
-      industry ? `Сфера: ${industry}.` : '',
+      finalCta.messageIntro + getUtmSuffix() + '.',
+      service ? `Направление: ${service}.` : '',
       name ? `Меня зовут ${name}.` : '',
-      contact ? `Связь: ${contact}.` : '',
+      phone ? `Телефон: ${phone}.` : '',
+      comment ? `Задача: ${comment}` : '',
     ]
       .filter(Boolean)
       .join(' ')
 
-    reachGoal('form_submit', { industry: industry || 'не выбрана', place })
+    reachGoal('form_submit', { service: service || 'не выбрано', place })
     window.open(`${site.telegramUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
     setSent(true)
   }
 
-  return { industry, setIndustry, name, setName, contact, setContact, sent, handleSubmit }
+  return {
+    service,
+    setService,
+    name,
+    setName,
+    phone,
+    setPhone,
+    comment,
+    setComment,
+    sent,
+    handleSubmit,
+  }
 }
