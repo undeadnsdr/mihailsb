@@ -74,8 +74,17 @@ export function SiteHeader() {
               <span className="truncate text-[15px] font-bold tracking-[-0.02em] text-primary sm:text-[17px]">
                 {site.domain}
               </span>
+              {/* Два варианта подписи вместо одной строки: на смартфоне
+                  только «за 1 день и 6000 ₽», от sm — с названием услуги.
+                  Переключение классами, а не по ширине через JS, чтобы
+                  разметка совпадала на сервере и клиенте */}
               <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-[13px]">
-                {site.headerTagline}
+                <span className="sm:hidden">{site.headerTagline}</span>
+                <span className="hidden sm:inline short-landscape:hidden">{site.headerTaglineWide}</span>
+                {/* В горизонтальной ориентации смартфона высота панели
+                    зажата, а справа появляется номер телефона — там
+                    возвращаем короткий вариант */}
+                <span className="hidden short-landscape:inline">{site.headerTagline}</span>
               </span>
             </span>
           </a>
