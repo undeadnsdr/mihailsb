@@ -149,7 +149,7 @@ function Contact({
  * Шапка демо-сайта: три разных варианта.
  *
  * plain   — подпись слева, меню и кнопка справа (самая частая схема)
- * centered — логотип по центру, меню строкой под ним: так делают там,
+ * centered — ло��отип по центру, меню строкой под ним: так делают там,
  *            где сайт продаёт вид, а не срочность
  * contact — телефон крупно рядом с кнопкой: у кровли и заборов половина
  *           заявок приходит звонком, а не через форму
@@ -699,39 +699,56 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
       </div>
 
       <div className="flex flex-1 flex-col gap-[3cqw] px-[6%] py-[5%]">
-        <div className="flex items-end justify-between gap-2 rounded-lg bg-[var(--mk-accent)] px-[4cqw] py-[3.4cqw] text-[var(--mk-accent-fg)]">
-          <span className="text-[3.6cqw] font-medium leading-tight">{mock.priceLabel}</span>
-          <span className="tnum whitespace-nowrap text-[5.4cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
-            {mock.price}
-          </span>
-        </div>
-
-        {/* Цифры из полосы на десктопе: на телефоне они ужимаются в одну
-            строку, но остаются теми же — это одна и та же страница */}
-        <div className="flex items-start justify-between gap-[2cqw]">
-          {mock.stats.map((item) => (
-            <div key={item.label} className="flex flex-col gap-[0.6cqw]">
-              <span className="tnum text-[4.4cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
-                {item.value}
-              </span>
-              <span className="text-[2.6cqw] leading-tight text-[var(--mk-muted)]">{item.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-[2.2cqw]">
-          <p className="text-[3.4cqw] font-bold tracking-[-0.01em]">Что делаем</p>
-          {mock.services.map((service) => (
-            <span key={service} className="flex items-center gap-[2cqw] text-[3.8cqw] font-medium">
-              <Check
-                className="size-[4cqw] shrink-0 text-[var(--mk-primary)]"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              {service}
-            </span>
-          ))}
-        </div>
+        {/* Порядок блоков — тот же, что на широком экране: это одна
+            страница в адаптиве, а не другой сайт. Из списка проекта
+            берутся блоки, которые имеют смысл на узком экране */}
+        {work.site.blocks
+          .filter((block) => block === 'price' || block === 'stats' || block === 'services')
+          .map((block) =>
+            block === 'price' ? (
+              <div
+                key="price"
+                className="flex items-end justify-between gap-2 rounded-lg bg-[var(--mk-accent)] px-[4cqw] py-[3.4cqw] text-[var(--mk-accent-fg)]"
+              >
+                <span className="text-[3.6cqw] font-medium leading-tight">{mock.priceLabel}</span>
+                <span className="tnum whitespace-nowrap text-[5.4cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
+                  {mock.price}
+                </span>
+              </div>
+            ) : block === 'stats' ? (
+              /* Цифры из полосы на десктопе: на телефоне они ужимаются
+                 в одну строку, но остаются теми же */
+              <div key="stats" className="flex items-start justify-between gap-[2cqw]">
+                {mock.stats.map((item) => (
+                  <div key={item.label} className="flex flex-col gap-[0.6cqw]">
+                    <span className="tnum text-[4.4cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
+                      {item.value}
+                    </span>
+                    <span className="text-[2.6cqw] leading-tight text-[var(--mk-muted)]">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div key="services" className="flex flex-col gap-[2.2cqw]">
+                <p className="text-[3.4cqw] font-bold tracking-[-0.01em]">Что делаем</p>
+                {mock.services.map((service) => (
+                  <span
+                    key={service}
+                    className="flex items-center gap-[2cqw] text-[3.8cqw] font-medium"
+                  >
+                    <Check
+                      className="size-[4cqw] shrink-0 text-[var(--mk-primary)]"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    {service}
+                  </span>
+                ))}
+              </div>
+            ),
+          )}
 
         <div className="mt-auto flex flex-col gap-[2.4cqw] border-t border-[var(--mk-line)] pt-[4cqw]">
           <div className="flex gap-[1cqw]" aria-hidden="true">
@@ -770,30 +787,42 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
 export function TabletMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
   const { mock, site } = work
   const centered = site.layout === 'centered'
+  // Порядок из списка блоков проекта: если цена там раньше услуг, значит
+  // в этой сфере считают смету — и на планшете она тоже идёт первой
+  const priceFirst = site.blocks.indexOf('price') < site.blocks.indexOf('services')
 
   return (
     <div
       style={siteVars(work)}
       className="flex h-full w-full flex-col bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[5%] py-[2.4%]">
+      <div className="flex shrink-0 items-center justify-between gap-[2cqw] border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[5%] py-[2.4%]">
         <span className="truncate text-[3.4cqw] font-bold tracking-[-0.01em] text-[var(--mk-primary)]">
           {work.niche}
         </span>
-        <span className="flex items-center gap-[1cqw] rounded-full bg-[var(--mk-primary)] px-[3cqw] py-[1.4cqw] text-[2.6cqw] font-medium text-[var(--mk-primary-fg)]">
-          <Phone className="size-[2.8cqw]" strokeWidth={1.75} aria-hidden="true" />
-          Позвонить
-        </span>
+        <div className="flex shrink-0 items-center gap-[2cqw]">
+          {/* На планшете в шапку помещается телефон текстом — как на
+              настоящем адаптиве между мобильной иконкой и десктопной
+              строкой. Он тоже под размытием */}
+          <Contact blur={2.5} className="text-[2.6cqw] text-[var(--mk-muted)]">
+            {mock.phone}
+          </Contact>
+          <span className="flex items-center gap-[1cqw] rounded-full bg-[var(--mk-primary)] px-[3cqw] py-[1.4cqw] text-[2.6cqw] font-medium text-[var(--mk-primary-fg)]">
+            <Phone className="size-[2.8cqw]" strokeWidth={1.75} aria-hidden="true" />
+            Позвонить
+          </span>
+        </div>
       </div>
 
+      {/* Свой кадр обложки: на планшете это второе фото проекта, а не то,
+          что стоит на ноутбуке и телефоне — слайды слайдшоу не должны
+          отличаться только рамкой корпуса */}
       <div className="relative shrink-0" style={{ aspectRatio: '16 / 9' }}>
         <Image
-          src={work.image}
+          src={work.gallery[1]}
           alt={work.imageAlt}
           fill
           sizes="420px"
-          placeholder="blur"
-          blurDataURL={work.blurDataURL}
           priority={priority}
           loading={priority ? undefined : 'lazy'}
           className="object-cover"
@@ -826,31 +855,78 @@ export function TabletMockup({ work, priority = false }: { work: Work; priority?
         </div>
       </div>
 
-      {/* Полоса цифр — тот же блок, что на десктопе, только в одну строку */}
-      <div className="flex shrink-0 justify-between gap-[2cqw] bg-[var(--mk-accent)] px-[5%] py-[2.4%] text-[var(--mk-accent-fg)]">
+      {/* Цифры: плашка или открытые колонки — тот же вариант, что на
+          широком экране, иначе это выглядело бы как другой сайт */}
+      <div
+        className={cn(
+          'flex shrink-0 justify-between gap-[2cqw] px-[5%] py-[2.4%]',
+          site.stats === 'band'
+            ? 'bg-[var(--mk-accent)] text-[var(--mk-accent-fg)]'
+            : 'border-b border-[var(--mk-line)]',
+        )}
+      >
         {mock.stats.map((item) => (
-          <div key={item.label} className="flex flex-col gap-[0.4cqw]">
-            <span className="tnum text-[3.6cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
+          <div
+            key={item.label}
+            className={cn(
+              'flex flex-col gap-[0.4cqw]',
+              site.stats === 'plain' && 'border-t-2 border-[var(--mk-primary)] pt-[1.2cqw]',
+            )}
+          >
+            <span
+              className={cn(
+                'tnum text-[3.6cqw] font-bold leading-none tracking-[-0.02em]',
+                site.stats === 'band' && 'text-[var(--mk-primary)]',
+              )}
+            >
               {item.value}
             </span>
-            <span className="text-[2.2cqw] leading-tight opacity-80">{item.label}</span>
+            <span
+              className={cn(
+                'text-[2.2cqw] leading-tight',
+                site.stats === 'band' ? 'opacity-80' : 'text-[var(--mk-muted)]',
+              )}
+            >
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-1 gap-[4cqw] px-[5%] py-[4%]">
+      {/* Колонки местами: у проектов, где в списке блоков цена стоит
+          раньше услуг, смета и на планшете идёт первой — слева */}
+      <div
+        className={cn(
+          'flex flex-1 gap-[4cqw] px-[5%] py-[4%]',
+          priceFirst && 'flex-row-reverse',
+        )}
+      >
         <div className="flex flex-1 flex-col gap-[2.4cqw]">
           <p className="text-[3cqw] font-bold tracking-[-0.01em]">Что делаем</p>
-          {mock.services.map((service) => (
-            <span key={service} className="flex items-center gap-[1.6cqw] text-[2.9cqw] font-medium">
-              <Check
-                className="size-[3cqw] shrink-0 text-[var(--mk-primary)]"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              {service}
-            </span>
-          ))}
+          {mock.services.map((service) =>
+            site.services === 'rows' ? (
+              /* Прайс-лист строками — как на широком экране у этих сфер */
+              <span
+                key={service}
+                className="flex items-baseline justify-between gap-[1.6cqw] border-b border-[var(--mk-line)] pb-[1.2cqw] text-[2.9cqw] font-medium"
+              >
+                {service}
+                <span className="text-[2.4cqw] text-[var(--mk-muted)]">по замеру</span>
+              </span>
+            ) : (
+              <span
+                key={service}
+                className="flex items-center gap-[1.6cqw] text-[2.9cqw] font-medium"
+              >
+                <Check
+                  className="size-[3cqw] shrink-0 text-[var(--mk-primary)]"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                {service}
+              </span>
+            ),
+          )}
           <div className="mt-auto flex flex-col gap-[1.4cqw]">
             <div className="flex gap-[0.8cqw]" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -889,7 +965,7 @@ export function TabletMockup({ work, priority = false }: { work: Work; priority?
 /**
  * Телефон, положенный на бок.
  *
- * Отдельная вёрстка нужна из-за геометрии: экран 19.5:9 — это очень
+ * Отдельная вёрстка нужна из-за ��еометрии: экран 19.5:9 — это очень
  * широкая и очень низкая полоса. Мобильный макет в ней получил бы кегль
  * в 2px по высоте, десктопный не влез бы даже шапкой. Поэтому здесь
  * контент разложен в две колонки: обложка с заголовком слева, цена,
@@ -904,9 +980,11 @@ export function PhoneLandscapeMockup({ work, priority = false }: { work: Work; p
       style={siteVars(work)}
       className="flex h-full w-full bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
+      {/* Третий кадр проекта: у каждой адаптации своя обложка, поэтому
+          четыре слайда слайдшоу показывают четыре разные фотографии */}
       <div className="relative w-[44%] shrink-0">
         <Image
-          src={work.image}
+          src={work.gallery[2]}
           alt={work.imageAlt}
           fill
           sizes="420px"
@@ -938,10 +1016,15 @@ export function PhoneLandscapeMockup({ work, priority = false }: { work: Work; p
 
       <div className="flex flex-1 flex-col gap-[2.4cqh] px-[4%] py-[3.4%]">
         <div className="flex items-center justify-between gap-[2cqh]">
-          <span className="truncate text-[5cqh] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
-            {work.niche}
-          </span>
-          <span className="flex items-center gap-[1.2cqh] rounded-full bg-[var(--mk-primary)] px-[3cqh] py-[1.6cqh] text-[4cqh] font-medium text-[var(--mk-primary-fg)]">
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-[5cqh] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
+              {work.niche}
+            </span>
+            <Contact blur={2} className="text-[3.4cqh] text-[var(--mk-muted)]">
+              {mock.phone}
+            </Contact>
+          </div>
+          <span className="flex shrink-0 items-center gap-[1.2cqh] rounded-full bg-[var(--mk-primary)] px-[3cqh] py-[1.6cqh] text-[4cqh] font-medium text-[var(--mk-primary-fg)]">
             <Phone className="size-[4.2cqh]" strokeWidth={1.75} aria-hidden="true" />
             Позвонить
           </span>

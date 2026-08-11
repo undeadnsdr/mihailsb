@@ -8,7 +8,15 @@ import {
   type CSSProperties,
   type TouchEvent as ReactTouchEvent,
 } from 'react'
-import { ArrowLeftRight, ArrowUpDown, Check, HelpCircle, Laptop } from 'lucide-react'
+import {
+  ArrowLeftRight,
+  ArrowUpDown,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  Laptop,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
 import { DeviceFrame, type DeviceKind } from '@/components/ui/device-frames'
@@ -399,10 +407,39 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
         ))}
       </div>
 
-      {/* 6-колоночная сетка: 3/6 сцена + 1/6 воздух + 2/6 описание.
-          Сцена шире описания — она несёт основной вес блока, текст рядом
-          с ней остаётся компактной подписью, а не второй половиной макета */}
-      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[3fr_1fr_2fr] lg:gap-0">
+      {/* Стрелки листания проекта живут в этой обёртке, а не внутри сетки:
+          им нужен якорь по высоте всей пары «сцена + описание», чтобы
+          top-1/2 считался от общего блока. Внутри сетки они центрировались
+          бы по своей колонке — на планшете, где сцена и описание стоят
+          друг под другом, левая стрелка ушла бы к середине картинки, а
+          правая к середине текста */}
+      <div className="relative">
+        {/* От sm: на смартфоне проекты листаются свайпом по описанию и
+            табами выше, а стрелки по краям узкого экрана перекрыли бы
+            сам макет. Каждая стрелка перелистывает проект целиком —
+            то же действие, что у свайпа: следующий сайт с первого
+            устройства, а не следующее устройство того же сайта */}
+        <button
+          type="button"
+          onClick={() => goToWork(-1)}
+          aria-label="Предыдущий проект"
+          className="absolute -left-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition-colors hover:border-foreground/40 hover:bg-background sm:flex lg:-left-5 xl:-left-8"
+        >
+          <ChevronLeft className="size-5" strokeWidth={2} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => goToWork(1)}
+          aria-label="Следующий проект"
+          className="absolute -right-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition-colors hover:border-foreground/40 hover:bg-background sm:flex lg:-right-5 xl:-right-8"
+        >
+          <ChevronRight className="size-5" strokeWidth={2} aria-hidden="true" />
+        </button>
+
+        {/* 6-колоночная сетка: 3/6 сцена + 1/6 воздух + 2/6 описание.
+            Сцена шире описания — она несёт основной вес блока, текст рядом
+            с ней остаётся компактной подписью, а не второй половиной макета */}
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[3fr_1fr_2fr] lg:gap-0">
         <div className="flex flex-col gap-4">
           <div
             ref={stageRef}
@@ -582,6 +619,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 animKey={`${work.id}:${metric.key}`}
               />
             ))}
+          </div>
           </div>
         </div>
       </div>
