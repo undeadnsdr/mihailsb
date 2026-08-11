@@ -115,7 +115,7 @@ function BarContent({ tone }: { tone: 'muted' | 'filled' }) {
       >
         <MapPin className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
         <span className="truncate">
-          {site.city} и {site.region}
+          {site.city} и {site.regionShort}
         </span>
       </p>
 

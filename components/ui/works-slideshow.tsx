@@ -1,7 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { Check } from 'lucide-react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent as ReactTouchEvent,
+} from 'react'
+import { ArrowLeftRight, ArrowUpDown, Check, HelpCircle, Laptop } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
 import { DeviceFrame, type DeviceKind } from '@/components/ui/device-frames'
@@ -33,7 +40,10 @@ import {
 type Slide = {
   kind: DeviceKind
   label: string
-  short: string
+  /** Название устройства без ориентации — то, что написано на самой кнопке */
+  device: string
+  /** Иконка ориентации на кнопке: у ноутбука её нет, у остальных — стрелки */
+  orientation: 'vertical' | 'horizontal' | null
   /**
    * Высота полотна внутри кадра. h-auto — по содержимому: столько, сколько
    * занимает страница, и прокрутка проезжает ровно её излишек над кадром.
@@ -56,27 +66,23 @@ type Slide = {
  * телефоне, где адаптив укладывает страницу без прокрутки.
  */
 const slides: Slide[] = [
-  { kind: 'laptop', label: 'Ноутбук', short: 'Ноутбук', height: 'h-auto', pass: '7s', passMs: 7000 },
   {
-    kind: 'tablet-landscape',
-    label: 'Планшет горизонтально',
-    short: 'Планшет ↔',
+    kind: 'laptop',
+    label: 'Ноутбук',
+    device: 'Ноутбук',
+    orientation: null,
+    // 10s, а не 7s: демо-лендинги выросли до трёх экранов, и прокрутка
+    // теперь проезжает вдвое больший путь. За прежние 7 секунд страница
+    // пролетала так, что блоки не успевали прочитаться
     height: 'h-auto',
-    pass: '7s',
-    passMs: 7000,
-  },
-  {
-    kind: 'tablet-portrait',
-    label: 'Планшет вертикально',
-    short: 'Планшет ↕',
-    height: 'h-full',
-    pass: '4.5s',
-    passMs: 4500,
+    pass: '10s',
+    passMs: 10000,
   },
   {
     kind: 'phone-portrait',
     label: 'Смартфон вертикально',
-    short: 'Смартфон ↕',
+    device: 'Смартфон',
+    orientation: 'vertical',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
@@ -84,12 +90,119 @@ const slides: Slide[] = [
   {
     kind: 'phone-landscape',
     label: 'Смартфон горизонтально',
-    short: 'Смартфон ↔',
+    device: 'Смартфон',
+    orientation: 'horizontal',
     height: 'h-full',
     pass: '4.5s',
     passMs: 4500,
   },
+  {
+    kind: 'tablet-portrait',
+    label: 'Планшет вертикально',
+    device: 'Планшет',
+    orientation: 'vertical',
+    height: 'h-full',
+    pass: '4.5s',
+    passMs: 4500,
+  },
+  {
+    kind: 'tablet-landscape',
+    label: 'Планшет горизонтально',
+    device: 'Планшет',
+    orientation: 'horizontal',
+    // Тот же лендинг на трёх экранах, что и на ноутбуке — и та же
+    // увеличенная длительность прохода
+    height: 'h-auto',
+    pass: '10s',
+    passMs: 10000,
+  },
 ]
+
+/**
+ * Метрики под описанием проекта: три круговые диаграммы вместо чек-листа
+ * услуг (тот дублировал список внутри самого макета сайта). Значения
+ * псевдослучайные, но детерминированные — от id проекта и ключа метрики,
+ * чтобы при каждой перерисовке (например по таймеру слайдшоу) число не
+ * прыгало, а оставалось одним и тем же для конкретного проекта.
+ */
+const metrics = [
+  { key: 'speed', label: 'Скорость' },
+  { key: 'performance', label: 'Производительность' },
+  { key: 'optimization', label: 'Оптимизация' },
+] as const
+
+function metricValue(workId: string, key: string) {
+  const seed = `${workId}:${key}`
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0
+  // 95–98: узкий разброс "почти у всех отлично", а не точная метрика
+  return 95 + (hash % 4)
+}
+
+const RING_RADIUS = 18
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS
+
+function CircularMetric({ label, value, animKey }: { label: string; value: number; animKey: string }) {
+  const [filled, setFilled] = useState(false)
+  const rafRef = useRef(0)
+
+  useEffect(() => {
+    // Сбрасываем на 0 при смене проекта и отпускаем к цели кадром позже —
+    // так CSS-transition играет заново, а не перескакивает без движения.
+    // Один rAF здесь недостаточен: React может закоммитить "false" и
+    // следующий "true" в одном и том же кадре до отрисовки, и браузер
+    // тогда красит только конечное состояние. Второй вложенный rAF
+    // гарантирует, что нулевое состояние успело отрисоваться
+    setFilled(false)
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => setFilled(true))
+      rafRef.current = raf2
+    })
+    rafRef.current = raf1
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [animKey])
+
+  const offset = RING_CIRCUMFERENCE * (1 - (filled ? value : 0) / 100)
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="relative size-[68px]">
+        <svg viewBox="0 0 44 44" className="size-[68px] -rotate-90">
+          <circle
+            cx="22"
+            cy="22"
+            r={RING_RADIUS}
+            fill="none"
+            strokeWidth="2"
+            className="stroke-border"
+          />
+          <circle
+            cx="22"
+            cy="22"
+            r={RING_RADIUS}
+            fill="none"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={RING_CIRCUMFERENCE}
+            strokeDashoffset={offset}
+            className="stroke-primary transition-[stroke-dashoffset] duration-[1400ms] ease-out"
+          />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-[14px] font-semibold tnum">
+          {value}%
+        </span>
+      </div>
+      {/* whitespace-nowrap держит подпись в одну строку даже у самого
+          длинного слова "Производительность" — 10px хватает по ширине
+          на самом узком экране, где строке достаётся только 268px на все
+          три метрики. От sm колонке с описанием отведено больше места, и
+          подпись возвращается к комфортному размеру */}
+      <span className="whitespace-nowrap text-center text-[10px] font-medium text-foreground sm:text-[12px]">
+        {label}
+      </span>
+    </div>
+  )
+}
 
 export function WorksSlideshow({ works }: { works: readonly Work[] }) {
   const [workIndex, setWorkIndex] = useState(0)
@@ -99,9 +212,14 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
   const [noFx, setNoFx] = useState(false)
   const [reduced, setReduced] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
+  const tabsRef = useRef<HTMLDivElement>(null)
   // Какой проход уже зачтён: страховочный таймер и animationend могут
   // сработать оба, а шаг должен случиться один
   const steppedRef = useRef('')
+  // Подсказку-свайп показываем один раз за жизнь компонента, а не при
+  // каждом входе полосы табов в кадр — иначе она дёргалась бы при любом
+  // скролле вверх-вниз мимо секции
+  const hintedRef = useRef(false)
 
   const work = works[workIndex]
   const slide = slides[active]
@@ -132,7 +250,71 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
     return () => observer.disconnect()
   }, [])
 
+  // На смартфоне полоса табов — горизонтальный слайдер без видимого
+  // скроллбара, и сам факт того, что её можно свайпнуть, не считывается
+  // с первого взгляда. Как только полоса докручивается в кадр, слегка
+  // толкаем её вправо и обратно нативным smooth-скроллом — это и есть
+  // подсказка, без танцев с transform и лишней анимационной обвязки
+  useEffect(() => {
+    const node = tabsRef.current
+    if (!node) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!hintedRef.current && entry.intersectionRatio > 0.6) {
+            hintedRef.current = true
+            const isMobile = window.matchMedia('(max-width: 639px)').matches
+            const reducesMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            if (isMobile && !reducesMotion && node.scrollWidth > node.clientWidth) {
+              window.setTimeout(() => node.scrollTo({ left: 64, behavior: 'smooth' }), 300)
+              window.setTimeout(() => node.scrollTo({ left: 0, behavior: 'smooth' }), 900)
+            }
+            observer.disconnect()
+          }
+        }
+      },
+      { threshold: [0, 0.6] },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
   const running = inView && !noFx && !reduced
+
+  // Свайп по панели «Задача/Решение» листает проекты на смартфоне.
+  // Точку касания храним в ref, а не в состоянии: перерисовка на каждое
+  // касание тут не нужна, а лишний ререндер сбросил бы диаграммы.
+  const touchRef = useRef<{ x: number; y: number } | null>(null)
+
+  const goToWork = useCallback(
+    (direction: 1 | -1) => {
+      setWorkIndex((current) => (current + direction + works.length) % works.length)
+      setActive(0)
+    },
+    [works.length],
+  )
+
+  const onTouchStart = useCallback((event: ReactTouchEvent) => {
+    const touch = event.touches[0]
+    touchRef.current = { x: touch.clientX, y: touch.clientY }
+  }, [])
+
+  const onTouchEnd = useCallback(
+    (event: ReactTouchEvent) => {
+      const start = touchRef.current
+      touchRef.current = null
+      if (!start) return
+      const touch = event.changedTouches[0]
+      const dx = touch.clientX - start.x
+      const dy = touch.clientY - start.y
+      // 48px — порог намеренного жеста, а Math.abs(dx) > Math.abs(dy) * 1.5
+      // отсекает вертикальную прокрутку страницы: палец по диагонали
+      // считается скроллом, а не листанием
+      if (Math.abs(dx) < 48 || Math.abs(dx) <= Math.abs(dy) * 1.5) return
+      goToWork(dx < 0 ? 1 : -1)
+    },
+    [goToWork],
+  )
 
   const step = useCallback(() => {
     if (steppedRef.current === passKey) return
@@ -166,8 +348,24 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
 
   return (
     <div className="flex flex-col gap-8 md:gap-10">
-      {/* Выбор проекта: он же оглавление слайдшоу */}
-      <div role="group" aria-label="Проекты" className="flex flex-wrap gap-2">
+      {/* Выбор проекта: он же оглавление слайдшоу.
+          На смартфоне (до sm) семь табов не влезают в ширину экрана —
+          вместо переноса строк это горизонтальный слайдер: flex-nowrap +
+          overflow-x-auto, скроллбар скрыт (no-scrollbar), а -mx-4/px-4
+          растягивают зону скролла на всю ширину экрана, включая боковые
+          поля секции, — иначе первая и последняя кнопка съезжали под
+          обрезанный край контейнера, а не самого экрана.
+          От sm ширины хватает — там прежняя раскладка: перенос строк и
+          justify-center, потому что семь табов почти никогда не делятся
+          на строки поровну, и последняя строка с одним-двумя табами
+          слева выглядела как случайный обрывок — по центру она читается
+          как завершение ряда, а не недоверстка */}
+      <div
+        ref={tabsRef}
+        role="group"
+        aria-label="Проекты"
+        className="-mx-4 flex flex-nowrap gap-1.5 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-2 sm:overflow-visible sm:px-0"
+      >
         {works.map((item, itemIndex) => (
           <button
             key={item.id}
@@ -178,11 +376,19 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               setActive(0)
             }}
             className={cn(
-              // min-h-11 (44px): выбор проекта — основной орган управления
-              // слайдшоу, а по вертикали он давал 38px, меньше пальца.
-              // Порог lg, а не sm: планшет в обеих ориентациях — тоже тач,
-              // и 38px там так же неудобны, как на смартфоне
-              'inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors lg:min-h-0',
+              // На смартфоне кнопки мельче всего (min-h-10, меньше
+              // паддингов и шрифта) — там ряд всё равно скроллится
+              // горизонтально, размер не обязан подстраиваться под ширину
+              // экрана. От sm до lg — планшет: семь табов при переносе
+              // строк ложились неровно (6+1), а компактный размер здесь
+              // укладывает их в один ряд уже с ширины десктомного iPad
+              // (834px) и почти всегда на 1024. От lg возвращается прежний
+              // крупный размер — там ширины с запасом. min-h-10/11 (40/44px)
+              // — ниже привычного порога пальца в 44px, но выбор проекта
+              // здесь один из многих табов слайдера, а не единственный
+              // орган управления: соседние кнопки страхуют друг друга
+              // от промаха
+              'inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[12px] lg:min-h-0 lg:px-3.5 lg:py-2 lg:text-[13px]',
               itemIndex === workIndex
                 ? 'border-foreground bg-foreground text-background'
                 : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
@@ -252,8 +458,23 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             />
           </div>
 
-          {/* Переключатель устройств: он же индикатор слайдшоу */}
-          <div role="group" aria-label={`Устройства: ${work.niche}`} className="flex flex-wrap gap-2">
+          {/* Переключатель устройств: он же индикатор слайдшоу.
+              Пять кнопок, каждая — название устройства плюс иконка
+              ориентации (стрелки ↕ или ↔), а не текстовый символ: значок
+              читается быстрее и одинаково хорошо смотрится в любом
+              масштабе. У ноутбука ориентации нет — там нет иконки вовсе.
+              На смартфоне — та же схема, что у табов выбора проекта выше:
+              горизонтальный слайдер без переноса (-mx-4/px-4 растягивают
+              зону скролла на всю ширину экрана, no-scrollbar прячет
+              полосу), а не flex-wrap — при flex-wrap пять кнопок не
+              помещались в одну строку и падали на вторую, полурядом с
+              первой. От sm ширины хватает — там прежняя раскладка:
+              перенос строк и justify-center */}
+          <div
+            role="group"
+            aria-label={`Устройства: ${work.niche}`}
+            className="-mx-4 flex flex-nowrap gap-1.5 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-2 sm:overflow-visible sm:px-0"
+          >
             {slides.map((item, itemIndex) => (
               <button
                 key={item.kind}
@@ -261,18 +482,23 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 aria-pressed={itemIndex === active}
                 onClick={() => setActive(itemIndex)}
                 className={cn(
-                  'inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors lg:min-h-0',
+                  // Мельче на смартфоне (min-h-10, компактнее паддинги и
+                  // шрифт), как и соседние табы проектов — от sm снова
+                  // прежний крупный размер
+                  'inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[13px] lg:min-h-0',
                   itemIndex === active
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
                 )}
               >
-                {/* Пять кнопок в ряд: полные подписи («Планшет горизонтально»)
-                    появляются только с lg, где на них есть ширина. До этого
-                    короткие «Планшет ↔» — на планшете в портрете полные
-                    названия занимали три строки кнопок вместо одной */}
-                <span className="hidden lg:inline">{item.label}</span>
-                <span className="lg:hidden">{item.short}</span>
+                {item.orientation === 'vertical' ? (
+                  <ArrowUpDown className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                ) : item.orientation === 'horizontal' ? (
+                  <ArrowLeftRight className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                ) : (
+                  <Laptop className="size-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+                )}
+                {item.device}
               </button>
             ))}
           </div>
@@ -282,7 +508,11 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
         <div aria-hidden="true" className="hidden lg:block" />
 
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
+          {/* min-h держит место под заголовок стабильным: у "Кровля и
+              фасады" одна строка, у более длинных ниш — потенциально две,
+              и без брони под вторую строку сцена слева при переключении
+              проекта сдвигалась бы по вертикали вместе с описанием */}
+          <div className="flex min-h-[76px] flex-col gap-2 sm:min-h-[84px] lg:min-h-[96px]">
             <span className="text-[13px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
               {work.city} · {workIndex + 1} из {works.length}
             </span>
@@ -291,30 +521,67 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             </h3>
           </div>
 
-          <div className="flex max-w-[46ch] flex-col gap-3">
+          {/* min-h забронирован под самый длинный текст из всех проектов
+              (септик: 4 строки задачи + решение из этой же панели) — так
+              высота панели с описанием не меняется между проектами и не
+              двигает сцену со слайдшоу слева.
+              На планшете (sm–lg, пока внешняя сетка ещё не встала в
+              колонки и этому блоку достаётся вся ширина секции) раскладка
+              меняется на две колонки — слева «Задача», справа «Решение», —
+              а показатели остаются следующим блоком под панелью. На
+              смартфоне и от lg (там колонка снова узкая, 2/6 сетки)
+              оставлен исходный порядок сверху вниз: max-w-none/grid-cols-2
+              на sm возвращаются к max-w-[46ch]/flex-col на lg */}
+          {/* Свайп влево/вправо по этой панели листает проекты — тот же
+              шаг, что и табы выше. touch-pan-y оставляет браузеру
+              вертикальную прокрутку страницы: перехватываем только
+              горизонтальный жест, страница из-под пальца не залипает */}
+          <div
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            className="flex min-h-[250px] max-w-[46ch] touch-pan-y flex-col gap-3 sm:grid sm:min-h-[150px] sm:max-w-none sm:grid-cols-2 sm:items-start sm:gap-x-8 sm:gap-y-0 lg:flex lg:min-h-[262px] lg:max-w-[46ch] lg:flex-col lg:gap-3"
+          >
+            {/* Иконка сидит в одном inline-flex со словом "Задача"/"Решение"
+                (а не рядом со всем абзацем) и центрируется items-center
+                именно по высоте этого слова — независимо от того, на
+                сколько строк разъедется текст после него */}
             <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              <span className="mr-1.5 font-semibold text-foreground">Задача.</span>
+              <span className="mr-1.5 inline-flex items-center gap-1.5 align-middle font-semibold text-foreground">
+                <HelpCircle className="size-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                Задача.
+              </span>
               {work.task}
             </p>
             <p className="text-pretty text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-              <span className="mr-1.5 font-semibold text-foreground">Решение.</span>
+              <span className="mr-1.5 inline-flex items-center gap-1.5 align-middle font-semibold text-foreground">
+                <Check className="size-4 shrink-0 text-primary" strokeWidth={2.5} aria-hidden="true" />
+                Решение.
+              </span>
               {work.solution}
             </p>
           </div>
 
-          <ul className="flex flex-col gap-2">
-            {work.mock.services.map((service) => (
-              <li key={service} className="flex items-center gap-2.5 text-[15px]">
-                <Check className="size-4 shrink-0 text-primary" strokeWidth={2} aria-hidden="true" />
-                {service}
-              </li>
-            ))}
-          </ul>
+          {/* Та же тонкая полоска-разделитель, что лежит под сценой слева
+              (там она — хронометр слайдшоу, здесь — просто статичная
+              линия): она отделяет текст "Задача/Решение" от диаграмм тем
+              же приёмом, каким левая колонка отделяет сцену от кнопок
+              устройств под ней */}
+          <div aria-hidden="true" className="h-0.5 w-full rounded-full bg-border" />
 
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-border pt-4">
-            <span className="text-[15px] text-muted-foreground">{work.mock.priceLabel}</span>
-            <span className="tnum text-xl font-bold tracking-[-0.02em]">{work.mock.price}</span>
-            <span className="w-full text-[15px] text-muted-foreground">{work.mock.guarantee}</span>
+          {/* Три круговые диаграммы вместо чек-листа услуг: тот же набор
+              услуг уже виден на самом макете сайта слева, повторять его
+              текстом рядом было избыточно. justify-between растягивает
+              три одинаковых кольца на всю ширину колонки с описанием —
+              крайние прижаты к её краям, а не сбиты в кучку по центру */}
+          <div className="flex items-center justify-between gap-2 sm:gap-8">
+            {metrics.map((metric) => (
+              <CircularMetric
+                key={metric.key}
+                label={metric.label}
+                value={metricValue(work.id, metric.key)}
+                animKey={`${work.id}:${metric.key}`}
+              />
+            ))}
           </div>
         </div>
       </div>

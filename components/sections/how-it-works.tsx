@@ -46,9 +46,14 @@ export function HowItWorks() {
                   {step.text}
                 </p>
                 {/* Кнопка живёт внутри последней карточки, а не отдельным
-                    блоком под сеткой — «Приступайте!» и есть сам призыв нажать. */}
+                    блоком под сеткой — «Приступайте!» и есть сам призыв нажать.
+                    whitespace-nowrap держит текст в одну строку на смартфоне,
+                    где кнопка растягивается на всю ширину карточки. */}
                 {index === 3 ? (
-                  <AvitoButton place="how-it-works" className="mt-1 border-primary-foreground/30 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                  <AvitoButton
+                    place="how-it-works"
+                    className="mt-1 whitespace-nowrap border-primary-foreground/30 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+                  >
                     {howItWorks.cta}
                   </AvitoButton>
                 ) : null}

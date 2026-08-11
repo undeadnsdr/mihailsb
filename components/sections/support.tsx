@@ -17,13 +17,22 @@ export function Support() {
           <SectionHeading id="support-title" title={support.title} subtitle={support.lead} />
         </div>
 
-        <ul className="flex flex-col gap-4 md:gap-6 lg:col-span-7">
+        {/* Три пункта («Первый месяц» / «Дальше по необходимости» / «Если
+            менять часто») — это не длинный список, а три равных по весу
+            варианта, поэтому на планшете (sm–lg) они встают в три колонки
+            рядом, а не друг под другом: так сразу видно, что это три
+            альтернативы, а не последовательность шагов. На смартфоне и от
+            lg (там у списка уже другая, горизонтальная раскладка строк)
+            сетка возвращается к одной колонке. */}
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 lg:col-span-7 lg:flex lg:flex-col">
           {support.items.map((item, index) => (
-            <Reveal key={item.title} as="li" step={(index % 3) as 0 | 1 | 2}>
+            <Reveal key={item.title} as="li" step={(index % 3) as 0 | 1 | 2} className="lg:contents">
               {/* Двухколоночная строка внутри карточки — только с lg:
                   на планшете 34% под заголовок давало 90px, и короткий
                   заголовок вставал в четыре строки рядом с текстом */}
-              <BentoCard className="gap-1.5 lg:flex-row lg:items-baseline lg:gap-6">
+              {/* flat: список того, что входит в сопровождение, — равные
+                  строки одного перечня (см. bento-card.tsx) */}
+              <BentoCard tone="flat" className="h-full gap-1.5 lg:flex-row lg:items-baseline lg:gap-6">
                 <h3 className="shrink-0 text-[16px] font-medium leading-snug sm:text-[17px] lg:w-[34%]">
                   {item.title}
                 </h3>

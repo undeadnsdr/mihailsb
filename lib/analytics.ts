@@ -13,6 +13,7 @@ export const YM_ID = process.env.NEXT_PUBLIC_YM_ID
 export type Goal =
   | 'click_avito'
   | 'click_phone'
+  | 'click_telegram'
   | 'click_callback'
   | 'form_submit'
   | 'scroll_75'

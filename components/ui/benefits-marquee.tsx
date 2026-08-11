@@ -28,7 +28,11 @@ import { benefitsMarquee } from '@/lib/content'
  */
 export function BenefitsMarquee() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-6 pt-1 md:px-10 lg:px-16">
+    // px-4 на узком экране — те же боковые отступы, что у TopBar, шапки и
+    // секций. Здесь стояло px-6 без sm-ступени: до 640px лента была на 16px
+    // уже пилюли локации над ней и карточки hero под ней, и три овала в
+    // столбик визуально не совпадали по краям
+    <div className="mx-auto w-full max-w-[1400px] px-4 pt-1 sm:px-6 md:px-10 lg:px-16">
       <div
         aria-label="Преимущества"
         className="flex h-7 w-full items-center overflow-hidden rounded-full bg-primary text-primary-foreground"

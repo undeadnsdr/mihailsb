@@ -5,6 +5,7 @@ import { ArrowUp, Phone } from 'lucide-react'
 import { site } from '@/lib/content'
 import { reachGoal } from '@/lib/analytics'
 import { AvitoIcon } from '@/components/ui/avito-icon'
+import { TelegramIcon } from '@/components/ui/telegram-icon'
 import { cn } from '@/lib/utils'
 
 const fab =
@@ -43,13 +44,25 @@ export function StickyActions() {
 
   return (
     <>
-      {/* Смартфон: нижняя панель */}
+      {/* Смартфон в портрете и боком: нижняя панель.
+          Условие no-bottom-bar вместо md: по ширине смартфон боком (932×430
+          у iPhone 15 Pro Max, 892×412 у Pixel 8 Pro) попадал за порог md и
+          терял панель. При этом шапка в горизонтальной ориентации осознанно
+          убирает свою кнопку «Написать на Авито», рассчитывая, что панель на
+          месте, — в итоге на экране не оставалось ни одной кнопки перехода
+          в переписку. Разбор самого условия — в globals.css */}
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 md:hidden',
+          'fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md transition-transform duration-300 no-bottom-bar:hidden',
           hidden && 'translate-y-full',
         )}
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        // Боковые вырезы: в горизонтальной ориентации «монобровь» и скругления
+        // корпуса забирают края экрана именно по бокам, а не снизу
+        style={{
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          paddingLeft: 'env(safe-area-inset-left, 0px)',
+          paddingRight: 'env(safe-area-inset-right, 0px)',
+        }}
       >
         {/* В горизонтальной ориентации смартфона панель занимала 73px из
             375px высоты экрана — вместе с шапкой это было 47% вьюпорта.
@@ -68,15 +81,21 @@ export function StickyActions() {
             <AvitoIcon className="size-5" />
             Написать на Авито
           </a>
+          {/* Вторая кнопка панели на смартфоне — переход в Телеграм, а не
+              звонок: аудитория этого лендинга чаще пишет, чем звонит
+              незнакомому номеру, и Телеграм рядом с Авито даёт два разных
+              канала переписки вместо звонка и переписки */}
           <a
-            href={`tel:${site.phoneRaw}`}
-            aria-label={`Позвонить по номеру ${site.phone}`}
-            data-goal="click_phone"
+            href={site.telegramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Написать в Телеграм"
+            data-goal="click_telegram"
             data-place="sticky"
-            onClick={() => reachGoal('click_phone', { place: 'sticky' })}
+            onClick={() => reachGoal('click_telegram', { place: 'sticky' })}
             className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary transition-colors hover:text-primary-hover short-landscape:size-10"
           >
-            <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
+            <TelegramIcon className="size-5" />
           </a>
         </div>
       </div>
@@ -118,14 +137,18 @@ export function StickyActions() {
       </div>
 
       {/* «Наверх» — отдельно от колонки: она появляется только с 1500px,
-          а на обычном ноутбуке страница длинная и кнопка нужна */}
+          а на обычном ноутбуке страница длинная и кнопка нужна.
+          Условие ровно обратное панели: обе живут в правом нижнем углу, и
+          на смартфоне боком кнопка садилась поверх панели, накрывая
+          телефонную трубку. Теперь «Наверх» появляется только там, где
+          нижней панели нет */}
       <button
         type="button"
         aria-label="Наверх страницы"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className={cn(
           fab,
-          'fixed bottom-6 right-5 z-40 hidden transition-opacity duration-300 md:flex',
+          'fixed bottom-6 right-5 z-40 hidden transition-opacity duration-300 no-bottom-bar:flex',
           showTop ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       >

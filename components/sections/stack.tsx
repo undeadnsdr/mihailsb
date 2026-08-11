@@ -59,7 +59,9 @@ function StackCard({
   wide?: boolean
 }) {
   return (
-    <BentoCard className="h-full gap-5">
+    // flat: фронтенд/бэкенд/база — три равные части одного стека,
+    // а не три ранжированных варианта (см. bento-card.tsx)
+    <BentoCard tone="flat" className="h-full gap-5">
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent">
           <Icon className="size-5 text-primary" strokeWidth={1.75} aria-hidden="true" />

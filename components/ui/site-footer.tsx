@@ -1,54 +1,31 @@
-import { Phone, Clock } from 'lucide-react'
-import { site, nav, geo } from '@/lib/content'
-import { AvitoIcon } from '@/components/ui/avito-icon'
+import { site, nav, footerServices, geo } from '@/lib/content'
+
+// Список ниш делится на две колонки поровну: первая половина — «в центре»,
+// вторая — «справа» (см. запрос по вёрстке подвала).
+const servicesLeft = footerServices.slice(0, 4)
+const servicesRight = footerServices.slice(4)
 
 /**
- * Подвал. Название, телефон и город продублированы в том же виде,
- * что в карточках Яндекс Карт и 2ГИС — NAP-консистентность
- * влияет на локальную выдачу сильнее, чем любые ключевые слова.
+ * Подвал. Название и город продублированы в том же виде, что в карточках
+ * Яндекс Карт и 2ГИС — NAP-консистентность влияет на локальную выдачу
+ * сильнее, чем любые ключевые слова.
  */
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-secondary">
       {/* px-4 на смартфоне — те же боковые отступы, что у секций выше:
-          иначе подвал визуально «шире» страницы. Три колонки в ряд только
-          с lg: на планшете 768px телефон, Авито, часы и меню из 10 ссылок
-          не укладывались в одну строку и слипались */}
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-8 sm:px-6 md:px-10 lg:px-16">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[18px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
-            <p className="max-w-[40ch] text-[14px] leading-relaxed text-muted-foreground">
-              Сайты-одностраничники для подрядчиков. {site.city} и {site.region}.
-            </p>
-          </div>
+          иначе подвал визуально «шире» страницы. lg:flex-row кладёт три
+          колонки в один ряд только на широких экранах — на телефоне и
+          планшете они идут друг под другом, иначе список из 8 ниш сжался
+          бы до нечитаемой ширины */}
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 md:px-10 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:px-16">
+        <div className="flex flex-col gap-1.5 lg:max-w-[280px] lg:shrink-0">
+          <span className="text-[18px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
+          <p className="max-w-[40ch] text-[14px] leading-relaxed text-muted-foreground">
+            Сайты-одностраничники для бизнеса. {site.city} и {site.region}.
+          </p>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {/* 44px на смартфоне — минимум для пальца; на мышиных ширинах
-                возвращается компактные 36px, иначе подвал распухает */}
-            <a
-              href={`tel:${site.phoneRaw}`}
-              className="flex min-h-11 items-center gap-1.5 text-[15px] font-medium sm:min-h-[36px]"
-            >
-              <Phone className="size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
-              {site.phone}
-            </a>
-            <a
-              href={site.avitoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-h-11 items-center gap-1.5 text-[15px] font-medium text-primary sm:min-h-[36px]"
-            >
-              <AvitoIcon className="size-4 shrink-0" />
-              Профиль на Авито
-            </a>
-            <p className="flex items-center gap-1.5 text-[14px] text-muted-foreground">
-              <Clock className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              {site.workingHours}
-            </p>
-          </div>
-
-          <nav aria-label="Разделы страницы" className="flex flex-wrap gap-x-4 gap-y-1">
+          <nav aria-label="Разделы страницы" className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
             {nav.map((item) => (
               <a
                 key={item.href}
@@ -63,7 +40,39 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-1.5 border-t border-border pt-4 text-[13px] leading-relaxed text-muted-foreground">
+        {/* Перечень сфер — «в центре» и «справа» — все ссылки ведут наверх
+            (#top), это не разделы, а витрина ниш, чтобы посетитель узнал
+            себя в списке. sm:grid-cols-2 кладёт обе колонки рядом уже на
+            смартфоне в альбомной ориентации и на планшете; на узком
+            смартфоне портретом они идут одна под другой */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:gap-10">
+          <nav aria-label="Сферы для сайта" className="flex flex-col gap-2">
+            {servicesLeft.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-[14px] leading-relaxed text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <nav aria-label="Сферы для сайта" className="flex flex-col gap-2">
+            {servicesRight.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-[14px] leading-relaxed text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-16">
+        <div className="flex flex-col gap-1.5 border-t border-border pt-4 pb-8 text-[13px] leading-relaxed text-muted-foreground">
           <p>Работаю по адресам: {geo.places.join(', ')}.</p>
           <p>
             {site.ownerName}, {site.city}. Сайт сделан на этой же технологии, что и сайты заказчиков.

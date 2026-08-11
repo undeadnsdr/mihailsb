@@ -1,6 +1,6 @@
 'use client'
 
-import { finalCta, site } from '@/lib/content'
+import { finalCta } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
@@ -27,12 +27,16 @@ export function FinalCta() {
 
   return (
     <Section id="contact" labelledBy="contact-title">
-      {/* Две колонки по половине включались на md: на планшете в портрете
-          форма с полями по 52px и подписями оставалась в 340px, а рядом
-          с ней — сжатый призыв. До lg блоки идут друг под другом, форма
-          получает всю ширину, и оба блока читаются в полный размер */}
-      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
-        <Reveal className="lg:col-span-6">
+      {/* Две колонки по половине включаются уже с sm: слева призыв
+          «Расскажите, чем занимаетесь…», справа форма «Или оставьте
+          заявку…» — рядом друг с другом. h-full на обеих плитках и
+          растяжение grid по умолчанию (stretch) уравнивают их высоту:
+          какая колонка выше, задаёт высоту строки, а justify-end в левой
+          плитке ниже не даёт контенту отрываться от нижнего края. На
+          смартфоне (<sm) блоки идут друг под другом, каждый получает
+          всю ширину */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-12 md:gap-6">
+        <Reveal className="sm:col-span-6">
           <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-8 lg:p-10 xl:p-12">
             <h2
               id="contact-title"
@@ -45,9 +49,14 @@ export function FinalCta() {
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              {/* До sm паддинг карточки (p-6) съедал столько ширины, что
+                  «Написать на Авито» при базовых px-6/text-17px переносилось
+                  на две строки — та же компактная мобильная гарнитура, что
+                  и у кнопки в hero, отдаёт тексту недостающие пиксели */}
               <AvitoButton
                 place="final"
-                className="bg-primary-foreground text-primary hover:bg-accent sm:w-auto"
+                className="bg-primary-foreground text-primary hover:bg-accent max-sm:gap-1.5 max-sm:px-4 max-sm:text-[15px] sm:w-auto"
+                iconClassName="size-4 sm:size-5"
               >
                 {finalCta.primary}
               </AvitoButton>
@@ -61,12 +70,12 @@ export function FinalCta() {
 
             <p className="flex items-center gap-2 text-[15px] text-primary-foreground/70">
               <Clock className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              {site.workingHours} · отвечаю {site.responseTime}
+              Отвечаю в течении часа
             </p>
           </BentoCard>
         </Reveal>
 
-        <Reveal step={1} className="lg:col-span-6">
+        <Reveal step={1} className="sm:col-span-6">
           <BentoCard className="h-full gap-5 md:p-8 lg:p-10">
             <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
               {finalCta.formTitle}
@@ -122,10 +131,15 @@ export function FinalCta() {
                 />
               </Field>
 
+              {/* Обводка вместо сплошной заливки — тот же приём, что и у
+                  кнопки «Перезвоните мне» в hero (см. hero.tsx): рядом,
+                  в левой плитке, уже стоит сплошная «Написать на Авито»,
+                  и форма — запасной путь для тех, кому проще заполнить
+                  поля, чем сразу писать или звонить */}
               <button
                 type="submit"
                 data-goal="form_submit"
-                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
+                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-[17px] font-medium leading-none text-primary transition-colors hover:bg-secondary"
               >
                 <Send className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 {finalCta.fields.submit}

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Phone } from 'lucide-react'
+import { Menu, Phone } from 'lucide-react'
 import { nav, site } from '@/lib/content'
 import { TopBar } from '@/components/ui/top-bar'
 import { AvitoButton } from '@/components/ui/cta'
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { reachGoal } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
@@ -36,10 +37,19 @@ export function SiteHeader() {
           aria-label="Основная навигация"
           className={cn(
             // px = py, поэтому отступ до лого/кнопки слева-справа равен отступу сверху-снизу.
-            // До lg меню скрыто, поэтому правая колонка auto (не сжимается, номер телефона не режется).
+            // На планшете (sm–lg) третья колонка убирается: меню <ul> там всё
+            // ещё скрыто (display:none), но сама явная колонка под него
+            // раньше оставалась в grid-template-columns и «съедала» gap-4
+            // с обеих сторон впустую — кнопка «Написать на Авито» стояла
+            // на 16px левее правого края хедера, хотя отступ сверху/снизу
+            // был 7px. Без третьей колонки gap полностью уходит в 1fr слева
+            // от лого, и кнопка встаёт вплотную к правому padding хедера —
+            // так gap справа равен gap сверху и снизу (оба = px-1.5/py-1.5).
+            // На смартфоне (<sm) оставлена прежняя раскладка в три колонки —
+            // там этот сдвиг не был частью задачи.
             // С lg меню появляется, и обе боковые колонки становятся равными 1fr — тогда среднее меню
             // центрируется относительно всего хедера, а не свободного места между лого и кнопкой.
-            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-1.5 py-1.5 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
+            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-1.5 py-1.5 shadow-sm transition-all duration-300 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
             floating ? 'glass' : 'bg-card',
           )}
         >
@@ -55,18 +65,35 @@ export function SiteHeader() {
             <Image
               src="/avatar.webp"
               alt="Илья, автор сайта"
-              width={40}
-              height={40}
-              // Аватар задаёт высоту всей панели: в горизонтальной
-              // ориентации смартфона он возвращается к мелкому размеру,
-              // хотя по ширине экран уже прошёл sm
-              className="size-8 shrink-0 rounded-full border border-border object-cover sm:size-10 short-landscape:size-8"
+              width={44}
+              height={44}
+              // На смартфоне (портрет) аватар крупнее, чем на sm+ — там
+              // дескриптор рядом стал короче («за 1 день и 6000 ₽» вместо
+              // полного названия услуги), и панель хедера может позволить
+              // себе более заметное фото автора. В горизонтальной
+              // ориентации смартфона он возвращается к мелкому размеру —
+              // там высота панели зажата short-landscape-отступами
+              className="size-11 shrink-0 rounded-full border border-border object-cover sm:size-10 short-landscape:size-8"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-[17px] font-bold tracking-[-0.02em] text-primary">{site.domain}</span>
-              <span className="hidden truncate text-[13px] font-medium text-muted-foreground sm:block">
-                {site.headerTagline}
+              {/* На смартфоне название мельче: рядом появляется дескриптор,
+                  и двум строкам вместе нужно на несколько пикселей меньше,
+                  чем одному крупному названию раньше */}
+              <span className="truncate text-[15px] font-bold tracking-[-0.02em] text-primary sm:text-[17px]">
+                {site.domain}
+              </span>
+              {/* Два варианта подписи вместо одной строки: на смартфоне
+                  только «за 1 день и 6000 ₽», от sm — с названием услуги.
+                  Переключение классами, а не по ширине через JS, чтобы
+                  разметка совпадала на сервере и клиенте */}
+              <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-[13px]">
+                <span className="sm:hidden">{site.headerTagline}</span>
+                <span className="hidden sm:inline short-landscape:hidden">{site.headerTaglineWide}</span>
+                {/* В горизонтальной ориентации смартфона высота панели
+                    зажата, а справа появляется номер телефона — там
+                    возвращаем короткий вариант */}
+                <span className="hidden short-landscape:inline">{site.headerTagline}</span>
               </span>
             </span>
           </a>
@@ -89,19 +116,49 @@ export function SiteHeader() {
           </ul>
 
           <div className="flex items-center justify-self-end">
-            {/* На смартфоне вместо кнопки — номер: кнопка «Написать»
-                дублировала бы нижнюю панель, а телефона в ней нет подписанного */}
+            {/* Портрет смартфона: бургер с якорями вместо номера — разделы
+                страницы теперь достижимы и без десктопного меню, а связь
+                и так всегда на виду в нижней панели */}
+            <Sheet>
+              <SheetTrigger
+                aria-label="Открыть меню разделов"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:text-primary sm:hidden short-landscape:hidden"
+              >
+                <Menu className="size-5" strokeWidth={1.75} aria-hidden="true" />
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full max-w-xs">
+                <SheetHeader>
+                  <SheetTitle>Разделы страницы</SheetTitle>
+                </SheetHeader>
+                <nav aria-label="Мобильная навигация" className="flex flex-col gap-1 px-2 pb-4">
+                  {nav.map((item) => (
+                    <SheetClose
+                      key={item.href}
+                      nativeButton={false}
+                      render={
+                        <a
+                          href={item.href}
+                          className="flex min-h-12 items-center rounded-lg px-3 text-[16px] font-medium text-foreground transition-colors hover:bg-secondary"
+                        />
+                      }
+                    >
+                      {item.label}
+                    </SheetClose>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+
+            {/* Номер остаётся только в горизонтальной ориентации: там
+                нижняя панель связи скрыта, а кнопка «Написать на Авито»
+                тоже не показывается — без номера не осталось бы ни одной
+                точки контакта в кадре */}
             <a
               href={`tel:${site.phoneRaw}`}
               data-goal="click_phone"
               data-place="header"
               onClick={() => reachGoal('click_phone', { place: 'header' })}
-              // Номер неразрывный и занимает 166px. Порог 420px — ширина,
-              // на которой домену остаётся 134px при нужных ему 119px:
-              // ниже он начинал обрезаться в «ильясайты.р…». Там номер
-              // скрыт, и позвонить можно из «Звонка» в верхней полоске
-              // или кнопкой с трубкой в нижней панели связи
-              className="hidden min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover min-[420px]:flex sm:hidden short-landscape:flex"
+              className="hidden min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium text-primary transition-colors hover:text-primary-hover short-landscape:flex"
             >
               <Phone className="size-4" strokeWidth={1.75} aria-hidden="true" />
               {site.phone}

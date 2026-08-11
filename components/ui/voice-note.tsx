@@ -118,7 +118,9 @@ export function VoiceNote({
   return (
     <figure
       className={cn(
-        'flex w-full flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm md:p-5',
+        // overflow-hidden — вторая линия защиты: даже если строке ниже не хватит
+        // места, лишнее срежется по скруглённому краю, а не вылезет за карточку
+        'flex w-full flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm md:p-5',
         className,
       )}
     >
@@ -145,8 +147,12 @@ export function VoiceNote({
           )}
         </button>
 
-        <div className="relative flex-1">
-          <div className="flex h-10 items-center gap-[2px] md:h-12" aria-hidden="true">
+        {/* min-w-0 снимает с флекс-элемента базовый min-width:auto — без него
+            браузер держит ширину волны не меньше суммы гэпов между делениями
+            (66 промежутков × 2px), и на очень узких экранах это раздвигало
+            строку шире карточки, выталкивая таймер за край */}
+        <div className="relative min-w-0 flex-1">
+          <div className="flex h-10 items-center gap-[2px] overflow-hidden md:h-12" aria-hidden="true">
             {peaks.map((peak, index) => {
               const played = index / peaks.length < progress
               return (
@@ -154,7 +160,12 @@ export function VoiceNote({
                   key={index}
                   className={cn(
                     'flex-1 rounded-full transition-colors duration-150',
-                    played ? 'bg-primary' : 'bg-border',
+                    // bg-border (#e7e9ed) на белой карточке давал почти
+                    // нулевой контраст — неотыгранная часть волны
+                    // визуально пропадала. muted-foreground/35 держит
+                    // деления заметными, но всё ещё заметно тише
+                    // проигранных (сплошной primary)
+                    played ? 'bg-primary' : 'bg-muted-foreground/35',
                   )}
                   // Минимум 12%, иначе тишина превращается в невидимые пропуски
                   // и волна выглядит порванной
