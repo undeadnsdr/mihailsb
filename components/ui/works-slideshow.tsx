@@ -371,15 +371,19 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               setActive(0)
             }}
             className={cn(
-              // На смартфоне кнопки чуть мельче (min-h-10, меньше паддингов
-              // и шрифта), чем от sm — там места под перенос строк с лихвой,
-              // и прежний более крупный размер возвращается. min-h-10 (40px)
-              // — минимум ниже 44px, который обычно берут за порог пальца,
-              // но выбор проекта здесь один из многих табов слайдера, а не
-              // единственный орган управления: соседние кнопки страхуют друг
-              // друга по промаху. Порог lg, а не sm — планшет в обеих
-              // ориентациях тоже тач, и там сохраняется тач-высота
-              'inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[13px] lg:min-h-0',
+              // На смартфоне кнопки мельче всего (min-h-10, меньше
+              // паддингов и шрифта) — там ряд всё равно скроллится
+              // горизонтально, размер не обязан подстраиваться под ширину
+              // экрана. От sm до lg — планшет: семь табов при переносе
+              // строк ложились неровно (6+1), а компактный размер здесь
+              // укладывает их в один ряд уже с ширины десктомного iPad
+              // (834px) и почти всегда на 1024. От lg возвращается прежний
+              // крупный размер — там ширины с запасом. min-h-10/11 (40/44px)
+              // — ниже привычного порога пальца в 44px, но выбор проекта
+              // здесь один из многих табов слайдера, а не единственный
+              // орган управления: соседние кнопки страхуют друг друга
+              // от промаха
+              'inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[12px] lg:min-h-0 lg:px-3.5 lg:py-2 lg:text-[13px]',
               itemIndex === workIndex
                 ? 'border-foreground bg-foreground text-background'
                 : 'border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground',
