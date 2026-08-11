@@ -5,6 +5,7 @@ import { ArrowUp, Phone } from 'lucide-react'
 import { site } from '@/lib/content'
 import { reachGoal } from '@/lib/analytics'
 import { AvitoIcon } from '@/components/ui/avito-icon'
+import { TelegramIcon } from '@/components/ui/telegram-icon'
 import { cn } from '@/lib/utils'
 
 const fab =
@@ -80,15 +81,21 @@ export function StickyActions() {
             <AvitoIcon className="size-5" />
             Написать на Авито
           </a>
+          {/* Вторая кнопка панели на смартфоне — переход в Телеграм, а не
+              звонок: аудитория этого лендинга чаще пишет, чем звонит
+              незнакомому номеру, и Телеграм рядом с Авито даёт два разных
+              канала переписки вместо звонка и переписки */}
           <a
-            href={`tel:${site.phoneRaw}`}
-            aria-label={`Позвонить по номеру ${site.phone}`}
-            data-goal="click_phone"
+            href={site.telegramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Написать в Телеграм"
+            data-goal="click_telegram"
             data-place="sticky"
-            onClick={() => reachGoal('click_phone', { place: 'sticky' })}
+            onClick={() => reachGoal('click_telegram', { place: 'sticky' })}
             className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-primary transition-colors hover:text-primary-hover short-landscape:size-10"
           >
-            <Phone className="size-5" strokeWidth={1.75} aria-hidden="true" />
+            <TelegramIcon className="size-5" />
           </a>
         </div>
       </div>
