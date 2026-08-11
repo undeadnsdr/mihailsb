@@ -11,11 +11,15 @@ export function PwaSection() {
     <Section id="pwa" labelledBy="pwa-title">
       <Reveal>
         <BentoCard tone="primary" className="gap-8 md:gap-10 md:p-8 lg:p-10 xl:p-12">
-          {/* Макет домашнего экрана телефона (9:17) рядом с текстом в
-              половину планшета выглядел щепкой — до lg он уходит под текст
-              и центрируется, сохраняя свою ширину 280px */}
-          <div className="grid grid-cols-1 gap-8 md:gap-6 lg:grid-cols-12 lg:items-center">
-            <div className="flex flex-col gap-5 lg:col-span-7">
+          {/* Две колонки включаются уже с sm (планшет): слева описание,
+              справа макет телефона. items-start, а не items-center —
+              на sm–lg высота картинки подогнана под высоту текстовой
+              колонки (см. ниже max-w у HomeScreen), и центрирование по
+              вертикали там же увело бы верх картинки вниз без причины.
+              От lg возвращается items-center — там пропорции колонок
+              другие, и точного совпадения высот уже не требуется */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-12 sm:items-start md:gap-6 lg:items-center">
+            <div className="flex flex-col gap-5 sm:col-span-7">
               <h2
                 id="pwa-title"
                 className="text-balance text-[26px] font-bold leading-[1.1] tracking-[-0.02em] sm:text-[30px] md:text-[34px] lg:text-[44px]"
@@ -46,11 +50,14 @@ export function PwaSection() {
             </div>
 
             {/* Домашний экран телефона с иконкой сайта */}
-            <div className="lg:col-span-5">
+            <div className="sm:col-span-5 sm:self-center">
               {/* В горизонтальной ориентации смартфона макет телефона 9:17
                   высотой 500px+ выдавливал бы всё остальное из кадра —
-                  там он уменьшается до 200px */}
-              <div className="mx-auto w-full max-w-[280px] short-landscape:max-w-[200px]">
+                  там он уменьшается до 200px. На sm–lg (планшет) макет
+                  уже сам сузился до max-w-[190px]: при аспекте 9:17 это
+                  держит высоту картинки примерно равной высоте текстовой
+                  колонки слева, а не растягивает её на весь рост экрана */}
+              <div className="mx-auto w-full max-w-[280px] short-landscape:max-w-[200px] sm:max-w-[165px] lg:max-w-[280px]">
                 <HomeScreen />
               </div>
             </div>
