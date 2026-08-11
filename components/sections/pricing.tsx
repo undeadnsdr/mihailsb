@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react'
+import { ChevronDown, Info } from 'lucide-react'
 import { pricing } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -109,9 +109,25 @@ export function Pricing() {
                   <Info className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} aria-hidden="true" />
                   {pricing.renewal.title}
                 </span>
-                <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
-                  {pricing.renewal.text}
-                </p>
+                {/* На смартфоне описание длиннее трёх строк — здесь оно
+                    спрятано за <details>: кликабельна вся область текста
+                    (нативное поведение summary), а шеврон сидит в правом
+                    нижнем углу третьей строки за счёт pr-6 на summary.
+                    group-open:line-clamp-none снимает обрезку при раскрытии.
+                    От sm карточка шире, клэмп и шеврон не нужны вовсе —
+                    line-clamp-none включён всегда, а chevron скрыт. */}
+                <details className="group">
+                  <summary className="relative cursor-pointer list-none pr-6 sm:cursor-default sm:pr-0 [&::-webkit-details-marker]:hidden">
+                    <p className="line-clamp-3 text-pretty text-[15px] leading-relaxed text-muted-foreground group-open:line-clamp-none sm:line-clamp-none">
+                      {pricing.renewal.text}
+                    </p>
+                    <ChevronDown
+                      className="absolute bottom-0 right-0 size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180 sm:hidden"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                  </summary>
+                </details>
               </BentoCard>
             </Reveal>
           </div>
