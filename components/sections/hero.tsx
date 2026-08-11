@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Phone } from 'lucide-react'
+import { Calendar, Phone } from 'lucide-react'
 import { hero, works } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -118,7 +118,7 @@ function PhotoCard() {
           бейджем. Оба условия — про одно и то же: бейдж скрывается там,
           где под него нет свободного поля над заголовком */}
       <span className="absolute left-5 top-5 hidden items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm min-[380px]:inline-flex short-landscape:hidden">
-        <MapPin className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
+          <Calendar className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         {hero.badge}
       </span>
 
@@ -214,9 +214,9 @@ function CallbackCard() {
       {/* Три устройства вместо фото: планшет, ноутбук и смартфон с тем же
           демо-сайтом, но в своей вёрстке под каждый экран — наглядно
           показывает то, что фото само по себе не объясняло: сайт
-          выглядит завершённым на любо�� устройстве клиента. Порядок —
+          выглядит завершённым на любо���� устройстве клиента. Порядок —
           планшет-ноутбук-смартфон, средний по размеру между двумя
-          крайними, а не по возрастанию/убыванию.
+          крайними, а не по возрастан��ю/убыванию.
           bg-secondary/60 отделяет панель от фото главного кадра слева —
           это не снимок, а витрина. Скругление на всех четырёх углах, а
           не только сверху: у карточки нет паддинга, поэтому панель
