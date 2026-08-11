@@ -1,13 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { gallery, services } from '@/lib/content'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { gallery, services, type GalleryItem } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { cn } from '@/lib/utils'
 
 const ALL = 'all'
+/** Сколько снимков показываем сразу статичным рядом, без прокрутки */
+const FEATURED_COUNT = 4
 
 /**
  * Портфолио с фильтром по направлению.
@@ -16,9 +19,10 @@ const ALL = 'all'
  * а не из всех семи: кнопка, показывающая пустую сетку, хуже отсутствия
  * кнопки — она выглядит как сломанный сайт, а не как «работ пока нет».
  *
- * Фильтрация идёт через CSS-класс hidden, а не через выкидывание элементов
- * из массива: все снимки остаются в разметке и загружаются один раз, поэтому
- * переключение фильтра не вызывает повторной загрузки картинок.
+ * Фильтрация идёт через отдельный подсчёт, а не через выкидывание элементов
+ * из массива: первые четыре снимка выбранного направления всегда видны
+ * рядом, остальные уходят в слайд-шоу ниже — так раздел не разрастается
+ * в бесконечную сетку, когда по направлению набралось много фотографий.
  */
 export function Gallery() {
   const [active, setActive] = useState<string>(ALL)
@@ -27,8 +31,10 @@ export function Gallery() {
     gallery.items.some((item) => item.service === service.slug),
   )
 
-  const shown =
-    active === ALL ? gallery.items.length : gallery.items.filter((i) => i.service === active).length
+  const filtered =
+    active === ALL ? gallery.items : gallery.items.filter((item) => item.service === active)
+  const featured = filtered.slice(0, FEATURED_COUNT)
+  const rest = filtered.slice(FEATURED_COUNT)
 
   return (
     <Section id="portfolio" labelledBy="portfolio-title">
@@ -67,40 +73,137 @@ export function Gallery() {
         {/* Счётчик озвучивает результат фильтрации для скринридера: без него
             нажатие кнопки визуально меняет сетку, но вслух не сообщает ничего */}
         <p aria-live="polite" className="sr-only">
-          Показано работ: {shown}
+          Показано работ: {filtered.length}
         </p>
 
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-          {gallery.items.map((item, index) => (
-            <li
-              key={item.src}
-              className={cn(
-                'overflow-hidden rounded-2xl border border-border bg-card',
-                active !== ALL && item.service !== active && 'hidden',
-              )}
-            >
-              <figure className="flex h-full flex-col">
-                <div className="relative aspect-[4/3] w-full">
-                  <Image
-                    src={item.src}
-                    alt={item.alt}
-                    fill
-                    sizes="(min-width: 1024px) 340px, (min-width: 640px) 33vw, 50vw"
-                    className="object-cover"
-                    // Первые четыре — в первом экране секции на любой сетке,
-                    // остальные грузятся лениво
-                    loading={index < 4 ? 'eager' : 'lazy'}
-                  />
-                </div>
-                <figcaption className="px-3 py-2.5 text-[13px] leading-snug text-muted-foreground sm:text-[14px]">
-                  {item.caption}
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
+        {featured.length > 0 ? (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+            {featured.map((item, index) => (
+              <GalleryCard key={item.src} item={item} eager={index < 4} />
+            ))}
+          </ul>
+        ) : (
+          <p className="text-[15px] text-muted-foreground">
+            По этому направлению пока нет фотографий — задача уже в работе.
+          </p>
+        )}
+
+        {rest.length > 0 && <GalleryCarousel key={active} items={rest} />}
       </div>
     </Section>
+  )
+}
+
+function GalleryCard({ item, eager }: { item: GalleryItem; eager?: boolean }) {
+  return (
+    <li className="overflow-hidden rounded-2xl border border-border bg-card">
+      <figure className="flex h-full flex-col">
+        <div className="relative aspect-[4/3] w-full">
+          <Image
+            src={item.src}
+            alt={item.alt}
+            fill
+            sizes="(min-width: 1024px) 300px, 50vw"
+            className="object-cover"
+            loading={eager ? 'eager' : 'lazy'}
+          />
+        </div>
+        <figcaption className="px-3 py-2.5 text-[13px] leading-snug text-muted-foreground sm:text-[14px]">
+          {item.caption}
+        </figcaption>
+      </figure>
+    </li>
+  )
+}
+
+/**
+ * Остальные снимки направления — горизонтальная лента с кнопками вперёд/
+ * назад вместо бесконечной сетки. Лента листается на ширину видимой
+ * области (2 карточки на смартфоне, 3–4 на большом экране), а не на одну
+ * карточку: иначе для тридцати снимков понадобилось бы тридцать нажатий.
+ *
+ * Кнопки блокируются на краях по факту прокрутки (onScroll), а не по
+ * заранее посчитанному числу страниц: ширина карточки завязана на
+ * брейкпоинт, и пересчитывать её в JS избыточно, когда это умеет сам скролл.
+ */
+function GalleryCarousel({ items }: { items: GalleryItem[] }) {
+  const trackRef = useRef<HTMLUListElement>(null)
+  const [canPrev, setCanPrev] = useState(false)
+  const [canNext, setCanNext] = useState(true)
+
+  const updateArrows = useCallback(() => {
+    const el = trackRef.current
+    if (!el) return
+    setCanPrev(el.scrollLeft > 8)
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 8)
+  }, [])
+
+  useEffect(() => {
+    trackRef.current?.scrollTo({ left: 0 })
+    updateArrows()
+  }, [items, updateArrows])
+
+  function scrollByPage(direction: 1 | -1) {
+    const el = trackRef.current
+    if (!el) return
+    el.scrollBy({ left: direction * el.clientWidth, behavior: 'smooth' })
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[14px] text-muted-foreground">Ещё {items.length} фото по направлению</p>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => scrollByPage(-1)}
+            disabled={!canPrev}
+            aria-label="Показать предыдущие фото"
+            className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/60 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <ChevronLeft className="size-5" strokeWidth={2} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByPage(1)}
+            disabled={!canNext}
+            aria-label="Показать следующие фото"
+            className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/60 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <ChevronRight className="size-5" strokeWidth={2} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+
+      <ul
+        ref={trackRef}
+        onScroll={updateArrows}
+        className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-1 sm:mx-0 sm:px-0 lg:gap-4"
+      >
+        {items.map((item) => (
+          <li
+            key={item.src}
+            className="w-[calc(50%-6px)] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card sm:w-[calc(33.333%-8px)] lg:w-[calc(25%-9px)]"
+          >
+            <figure className="flex h-full flex-col">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  sizes="(min-width: 1024px) 300px, 50vw"
+                  className="object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <figcaption className="px-3 py-2.5 text-[13px] leading-snug text-muted-foreground sm:text-[14px]">
+                {item.caption}
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

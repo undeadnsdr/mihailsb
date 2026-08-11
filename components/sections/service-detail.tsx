@@ -1,7 +1,6 @@
 'use client'
 
 import { useId, useState } from 'react'
-import Image from 'next/image'
 import { Check } from 'lucide-react'
 import {
   type Service,
@@ -13,6 +12,7 @@ import {
 } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { PhotoSlideshow } from '@/components/ui/photo-slideshow'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
 import { reachGoal } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
@@ -104,17 +104,7 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
           </Reveal>
 
           <Reveal step={1} className="flex flex-col gap-5 lg:flex-1">
-            <figure className="overflow-hidden rounded-2xl border border-border card-shadow">
-              <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src={service.image}
-                  alt={service.imageAlt}
-                  fill
-                  sizes="(min-width: 1024px) 640px, 100vw"
-                  className="object-cover"
-                />
-              </div>
-            </figure>
+            <PhotoSlideshow photos={service.images} />
           </Reveal>
         </div>
 
