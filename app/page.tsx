@@ -14,6 +14,7 @@ import { Industries } from '@/components/sections/industries'
 import { Pricing } from '@/components/sections/pricing'
 import { Support } from '@/components/sections/support'
 import { About } from '@/components/sections/about'
+import { Showcase } from '@/components/sections/showcase'
 import { Faq } from '@/components/sections/faq'
 import { FinalCta } from '@/components/sections/final-cta'
 import { JsonLd } from '@/components/json-ld'
@@ -46,6 +47,10 @@ import { JsonLd } from '@/components/json-ld'
  * рядом с FAQ. HowItWorks стоит прямо перед Stack: сначала человек читает
  * про механику работы с исполнителем (шаги, сроки), и только потом —
  * про техническую механику самого сайта.
+ *
+ * Showcase стоит между About и Pains: возражение «у меня уже есть Авито и
+ * группа» приходит раньше, чем разговор о болях и цене, — и снимать его
+ * нужно до того, как человек решит, что сайт ему в принципе не нужен.
  */
 export default function Page() {
   return (
@@ -57,6 +62,7 @@ export default function Page() {
         <Hero />
         <BenefitsMarquee />
         <About />
+        <Showcase />
         <Pains />
         <Works />
         <Industries />
