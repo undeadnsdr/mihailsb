@@ -37,10 +37,19 @@ export function SiteHeader() {
           aria-label="Основная навигация"
           className={cn(
             // px = py, поэтому отступ до лого/кнопки слева-справа равен отступу сверху-снизу.
-            // До lg меню скрыто, поэтому правая колонка auto (не сжимается, номер телефона не режется).
+            // На планшете (sm–lg) третья колонка убирается: меню <ul> там всё
+            // ещё скрыто (display:none), но сама явная колонка под него
+            // раньше оставалась в grid-template-columns и «съедала» gap-4
+            // с обеих сторон впустую — кнопка «Написать на Авито» стояла
+            // на 16px левее правого края хедера, хотя отступ сверху/снизу
+            // был 7px. Без третьей колонки gap полностью уходит в 1fr слева
+            // от лого, и кнопка встаёт вплотную к правому padding хедера —
+            // так gap справа равен gap сверху и снизу (оба = px-1.5/py-1.5).
+            // На смартфоне (<sm) оставлена прежняя раскладка в три колонки —
+            // там этот сдвиг не был частью задачи.
             // С lg меню появляется, и обе боковые колонки становятся равными 1fr — тогда среднее меню
             // центрируется относительно всего хедера, а не свободного места между лого и кнопкой.
-            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-1.5 py-1.5 shadow-sm transition-all duration-300 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
+            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-4 rounded-full border border-border px-1.5 py-1.5 shadow-sm transition-all duration-300 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]',
             floating ? 'glass' : 'bg-card',
           )}
         >
