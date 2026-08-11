@@ -51,7 +51,13 @@ export function Hero() {
             ))}
           </div>
 
-          <CallbackCard />
+          {/* На смартфоне плитку прячем: герой и без неё занимает весь
+              первый экран, а обратный звонок там доступен из нижней
+              панели связи. От sm карточка возвращается и по-прежнему
+              растягивается на остаток высоты колонки. */}
+          <div className="hidden sm:flex sm:flex-1 sm:flex-col">
+            <CallbackCard />
+          </div>
         </Reveal>
       </div>
     </Section>
