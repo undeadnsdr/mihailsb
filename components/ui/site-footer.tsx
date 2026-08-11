@@ -12,7 +12,7 @@ export function SiteFooter() {
     <footer className="border-t border-border bg-secondary">
       {/* px-4 на смартфоне — те же боковые отступы, что у секций выше:
           иначе подвал визуально «шире» страницы. Четыре колонки в ряд
-          только с lg — на планшете список из семи направлений сжался бы
+          только с lg — на планшете список направлений сжался бы
           до нечитаемой ширины */}
       <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 md:px-10 lg:grid-cols-4 lg:gap-6 lg:px-16">
         <div className="flex flex-col gap-3">
