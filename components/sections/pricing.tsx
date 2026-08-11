@@ -120,11 +120,10 @@ export function Pricing() {
                     короткий текст спрятан за <details> (кликабельна вся
                     область — нативное поведение summary, шеврон в углу
                     третьей строки за счёт pr-6). На планшете (sm–lg) блок
-                    стоит рядом с «Если нужно больше» и растягивается на
-                    его высоту — вместо клэмпа здесь textTablet: тот же
-                    список идей, но развёрнутый до объёма, который
-                    естественно заполняет карточку без пустот. От lg
-                    возвращается компактный main-текст без клэмпа. */}
+                    стоит рядом с «Если нужно больше» и показывает
+                    textTablet — тот же список модулей, но короче
+                    основного text (без клэмпа, текст сам по себе
+                    компактный). От lg возвращается обычный main-текст. */}
                 <details className="group sm:hidden">
                   <summary className="relative cursor-pointer list-none pr-6 [&::-webkit-details-marker]:hidden">
                     <p className="line-clamp-3 text-pretty text-[15px] leading-relaxed text-muted-foreground group-open:line-clamp-none">
