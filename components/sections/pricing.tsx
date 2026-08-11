@@ -8,15 +8,18 @@ import { AvitoButton } from '@/components/ui/cta'
 /**
  * Кадр 10. Цифра 6000 набрана 96px — это главный аргумент страницы.
  *
- * Правая колонка — это два блока друг под другом («Если нужно больше» +
- * «Если нужно ещё больше»), их суммарная высота почти всегда больше, чем
- * естественная высота левой плитки с ценой. Grid по умолчанию тянет все
- * колонки строки на одинаковую высоту (stretch), поэтому левая плитка
- * растягивается сама — h-full на BentoCard просто использует эту высоту.
- * Цена, разбивка и приписка должны прижиматься к верху (первое, что видит
- * взгляд), а лишнюю высоту съедает mt-auto на кнопке: она остаётся там же,
- * где стояла раньше, просто теперь её позиция определяется отступом сверху,
- * а не justify-end на всём блоке.
+ * Три раскладки под три диапазона:
+ * - до sm (смартфон): всё в один столбец сверху вниз — цена, «Если нужно
+ *   больше», «Если нужно ещё больше».
+ * - sm–lg (планшет): цена на всю ширину сверху, под ней строка из двух
+ *   карточек 2/3 + 1/3 — «Если нужно больше» слева, «Если нужно ещё
+ *   больше» справа. Grid тянет обе карточки строки на одинаковую высоту
+ *   (stretch), поэтому h-full на BentoCard используют именно эту высоту.
+ * - от lg (десктоп): прежние 7/5 колонки, «Если нужно больше» и «Если
+ *   нужно ещё больше» друг под другом справа от цены.
+ *
+ * Внутри плитки цены цена/разбивка/приписка прижаты к верху (первое, что
+ * видит взгляд), а лишнюю высоту на lg съедает mt-auto на кнопке.
  */
 export function Pricing() {
   return (
@@ -24,12 +27,10 @@ export function Pricing() {
       <div className="flex flex-col gap-8 md:gap-10">
         <SectionHeading id="pricing-title" title={pricing.title} subtitle={pricing.subtitle} />
 
-        {/* Раскладка 7/5 включалась на md — на планшете в портрете плитка
-            цены получала 390px, цифра 96px почти упиралась в края, а
-            grid растягивал плитку под высоту правой колонки, из-за чего
-            сверху зияло пустое поле в треть карточки. До lg колонки идут
-            друг под другом: цена получает всю ширину, растягивать нечего */}
-        <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
+        {/* На lg — grid 12 колонок, cена 7 + правая колонка 5, друг под
+            другом. До lg колонки не нужны: макет описан ниже отдельно
+            для sm–lg и для <sm через flex-col / grid-cols-3 */}
+        <div className="flex flex-col gap-4 md:gap-6 lg:grid lg:grid-cols-12 lg:items-start">
           <Reveal className="lg:col-span-7">
             <BentoCard className="h-full gap-6 lg:p-10">
               <div className="flex flex-col gap-1">
@@ -79,10 +80,16 @@ export function Pricing() {
             </BentoCard>
           </Reveal>
 
-          <div className="flex flex-col gap-4 md:gap-6 lg:col-span-5">
-            <Reveal step={1} className="flex-1">
+          {/* Правая колонка целиком: до sm — обычный flex-col, карточки
+              друг под другом (grid-cols-1 = один столбец, col-span на
+              детях без sm: не действует). sm–lg — строка 2/3 + 1/3, обе
+              карточки растянуты на одинаковую высоту строки (items-stretch
+              по умолчанию у grid). От lg — своя колонка (col-span-5),
+              внутри которой карточки снова идут друг под другом. */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6 lg:col-span-5 lg:flex lg:flex-col lg:gap-6">
+            <Reveal step={1} className="sm:col-span-2 lg:col-span-auto">
               {/* bg-secondary-strong чуть темнее bg-secondary у блока
-                  «Если нужно ещё больше» ниже — так первый, более весомый
+                  «Если нужно ещё больше» рядом — так первый, более весомый
                   блок визуально отделяется от второго, не прибегая к
                   тени или рамке */}
               <BentoCard tone="secondary" className="h-full gap-4 bg-secondary-strong">
@@ -98,36 +105,44 @@ export function Pricing() {
               </BentoCard>
             </Reveal>
 
-            <Reveal step={2}>
+            <Reveal step={2} className="sm:col-span-1 lg:col-span-auto">
               {/* Раньше этот блок был предупреждением про скрытый платёж
                   (красная рамка, tone="outline"). Второй год — это не риск,
                   а обычное продление, поэтому тон и цвет теперь такие же,
                   как у «Если нужно больше» рядом: секция про цены не должна
                   заканчиваться тревожной нотой */}
-              <BentoCard tone="secondary" className="gap-3">
+              <BentoCard tone="secondary" className="h-full gap-3">
                 <span className="flex items-center gap-2 text-[15px] font-medium tracking-[0.01em]">
                   <Info className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} aria-hidden="true" />
                   {pricing.renewal.title}
                 </span>
-                {/* На смартфоне описание длиннее трёх строк — здесь оно
-                    спрятано за <details>: кликабельна вся область текста
-                    (нативное поведение summary), а шеврон сидит в правом
-                    нижнем углу третьей строки за счёт pr-6 на summary.
-                    group-open:line-clamp-none снимает обрезку при раскрытии.
-                    От sm карточка шире, клэмп и шеврон не нужны вовсе —
-                    line-clamp-none включён всегда, а chevron скрыт. */}
-                <details className="group">
-                  <summary className="relative cursor-pointer list-none pr-6 sm:cursor-default sm:pr-0 [&::-webkit-details-marker]:hidden">
-                    <p className="line-clamp-3 text-pretty text-[15px] leading-relaxed text-muted-foreground group-open:line-clamp-none sm:line-clamp-none">
+                {/* Три версии подписи под три диапазона: на смартфоне
+                    короткий текст спрятан за <details> (кликабельна вся
+                    область — нативное поведение summary, шеврон в углу
+                    третьей строки за счёт pr-6). На планшете (sm–lg) блок
+                    стоит рядом с «Если нужно больше» и растягивается на
+                    его высоту — вместо клэмпа здесь textTablet: тот же
+                    список идей, но развёрнутый до объёма, который
+                    естественно заполняет карточку без пустот. От lg
+                    возвращается компактный main-текст без клэмпа. */}
+                <details className="group sm:hidden">
+                  <summary className="relative cursor-pointer list-none pr-6 [&::-webkit-details-marker]:hidden">
+                    <p className="line-clamp-3 text-pretty text-[15px] leading-relaxed text-muted-foreground group-open:line-clamp-none">
                       {pricing.renewal.text}
                     </p>
                     <ChevronDown
-                      className="absolute bottom-0 right-0 size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180 sm:hidden"
+                      className="absolute bottom-0 right-0 size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
                       strokeWidth={1.75}
                       aria-hidden="true"
                     />
                   </summary>
                 </details>
+                <p className="hidden text-pretty text-[15px] leading-relaxed text-muted-foreground sm:block lg:hidden">
+                  {pricing.renewal.textTablet}
+                </p>
+                <p className="hidden text-pretty text-[15px] leading-relaxed text-muted-foreground lg:block">
+                  {pricing.renewal.text}
+                </p>
               </BentoCard>
             </Reveal>
           </div>
