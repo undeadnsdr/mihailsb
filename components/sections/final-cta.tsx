@@ -27,12 +27,16 @@ export function FinalCta() {
 
   return (
     <Section id="contact" labelledBy="contact-title">
-      {/* Две колонки по половине включались на md: на планшете в портрете
-          форма с полями по 52px и подписями оставалась в 340px, а рядом
-          с ней — сжатый призыв. До lg блоки идут друг под другом, форма
-          получает всю ширину, и оба блока читаются в полный размер */}
-      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-12">
-        <Reveal className="lg:col-span-6">
+      {/* Две колонки по половине включаются уже с sm: слева призыв
+          «Расскажите, чем занимаетесь…», справа форма «Или оставьте
+          заявку…» — рядом друг с другом. h-full на обеих плитках и
+          растяжение grid по умолчанию (stretch) уравнивают их высоту:
+          какая колонка выше, задаёт высоту строки, а justify-end в левой
+          плитке ниже не даёт контенту отрываться от нижнего края. На
+          смартфоне (<sm) блоки идут друг под другом, каждый получает
+          всю ширину */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-12 md:gap-6">
+        <Reveal className="sm:col-span-6">
           <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-8 lg:p-10 xl:p-12">
             <h2
               id="contact-title"
@@ -71,7 +75,7 @@ export function FinalCta() {
           </BentoCard>
         </Reveal>
 
-        <Reveal step={1} className="lg:col-span-6">
+        <Reveal step={1} className="sm:col-span-6">
           <BentoCard className="h-full gap-5 md:p-8 lg:p-10">
             <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
               {finalCta.formTitle}
