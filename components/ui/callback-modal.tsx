@@ -124,7 +124,13 @@ export function CallbackModal({ trigger, place }: { trigger: ReactNode; place: s
               {callbackModal.fields.submit}
             </button>
 
-            <p className="text-[14px] leading-relaxed text-muted-foreground">{callbackModal.microcopy}</p>
+            {/* Две версии подписи вместо одной: на смартфоне короткая,
+                от sm — полная. Переключение классами, а не через JS,
+                чтобы разметка совпадала на сервере и клиенте */}
+            <p className="text-[14px] leading-relaxed text-muted-foreground">
+              <span className="sm:hidden">{callbackModal.microcopyMobile}</span>
+              <span className="hidden sm:inline">{callbackModal.microcopy}</span>
+            </p>
           </form>
         )}
       </DialogContent>
