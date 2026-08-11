@@ -158,7 +158,10 @@ function PhotoCard() {
           {hero.h1}
         </h1>
         <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-background/85 lg:text-lg short-landscape:text-[15px]">
-          {hero.subtitle}
+          {hero.subtitle}{' '}
+          {/* «Оплата — только если понравится» появляется от sm: на смартфоне
+              герой и без неё занимает весь экран. */}
+          <span className="hidden sm:inline">{hero.subtitleTail}</span>
         </p>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
