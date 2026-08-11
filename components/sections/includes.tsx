@@ -28,17 +28,26 @@ export function Includes() {
       <div className="flex flex-col gap-8 md:gap-10">
         <SectionHeading id="includes-title" title={includes.title} subtitle={includes.subtitle} />
 
-        {/* Три колонки включались на md, то есть ровно на планшете в
-            портрете: 768px минус отступы делилось на три по ~200px, из-за
-            чего «Чтобы вас находили» ломалось на три строки, а описания
-            переносились по два слова. Третья колонка теперь появляется
-            только с lg (планшет боком и десктоп), а планшет в портрете
-            получает две — там на карточку приходится ~340px */}
+        {/* Три диапазона:
+            - до sm (смартфон): все три группы друг под другом.
+            - sm–lg (планшет): «Сам сайт» и «Чтобы вас находили» — две
+              колонки в верхней строке, «Чтобы вам писали» — целиком под
+              ними на всю ширину (col-span-2), а пункты внутри неё лежат
+              в одну линию (см. ниже переключение <ul> на grid-cols-3).
+            - от lg (планшет боком и десктоп): прежние три равные колонки —
+              на 768px в портрете «Чтобы вас находили» ломалось на три
+              строки, поэтому третья колонка появляется только начиная
+              с lg, где на карточку уже приходится достаточно ширины. */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {includes.groups.map((group, index) => {
             const Icon = groupIcons[group.icon]
+            const isContact = group.icon === 'contact'
             return (
-              <Reveal key={group.title} step={(index % 3) as 0 | 1 | 2}>
+              <Reveal
+                key={group.title}
+                step={(index % 3) as 0 | 1 | 2}
+                className={isContact ? 'sm:col-span-2 lg:col-span-1' : undefined}
+              >
                 {/* flat: три равные группы пунктов, не три отдельных
                     предложения — тень тут читалась бы как «выбери одну
                     из трёх», хотя нужны все три (см. bento-card.tsx) */}
@@ -52,7 +61,20 @@ export function Includes() {
                     </h3>
                   </div>
 
-                  <ul className="flex flex-col divide-y divide-border border-t border-border">
+                  {/* «Чтобы вам писали» получает во всю ширину секции на
+                      sm–lg, поэтому её три пункта на этом диапазоне встают
+                      в одну линию (grid-cols-3) вместо списка друг под
+                      другом — иначе вся выгода от полной ширины ушла бы
+                      просто на более длинные строки текста. На смартфоне
+                      и от lg (там у карточки снова только 1/3 ширины)
+                      возвращается обычный вертикальный список. */}
+                  <ul
+                    className={
+                      isContact
+                        ? 'grid grid-cols-1 divide-y divide-border border-t border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x sm:border-t-0 sm:border-b lg:grid-cols-1 lg:divide-x-0 lg:divide-y lg:border-b-0 lg:border-t'
+                        : 'flex flex-col divide-y divide-border border-t border-border'
+                    }
+                  >
                     {group.items.map((item) => (
                       <li
                         key={item.title}
@@ -60,8 +82,18 @@ export function Includes() {
                         // он держит разделители на одной линии в соседних
                         // колонках. На смартфоне карточки идут друг под
                         // другом — выравнивать не с чем, а фиксированная
-                        // высота добавляла к каждому пункту пустое поле
-                        className="flex items-start gap-3 pt-4 sm:min-h-[132px] lg:min-h-[108px] [&:not(:last-child)]:pb-4"
+                        // высота добавляла к каждому пункту пустое поле.
+                        // В линии «Чтобы вам писали» на sm–lg пункты сами
+                        // друг с другом не выравниваются по высоте текста
+                        // (это три раздельные колонки, не строки одной
+                        // сетки), поэтому там min-h не нужен — high-строку
+                        // держит сама карточка через articles одинаковой
+                        // длины в контенте.
+                        className={
+                          isContact
+                            ? 'flex items-start gap-3 px-0 pt-4 sm:px-4 sm:pt-0 sm:first:pl-0 sm:last:pr-0 lg:px-0 lg:pt-4 lg:min-h-[108px] [&:not(:last-child)]:pb-4 sm:[&:not(:last-child)]:pb-0 lg:[&:not(:last-child)]:pb-4'
+                            : 'flex items-start gap-3 pt-4 sm:min-h-[132px] lg:min-h-[108px] [&:not(:last-child)]:pb-4'
+                        }
                       >
                         <Check
                           className="mt-1 size-4 shrink-0 text-primary"
@@ -74,8 +106,17 @@ export function Includes() {
                               смартфоне: тексты разной длины — от одной строки до
                               трёх — иначе пункты внутри карточки визуально
                               «прыгали» бы по высоте. От sm высоту уже держит
-                              min-h на самом <li>, поэтому здесь его убираем */}
-                          <span className="min-h-[3lh] text-[15px] leading-relaxed text-muted-foreground sm:min-h-0">
+                              min-h на самом <li>, поэтому здесь его убираем
+                              (кроме линии «Чтобы вам писали» на sm–lg — там
+                              min-h на <li> тоже снят, три раздельные колонки
+                              не обязаны совпадать по высоте построчно) */}
+                          <span
+                            className={
+                              isContact
+                                ? 'min-h-[3lh] text-[15px] leading-relaxed text-muted-foreground sm:min-h-0 lg:min-h-0'
+                                : 'min-h-[3lh] text-[15px] leading-relaxed text-muted-foreground sm:min-h-0'
+                            }
+                          >
                             {item.text}
                           </span>
                         </span>
