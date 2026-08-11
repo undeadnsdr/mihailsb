@@ -1,6 +1,13 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent as ReactTouchEvent,
+} from 'react'
 import { ArrowLeftRight, ArrowUpDown, Check, HelpCircle, Laptop } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Work } from '@/lib/content'
@@ -269,6 +276,41 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
 
   const running = inView && !noFx && !reduced
 
+  // Свайп по панели «Задача/Решение» листает проекты на смартфоне.
+  // Точку касания храним в ref, а не в состоянии: перерисовка на каждое
+  // касание тут не нужна, а лишний ререндер сбросил бы диаграммы.
+  const touchRef = useRef<{ x: number; y: number } | null>(null)
+
+  const goToWork = useCallback(
+    (direction: 1 | -1) => {
+      setWorkIndex((current) => (current + direction + works.length) % works.length)
+      setActive(0)
+    },
+    [works.length],
+  )
+
+  const onTouchStart = useCallback((event: ReactTouchEvent) => {
+    const touch = event.touches[0]
+    touchRef.current = { x: touch.clientX, y: touch.clientY }
+  }, [])
+
+  const onTouchEnd = useCallback(
+    (event: ReactTouchEvent) => {
+      const start = touchRef.current
+      touchRef.current = null
+      if (!start) return
+      const touch = event.changedTouches[0]
+      const dx = touch.clientX - start.x
+      const dy = touch.clientY - start.y
+      // 48px — порог намеренного жеста, а Math.abs(dx) > Math.abs(dy) * 1.5
+      // отсекает вертикальную прокрутку страницы: палец по диагонали
+      // считается скроллом, а не листанием
+      if (Math.abs(dx) < 48 || Math.abs(dx) <= Math.abs(dy) * 1.5) return
+      goToWork(dx < 0 ? 1 : -1)
+    },
+    [goToWork],
+  )
+
   const step = useCallback(() => {
     if (steppedRef.current === passKey) return
     steppedRef.current = passKey
@@ -474,7 +516,15 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               (септик: 4 строки задачи + решение из этой же панели) — так
               высота панели с описанием не меняется между проектами и не
               двигает сцену со слайдшоу слева */}
-          <div className="flex min-h-[250px] max-w-[46ch] flex-col gap-3 sm:min-h-[176px] lg:min-h-[262px]">
+          {/* Свайп влево/вправо по этой панели листает проекты — тот же
+              шаг, что и табы выше. touch-pan-y оставляет браузеру
+              вертикальную прокрутку страницы: перехватываем только
+              горизонтальный жест, страница из-под пальца не залипает */}
+          <div
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            className="flex min-h-[250px] max-w-[46ch] touch-pan-y flex-col gap-3 sm:min-h-[176px] lg:min-h-[262px]"
+          >
             {/* Иконка сидит в одном inline-flex со словом "Задача"/"Решение"
                 (а не рядом со всем абзацем) и центрируется items-center
                 именно по высоте этого слова — независимо от того, на
