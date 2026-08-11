@@ -366,7 +366,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
             className="relative aspect-square w-full sm:aspect-[4/3] [container-type:size] short-landscape:aspect-[16/9]"
           >
             <DeviceFrame kind={slide.kind}>
-              {/* key — это перезапуск: у н��вого прохода новый элемент, а
+              {/* key — это перезапуск: у нового прохода новый элемент, а
                   значит анимация начинается с начала, без сброса вручную */}
               <div
                 key={passKey}
@@ -394,7 +394,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           {/* Полоска хода прохода — и она же его хронометр.
               Шаг делает animationend именно этой полоски, а не прокрутки:
               полоска есть у любого кадра, а прокрутка — только у двух.
-              Один источник ��ремени вместо двух, и разойтись и�� негде */}
+              Один источник времени вместо двух, и разойтись им негде */}
           <div aria-hidden="true" className="h-0.5 w-full overflow-hidden rounded-full bg-border">
             <div
               key={passKey}
