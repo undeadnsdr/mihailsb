@@ -506,7 +506,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               услуг уже виден на самом макете сайта слева, повторять его
               текстом рядом было избыточно. justify-between растягивает
               три одинаковых кольца на всю ширину колонки с описанием —
-              крайние прижа��ы к её краям, а не сбиты в кучку по центру */}
+              крайние прижаты к её краям, а не сбиты в кучку по центру */}
           <div className="flex items-center justify-between gap-2 sm:gap-8">
             {metrics.map((metric) => (
               <CircularMetric
