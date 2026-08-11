@@ -99,7 +99,7 @@ export function SiteHeader() {
           </ul>
 
           <div className="flex items-center justify-self-end">
-            {/* Портрет смартфона: бургер со всеми якорями — семь направлений
+            {/* Портрет смартфона: бургер со всеми якорями — направления
                 и разделы. Связь и так всегда на виду в нижней панели */}
             <Sheet>
               <SheetTrigger
