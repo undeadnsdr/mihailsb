@@ -3,7 +3,14 @@
 import { useId, useState } from 'react'
 import Image from 'next/image'
 import { Check, ChevronDown } from 'lucide-react'
-import { type Service, services, servicesDetail, formatPrice, telegramMessage } from '@/lib/content'
+import {
+  type Service,
+  services,
+  servicesDetail,
+  formatNumber,
+  formatPrice,
+  telegramMessage,
+} from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
@@ -67,8 +74,10 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
               </h2>
               <p className="flex items-baseline gap-1.5">
                 <span className="text-[14px] text-muted-foreground">от</span>
+                {/* Число без знака рубля: он уже есть в подписи единицы
+                    справа (`₽/м²`) — см. тот же приём в карточках Services */}
                 <span className="display-caps tnum text-[28px] leading-none text-highlight sm:text-[32px]">
-                  {formatPrice(service.priceFrom)}
+                  {formatNumber(service.priceFrom)}
                 </span>
                 <span className="text-[14px] text-muted-foreground">{service.priceUnit}</span>
               </p>
@@ -161,7 +170,7 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
   )
 }
 
-/** Свёрнутый прайс-лист направления */
+/** Свёрнутый ��райс-лист направления */
 function PriceList({ service }: { service: Service }) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
@@ -248,7 +257,9 @@ function PriceList({ service }: { service: Service }) {
           ))}
 
           <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-[14px]">
-            {servicesDetail.priceNote}
+            {servicesDetail.priceNote(
+              servicesDetail.priceUnitWords[service.priceUnit] ?? 'за работу',
+            )}
           </p>
         </div>
       </div>

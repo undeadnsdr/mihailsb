@@ -8,7 +8,7 @@
  *
  * Версию кэша поднимать при смене состава файлов.
  */
-const CACHE = 'ilya-sites-v1'
+const CACHE = 'mihail-sb-v1'
 const OFFLINE_URL = '/'
 
 self.addEventListener('install', (event) => {

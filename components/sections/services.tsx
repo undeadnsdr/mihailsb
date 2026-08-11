@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { services, servicesIntro, formatPrice } from '@/lib/content'
+import { services, servicesIntro, formatNumber } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 
@@ -58,11 +58,14 @@ export function Services() {
                     {service.short}
                   </p>
 
+                  {/* Знак рубля живёт только в подписи единицы
+                      (`₽/м²`), поэтому само число выводится через
+                      formatNumber — иначе получалось «1 000 ₽ ₽/м²» */}
                   <p className="mt-1 flex items-center justify-between gap-3">
                     <span className="flex items-baseline gap-1">
                       <span className="text-[13px] text-muted-foreground">от</span>
                       <span className="display-caps tnum text-[22px] leading-none text-highlight">
-                        {formatPrice(service.priceFrom)}
+                        {formatNumber(service.priceFrom)}
                       </span>
                       <span className="text-[13px] text-muted-foreground">{service.priceUnit}</span>
                     </span>
