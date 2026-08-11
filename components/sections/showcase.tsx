@@ -3,6 +3,7 @@ import { showcase } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
+import { ChannelText } from '@/components/ui/channel-text'
 
 /** Иконка на смысл канала: доска объявлений — список строк, соцсети —
  *  собака из ника, сарафан — люди. Тот же приём, что в pains.tsx */
@@ -55,9 +56,7 @@ export function Showcase() {
                         <span className="text-pretty text-[18px] font-medium leading-snug tracking-[-0.01em]">
                           {item.title}
                         </span>
-                        <span className="text-pretty text-[16px] leading-relaxed text-muted-foreground">
-                          {item.text}
-                        </span>
+                        <ChannelText text={item.text} />
                       </span>
                     </BentoCard>
                   </Reveal>

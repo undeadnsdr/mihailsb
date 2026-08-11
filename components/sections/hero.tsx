@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Phone } from 'lucide-react'
+import { Calendar, Phone } from 'lucide-react'
 import { hero, works } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -118,7 +118,7 @@ function PhotoCard() {
           бейджем. Оба условия — про одно и то же: бейдж скрывается там,
           где под него нет свободного поля над заголовком */}
       <span className="absolute left-5 top-5 hidden items-center gap-1.5 rounded-full bg-card/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm min-[380px]:inline-flex short-landscape:hidden">
-        <MapPin className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
+          <Calendar className="size-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />
         {hero.badge}
       </span>
 
@@ -214,14 +214,18 @@ function CallbackCard() {
       {/* Три устройства вместо фото: планшет, ноутбук и смартфон с тем же
           демо-сайтом, но в своей вёрстке под каждый экран — наглядно
           показывает то, что фото само по себе не объясняло: сайт
-          выглядит завершённым на любом устройстве клиента. Порядок —
-          планшет-ноутбук-смартфон, сре��ний по размеру между двумя
-          крайними, а не по возрастанию/убыванию.
+          выглядит завершённым на любо���� устройстве клиента. Порядок —
+          планшет-ноутбук-смартфон, средний по размеру между двумя
+          крайними, а не по возрастан��ю/убыванию.
           bg-secondary/60 отделяет панель от фото главного кадра слева —
-          это не снимок, а витрина. rounded-t-2xl вместо родительского
-          overflow-hidden: у карточки нет паддинга, и без явного скругления
-          здесь были бы острые верхние углы поверх скруглённой карточки. */}
-      <div className="flex shrink-0 items-end justify-center gap-2.5 rounded-t-2xl bg-secondary/60 px-3 pt-5 pb-4 sm:gap-4 sm:px-5 sm:pt-6 sm:pb-5">
+          это не снимок, а витрина. Скругление на всех четырёх углах, а
+          не только сверху: у карточки нет паддинга, поэтому панель
+          прилегает к верхним и боковым краям карточки и без rounded-2xl
+          выглядывала бы острыми углами поверх скруглённой карточки; gap-3
+          от родителя отделяет её от кнопки снизу, так что нижние углы
+          панели ничем не закрыты и должны быть скруглены так же, как
+          верхние — иначе только они одни остаются острыми. */}
+      <div className="flex shrink-0 items-end justify-center gap-2.5 rounded-2xl bg-secondary/60 px-3 pt-5 pb-4 sm:gap-4 sm:px-5 sm:pt-6 sm:pb-5">
         {/* Планшет — портрет 3:4, тот же корпус и та же вёрстка, что и в
             слайдшоу работ (TabletMockup), просто без анимации и в статике */}
         <div className="relative h-16 shrink-0 sm:h-[72px] md:h-20" style={{ aspectRatio: '3 / 4' }}>

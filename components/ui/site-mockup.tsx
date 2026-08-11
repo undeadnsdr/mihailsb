@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Phone, Check, Star } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import type { Work } from '@/lib/content'
 import { cn } from '@/lib/utils'
 
@@ -58,76 +58,30 @@ const OVER_PHOTO_MUTED = '#dfe4ea'
  * различается сильнее всего, потому что именно его видно на всех превью.
  */
 export function SiteMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
-  const { mock, site } = work
+  const { mock } = work
 
-  const hero = <DesktopHero work={work} priority={priority} />
-  const services = <DesktopServices work={work} />
-  const price = <DesktopPrice work={work} />
-  const stats = <DesktopStats work={work} />
-  const gallery = <DesktopGallery work={work} />
-  const steps = <DesktopSteps work={work} />
-  const review = <DesktopReview work={work} />
-
-  // Разный порядок «тела» лендинга под разные сферы: у дома и котельной
-  // клиент считает смету, у кухни и септика сначала смотрит на работы
-  const body =
-    site.layout === 'split' ? (
-      <>
-        {price}
-        {stats}
-        {services}
-        {gallery}
-        {steps}
-        {review}
-      </>
-    ) : site.layout === 'centered' ? (
-      <>
-        {gallery}
-        {services}
-        {stats}
-        {price}
-        {review}
-        {steps}
-      </>
-    ) : (
-      <>
-        {services}
-        {stats}
-        {price}
-        {gallery}
-        {steps}
-        {review}
-      </>
-    )
+  // Порядок блоков приходит из проекта (work.site.blocks), а не выводится
+  // из каркаса первого экрана: у двух сайтов с одинаковым hero тело всё
+  // равно рассказывает о себе по-разному — где решает смета, цена идёт
+  // первой, где решает картинка — галерея
+  const blocks: Record<string, ReactNode> = {
+    services: <DesktopServices key="services" work={work} />,
+    price: <DesktopPrice key="price" work={work} />,
+    stats: <DesktopStats key="stats" work={work} />,
+    gallery: <DesktopGallery key="gallery" work={work} />,
+    steps: <DesktopSteps key="steps" work={work} />,
+    review: <DesktopReview key="review" work={work} />,
+  }
 
   return (
     <div
       style={siteVars(work)}
       className="flex w-full flex-col bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
-      {/* Шапка демо-сайта */}
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[4%] py-[1.6%]">
-        <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-[var(--mk-primary)]">
-          {mock.headline}
-        </span>
-        <div className="flex items-center gap-[1.6cqw]">
-          {/* Меню разделов есть у каждого настоящего лендинга — здесь оно
-              заодно отличает сайты друг от друга по составу пунктов */}
-          <div className="flex items-center gap-[1.4cqw] text-[1.15cqw] text-[var(--mk-muted)]">
-            <span>Услуги</span>
-            <span>Цены</span>
-            <span>Работы</span>
-            <span>Контакты</span>
-          </div>
-          <span className="flex items-center gap-1 rounded-full bg-[var(--mk-primary)] px-[1.6cqw] py-[0.8cqw] text-[1.2cqw] font-medium text-[var(--mk-primary-fg)]">
-            <Phone className="size-[1.4cqw]" strokeWidth={1.75} aria-hidden="true" />
-            Позвонить
-          </span>
-        </div>
-      </div>
+      <DesktopHeader work={work} />
 
-      {hero}
-      {body}
+      <DesktopHero work={work} priority={priority} />
+      {work.site.blocks.map((block) => blocks[block])}
 
       {/* Блок заявки: у настоящего лендинга подрядчика он всегда внизу —
           посетитель дочитал до конца, значит готов оставить телефон */}
@@ -143,14 +97,130 @@ export function SiteMockup({ work, priority = false }: { work: Work; priority?: 
         </div>
       </div>
 
-      {/* Подвал демо-сайта */}
+      {/* Подвал демо-сайта: здесь у настоящего сайта стоят почта и телефон —
+          они и уходят под размытие */}
       <div className="flex shrink-0 items-center justify-between gap-2 border-t border-[var(--mk-line)] bg-[var(--mk-surface)] px-[4%] py-[1.6%]">
         <span className="text-[1.2cqw] text-[var(--mk-muted)]">
           {work.niche} · {work.city}
         </span>
+        <div className="flex items-center gap-[1.6cqw] text-[1.2cqw] text-[var(--mk-muted)]">
+          <Contact blur={2.5}>{mock.email}</Contact>
+          <Contact blur={2.5}>{mock.phone}</Contact>
+        </div>
         <span className="rounded-md bg-[var(--mk-primary)] px-[1.6cqw] py-[0.9cqw] text-[1.2cqw] font-medium text-[var(--mk-primary-fg)]">
           Оставить заявку
         </span>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Контакт заказчика на макете — всегда под размытием.
+ *
+ * Размытие живёт на самом элементе, а не отдельным слоем в процентах от
+ * кадра (как было в BlurRegions): текст едет вместе с прокруткой макета,
+ * переносится вместе с ним в мобильную и планшетную вёрстку и не съезжает
+ * с телефона при смене устройства. Строка остаётся на месте — сайт выглядит
+ * настоящим, у которого просто закрыли контакт, а не макетом с пустотой.
+ */
+function Contact({
+  children,
+  blur = 3,
+  className,
+}: {
+  children: ReactNode
+  /** Радиус в пикселях: у крупного телефона в шапке нужен больше */
+  blur?: number
+  className?: string
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn('select-none whitespace-nowrap', className)}
+      style={{ filter: `blur(${blur}px)` }}
+    >
+      {children}
+    </span>
+  )
+}
+
+/**
+ * Шапка демо-сайта: три разных варианта.
+ *
+ * plain   — подпись слева, меню и кнопка справа (самая частая схема)
+ * centered — логотип по центру, меню строкой под ним: так делают там,
+ *            где сайт продаёт вид, а не срочность
+ * contact — телефон крупно рядом с кнопкой: у кровли и заборов половина
+ *           заявок приходит звонком, а не через форму
+ */
+function DesktopHeader({ work }: { work: Work }) {
+  const { mock, site } = work
+  const menu =
+    site.header === 'centered'
+      ? ['Проекты', 'Услуги', 'Смета', 'Этапы', 'Отзывы', 'Контакты']
+      : ['Услуги', 'Цены', 'Работы', 'Контакты']
+
+  const call = (
+    <span className="flex items-center gap-1 rounded-full bg-[var(--mk-primary)] px-[1.6cqw] py-[0.8cqw] text-[1.2cqw] font-medium text-[var(--mk-primary-fg)]">
+      <Phone className="size-[1.4cqw]" strokeWidth={1.75} aria-hidden="true" />
+      Позвонить
+    </span>
+  )
+
+  if (site.header === 'centered') {
+    return (
+      <div className="flex shrink-0 flex-col items-center gap-[0.9cqw] border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[4%] py-[1.4%]">
+        <span className="text-[1.7cqw] font-bold uppercase tracking-[0.18em] text-[var(--mk-primary)]">
+          {work.niche}
+        </span>
+        <div className="flex items-center gap-[1.8cqw] text-[1.15cqw] text-[var(--mk-muted)]">
+          {menu.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+          <Contact blur={2.5}>{mock.phone}</Contact>
+        </div>
+      </div>
+    )
+  }
+
+  if (site.header === 'contact') {
+    return (
+      <div className="flex shrink-0 items-center justify-between gap-[2cqw] border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[4%] py-[1.4%]">
+        <div className="flex min-w-0 flex-col">
+          <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-[var(--mk-primary)]">
+            {work.niche}
+          </span>
+          <span className="text-[1.05cqw] text-[var(--mk-muted)]">{work.city} и область</span>
+        </div>
+        <div className="flex items-center gap-[1.4cqw] text-[1.15cqw] text-[var(--mk-muted)]">
+          {menu.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </div>
+        <div className="flex shrink-0 items-center gap-[1.4cqw]">
+          <Contact blur={4} className="text-[1.9cqw] font-bold text-[var(--mk-text)]">
+            {mock.phone}
+          </Contact>
+          {call}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[4%] py-[1.6%]">
+      <span className="truncate text-[1.5cqw] font-bold tracking-[-0.01em] text-[var(--mk-primary)]">
+        {mock.headline}
+      </span>
+      <div className="flex items-center gap-[1.6cqw]">
+        <div className="flex items-center gap-[1.4cqw] text-[1.15cqw] text-[var(--mk-muted)]">
+          {menu.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+          <Contact blur={2.5}>{mock.email}</Contact>
+        </div>
+        {call}
       </div>
     </div>
   )
@@ -308,15 +378,14 @@ function DesktopHero({ work, priority }: { work: Work; priority: boolean }) {
   )
 }
 
-/** Услуги: плитками или списком в две колонки — зависит от каркаса */
+/** Услуги: плитки с иконками, чипы в строку или нумерованные строки */
 function DesktopServices({ work }: { work: Work }) {
   const { mock, site } = work
-  const asCards = site.layout === 'split' || site.layout === 'centered'
 
   return (
     <div className="flex shrink-0 flex-col gap-[1.4cqw] px-[4%] py-[2.6%]">
       <p className="text-[1.7cqw] font-bold tracking-[-0.01em]">Что делаем</p>
-      {asCards ? (
+      {site.services === 'cards' ? (
         <div className="grid grid-cols-4 gap-[1.2cqw]">
           {mock.services.map((service) => (
             <div
@@ -332,7 +401,7 @@ function DesktopServices({ work }: { work: Work }) {
             </div>
           ))}
         </div>
-      ) : (
+      ) : site.services === 'chips' ? (
         <div className="flex flex-wrap gap-[1.2cqw]">
           {mock.services.map((service) => (
             <span
@@ -348,16 +417,51 @@ function DesktopServices({ work }: { work: Work }) {
             </span>
           ))}
         </div>
+      ) : (
+        /* rows — прайс-лист строками: слева работа, справа «от … ₽».
+           Так устроены сайты, где выбирают не набор услуг, а конкретную
+           позицию с ценой напротив */
+        <div className="grid grid-cols-2 gap-x-[3cqw]">
+          {mock.services.map((service) => (
+            <div
+              key={service}
+              className="flex items-baseline justify-between gap-[1.4cqw] border-b border-[var(--mk-line)] py-[1.1cqw]"
+            >
+              <span className="text-[1.3cqw] font-medium">{service}</span>
+              <span className="text-[1.15cqw] text-[var(--mk-muted)]">по замеру</span>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
 }
 
-/** Полоса цифр — она же второй экран лендинга */
+/** Цифры: плашка акцентным цветом или открытые колонки по линии сверху */
 function DesktopStats({ work }: { work: Work }) {
+  const { mock, site } = work
+
+  if (site.stats === 'plain') {
+    return (
+      <div className="mx-[4%] grid shrink-0 grid-cols-3 gap-[2cqw] py-[2.2%]">
+        {mock.stats.map((item) => (
+          <div
+            key={item.label}
+            className="flex flex-col gap-[0.5cqw] border-t-2 border-[var(--mk-primary)] pt-[1.2cqw]"
+          >
+            <span className="tnum text-[2.6cqw] font-bold leading-none tracking-[-0.02em]">
+              {item.value}
+            </span>
+            <span className="text-[1.15cqw] leading-snug text-[var(--mk-muted)]">{item.label}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="mx-[4%] grid shrink-0 grid-cols-3 gap-[2cqw] rounded-lg bg-[var(--mk-accent)] px-[3cqw] py-[2.4cqw] text-[var(--mk-accent-fg)]">
-      {work.mock.stats.map((item) => (
+      {mock.stats.map((item) => (
         <div key={item.label} className="flex flex-col gap-[0.4cqw]">
           <span className="tnum text-[2.4cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
             {item.value}
@@ -382,41 +486,77 @@ function DesktopPrice({ work }: { work: Work }) {
   )
 }
 
+/** Один кадр галереи — картинка проекта, обрезанная по пропорции слота */
+function Shot({
+  src,
+  ratio,
+  className,
+}: {
+  src: string
+  ratio: string
+  className?: string
+}) {
+  return (
+    <div
+      className={cn('relative overflow-hidden rounded-lg', className)}
+      style={{ aspectRatio: ratio }}
+    >
+      <Image
+        src={src}
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="240px"
+        loading="lazy"
+        className="object-cover"
+      />
+    </div>
+  )
+}
+
 /**
- * Галерея работ. Фотография у проекта одна, поэтому три кадра —
- * это она же с разным object-position: честнее выдуманных картинок
- * и держит лендинг на нужной длине без пустых блоков.
+ * Галерея работ: три собственные фотографии проекта в одной из трёх
+ * раскладок. Раньше здесь трижды повторялась фотография первого экрана
+ * с разным object-position — на превью это читалось как один кадр,
+ * продублированный от нехватки материала.
  */
 function DesktopGallery({ work }: { work: Work }) {
-  const positions = ['30% 30%', '50% 60%', '70% 40%']
+  const { site } = work
+  const [first, second, third] = work.gallery
+
   return (
     <div className="flex shrink-0 flex-col gap-[1.4cqw] px-[4%] py-[2.6%]">
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-[1.7cqw] font-bold tracking-[-0.01em]">Наши работы</p>
         <span className="text-[1.2cqw] text-[var(--mk-muted)]">{work.city} и область</span>
       </div>
-      <div className="grid grid-cols-3 gap-[1.2cqw]">
-        {positions.map((position) => (
-          <div
-            key={position}
-            className="relative overflow-hidden rounded-lg"
-            style={{ aspectRatio: '4 / 3' }}
-          >
-            <Image
-              src={work.image}
-              alt=""
-              aria-hidden="true"
-              fill
-              sizes="200px"
-              placeholder="blur"
-              blurDataURL={work.blurDataURL}
-              loading="lazy"
-              className="object-cover"
-              style={{ objectPosition: position }}
-            />
+
+      {site.gallery === 'mosaic' ? (
+        /* Мозаика: один крупный кадр и два мелких рядом — так верстают
+           там, где главный объект надо показать целиком */
+        <div className="grid grid-cols-3 grid-rows-2 gap-[1.2cqw]">
+          <Shot src={first} ratio="16 / 11" className="col-span-2 row-span-2 h-full" />
+          <Shot src={second} ratio="4 / 3" className="h-full" />
+          <Shot src={third} ratio="4 / 3" className="h-full" />
+        </div>
+      ) : site.gallery === 'strip' ? (
+        /* Лента вертикальных кадров: четвёртый обрезан правым краем —
+           видно, что галерея листается дальше */
+        <div className="grid grid-cols-4 gap-[1.2cqw]">
+          <Shot src={first} ratio="3 / 4" />
+          <Shot src={second} ratio="3 / 4" />
+          <Shot src={third} ratio="3 / 4" />
+          <div className="relative">
+            <Shot src={first} ratio="3 / 4" className="opacity-45" />
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-[1.2cqw]">
+          <Shot src={first} ratio="4 / 3" />
+          <Shot src={second} ratio="4 / 3" />
+          <Shot src={third} ratio="4 / 3" />
+        </div>
+      )}
     </div>
   )
 }
@@ -500,11 +640,18 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
       style={siteVars(work)}
       className="flex h-full w-full flex-col bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
-      <div className="flex shrink-0 items-center justify-between gap-2 bg-[var(--mk-surface)] px-[6%] pb-[3%] pt-[9%]">
-        <span className="truncate text-[4.6cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
-          {work.niche}
-        </span>
-        <span className="flex size-[9cqw] items-center justify-center rounded-full bg-[var(--mk-primary)]">
+      <div className="flex shrink-0 items-center justify-between gap-[2cqw] bg-[var(--mk-surface)] px-[6%] pb-[3%] pt-[9%]">
+        <div className="flex min-w-0 flex-col">
+          <span className="truncate text-[4.6cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
+            {work.niche}
+          </span>
+          {/* Телефон в мобильной шапке — то, ради чего заходят с улицы,
+              поэтому он есть и здесь, и здесь же уходит под размытие */}
+          <Contact blur={2.5} className="text-[3cqw] text-[var(--mk-muted)]">
+            {mock.phone}
+          </Contact>
+        </div>
+        <span className="flex size-[9cqw] shrink-0 items-center justify-center rounded-full bg-[var(--mk-primary)]">
           <Phone
             className="size-[4.6cqw] text-[var(--mk-primary-fg)]"
             strokeWidth={1.75}
@@ -513,14 +660,15 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
         </span>
       </div>
 
+      {/* Обложка на телефоне — не та же фотография, что на ноутбуке:
+          у адаптивной вёрстки свой кадр под вертикальный экран, и это
+          заодно отличает слайды слайдшоу друг от друга */}
       <div className="relative shrink-0" style={{ aspectRatio: '4 / 3' }}>
         <Image
-          src={work.image}
+          src={work.gallery[0]}
           alt={work.imageAlt}
           fill
           sizes="300px"
-          placeholder="blur"
-          blurDataURL={work.blurDataURL}
           priority={priority}
           loading={priority ? undefined : 'lazy'}
           className="object-cover"
@@ -551,39 +699,56 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
       </div>
 
       <div className="flex flex-1 flex-col gap-[3cqw] px-[6%] py-[5%]">
-        <div className="flex items-end justify-between gap-2 rounded-lg bg-[var(--mk-accent)] px-[4cqw] py-[3.4cqw] text-[var(--mk-accent-fg)]">
-          <span className="text-[3.6cqw] font-medium leading-tight">{mock.priceLabel}</span>
-          <span className="tnum whitespace-nowrap text-[5.4cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
-            {mock.price}
-          </span>
-        </div>
-
-        {/* Цифры из полосы на десктопе: на телефоне они ужимаются в одну
-            строку, но остаются теми же — это одна и та же страница */}
-        <div className="flex items-start justify-between gap-[2cqw]">
-          {mock.stats.map((item) => (
-            <div key={item.label} className="flex flex-col gap-[0.6cqw]">
-              <span className="tnum text-[4.4cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
-                {item.value}
-              </span>
-              <span className="text-[2.6cqw] leading-tight text-[var(--mk-muted)]">{item.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-[2.2cqw]">
-          <p className="text-[3.4cqw] font-bold tracking-[-0.01em]">Что делаем</p>
-          {mock.services.map((service) => (
-            <span key={service} className="flex items-center gap-[2cqw] text-[3.8cqw] font-medium">
-              <Check
-                className="size-[4cqw] shrink-0 text-[var(--mk-primary)]"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              {service}
-            </span>
-          ))}
-        </div>
+        {/* Порядок блоков — тот же, что на широком экране: это одна
+            страница в адаптиве, а не другой сайт. Из списка проекта
+            берутся блоки, которые имеют смысл на узком экране */}
+        {work.site.blocks
+          .filter((block) => block === 'price' || block === 'stats' || block === 'services')
+          .map((block) =>
+            block === 'price' ? (
+              <div
+                key="price"
+                className="flex items-end justify-between gap-2 rounded-lg bg-[var(--mk-accent)] px-[4cqw] py-[3.4cqw] text-[var(--mk-accent-fg)]"
+              >
+                <span className="text-[3.6cqw] font-medium leading-tight">{mock.priceLabel}</span>
+                <span className="tnum whitespace-nowrap text-[5.4cqw] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
+                  {mock.price}
+                </span>
+              </div>
+            ) : block === 'stats' ? (
+              /* Цифры из полосы на десктопе: на телефоне они ужимаются
+                 в одну строку, но остаются теми же */
+              <div key="stats" className="flex items-start justify-between gap-[2cqw]">
+                {mock.stats.map((item) => (
+                  <div key={item.label} className="flex flex-col gap-[0.6cqw]">
+                    <span className="tnum text-[4.4cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
+                      {item.value}
+                    </span>
+                    <span className="text-[2.6cqw] leading-tight text-[var(--mk-muted)]">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div key="services" className="flex flex-col gap-[2.2cqw]">
+                <p className="text-[3.4cqw] font-bold tracking-[-0.01em]">Что делаем</p>
+                {mock.services.map((service) => (
+                  <span
+                    key={service}
+                    className="flex items-center gap-[2cqw] text-[3.8cqw] font-medium"
+                  >
+                    <Check
+                      className="size-[4cqw] shrink-0 text-[var(--mk-primary)]"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    {service}
+                  </span>
+                ))}
+              </div>
+            ),
+          )}
 
         <div className="mt-auto flex flex-col gap-[2.4cqw] border-t border-[var(--mk-line)] pt-[4cqw]">
           <div className="flex gap-[1cqw]" aria-hidden="true">
@@ -622,30 +787,42 @@ export function PhoneMockup({ work, priority = false }: { work: Work; priority?:
 export function TabletMockup({ work, priority = false }: { work: Work; priority?: boolean }) {
   const { mock, site } = work
   const centered = site.layout === 'centered'
+  // Порядок из списка блоков проекта: если цена там раньше услуг, значит
+  // в этой сфере считают смету — и на планшете она тоже идёт первой
+  const priceFirst = site.blocks.indexOf('price') < site.blocks.indexOf('services')
 
   return (
     <div
       style={siteVars(work)}
       className="flex h-full w-full flex-col bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[5%] py-[2.4%]">
+      <div className="flex shrink-0 items-center justify-between gap-[2cqw] border-b border-[var(--mk-line)] bg-[var(--mk-surface)] px-[5%] py-[2.4%]">
         <span className="truncate text-[3.4cqw] font-bold tracking-[-0.01em] text-[var(--mk-primary)]">
           {work.niche}
         </span>
-        <span className="flex items-center gap-[1cqw] rounded-full bg-[var(--mk-primary)] px-[3cqw] py-[1.4cqw] text-[2.6cqw] font-medium text-[var(--mk-primary-fg)]">
-          <Phone className="size-[2.8cqw]" strokeWidth={1.75} aria-hidden="true" />
-          Позвонить
-        </span>
+        <div className="flex shrink-0 items-center gap-[2cqw]">
+          {/* На планшете в шапку помещается телефон текстом — как на
+              настоящем адаптиве между мобильной иконкой и десктопной
+              строкой. Он тоже под размытием */}
+          <Contact blur={2.5} className="text-[2.6cqw] text-[var(--mk-muted)]">
+            {mock.phone}
+          </Contact>
+          <span className="flex items-center gap-[1cqw] rounded-full bg-[var(--mk-primary)] px-[3cqw] py-[1.4cqw] text-[2.6cqw] font-medium text-[var(--mk-primary-fg)]">
+            <Phone className="size-[2.8cqw]" strokeWidth={1.75} aria-hidden="true" />
+            Позвонить
+          </span>
+        </div>
       </div>
 
+      {/* Свой кадр обложки: на планшете это второе фото проекта, а не то,
+          что стоит на ноутбуке и телефоне — слайды слайдшоу не должны
+          отличаться только рамкой корпуса */}
       <div className="relative shrink-0" style={{ aspectRatio: '16 / 9' }}>
         <Image
-          src={work.image}
+          src={work.gallery[1]}
           alt={work.imageAlt}
           fill
           sizes="420px"
-          placeholder="blur"
-          blurDataURL={work.blurDataURL}
           priority={priority}
           loading={priority ? undefined : 'lazy'}
           className="object-cover"
@@ -678,31 +855,78 @@ export function TabletMockup({ work, priority = false }: { work: Work; priority?
         </div>
       </div>
 
-      {/* Полоса цифр — тот же блок, что на десктопе, только в одну строку */}
-      <div className="flex shrink-0 justify-between gap-[2cqw] bg-[var(--mk-accent)] px-[5%] py-[2.4%] text-[var(--mk-accent-fg)]">
+      {/* Цифры: плашка или открытые колонки — тот же вариант, что на
+          широком экране, иначе это выглядело бы как другой сайт */}
+      <div
+        className={cn(
+          'flex shrink-0 justify-between gap-[2cqw] px-[5%] py-[2.4%]',
+          site.stats === 'band'
+            ? 'bg-[var(--mk-accent)] text-[var(--mk-accent-fg)]'
+            : 'border-b border-[var(--mk-line)]',
+        )}
+      >
         {mock.stats.map((item) => (
-          <div key={item.label} className="flex flex-col gap-[0.4cqw]">
-            <span className="tnum text-[3.6cqw] font-bold leading-none tracking-[-0.02em] text-[var(--mk-primary)]">
+          <div
+            key={item.label}
+            className={cn(
+              'flex flex-col gap-[0.4cqw]',
+              site.stats === 'plain' && 'border-t-2 border-[var(--mk-primary)] pt-[1.2cqw]',
+            )}
+          >
+            <span
+              className={cn(
+                'tnum text-[3.6cqw] font-bold leading-none tracking-[-0.02em]',
+                site.stats === 'band' && 'text-[var(--mk-primary)]',
+              )}
+            >
               {item.value}
             </span>
-            <span className="text-[2.2cqw] leading-tight opacity-80">{item.label}</span>
+            <span
+              className={cn(
+                'text-[2.2cqw] leading-tight',
+                site.stats === 'band' ? 'opacity-80' : 'text-[var(--mk-muted)]',
+              )}
+            >
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-1 gap-[4cqw] px-[5%] py-[4%]">
+      {/* Колонки местами: у проектов, где в списке блоков цена стоит
+          раньше услуг, смета и на планшете идёт первой — слева */}
+      <div
+        className={cn(
+          'flex flex-1 gap-[4cqw] px-[5%] py-[4%]',
+          priceFirst && 'flex-row-reverse',
+        )}
+      >
         <div className="flex flex-1 flex-col gap-[2.4cqw]">
           <p className="text-[3cqw] font-bold tracking-[-0.01em]">Что делаем</p>
-          {mock.services.map((service) => (
-            <span key={service} className="flex items-center gap-[1.6cqw] text-[2.9cqw] font-medium">
-              <Check
-                className="size-[3cqw] shrink-0 text-[var(--mk-primary)]"
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              {service}
-            </span>
-          ))}
+          {mock.services.map((service) =>
+            site.services === 'rows' ? (
+              /* Прайс-лист строками — как на широком экране у этих сфер */
+              <span
+                key={service}
+                className="flex items-baseline justify-between gap-[1.6cqw] border-b border-[var(--mk-line)] pb-[1.2cqw] text-[2.9cqw] font-medium"
+              >
+                {service}
+                <span className="text-[2.4cqw] text-[var(--mk-muted)]">по замеру</span>
+              </span>
+            ) : (
+              <span
+                key={service}
+                className="flex items-center gap-[1.6cqw] text-[2.9cqw] font-medium"
+              >
+                <Check
+                  className="size-[3cqw] shrink-0 text-[var(--mk-primary)]"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                {service}
+              </span>
+            ),
+          )}
           <div className="mt-auto flex flex-col gap-[1.4cqw]">
             <div className="flex gap-[0.8cqw]" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -756,9 +980,11 @@ export function PhoneLandscapeMockup({ work, priority = false }: { work: Work; p
       style={siteVars(work)}
       className="flex h-full w-full bg-[var(--mk-bg)] text-[var(--mk-text)]"
     >
+      {/* Третий кадр проекта: у каждой адаптации своя обложка, поэтому
+          четыре слайда слайдшоу показывают четыре разные фотографии */}
       <div className="relative w-[44%] shrink-0">
         <Image
-          src={work.image}
+          src={work.gallery[2]}
           alt={work.imageAlt}
           fill
           sizes="420px"
@@ -790,10 +1016,15 @@ export function PhoneLandscapeMockup({ work, priority = false }: { work: Work; p
 
       <div className="flex flex-1 flex-col gap-[2.4cqh] px-[4%] py-[3.4%]">
         <div className="flex items-center justify-between gap-[2cqh]">
-          <span className="truncate text-[5cqh] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
-            {work.niche}
-          </span>
-          <span className="flex items-center gap-[1.2cqh] rounded-full bg-[var(--mk-primary)] px-[3cqh] py-[1.6cqh] text-[4cqh] font-medium text-[var(--mk-primary-fg)]">
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-[5cqh] font-bold tracking-[-0.02em] text-[var(--mk-primary)]">
+              {work.niche}
+            </span>
+            <Contact blur={2} className="text-[3.4cqh] text-[var(--mk-muted)]">
+              {mock.phone}
+            </Contact>
+          </div>
+          <span className="flex shrink-0 items-center gap-[1.2cqh] rounded-full bg-[var(--mk-primary)] px-[3cqh] py-[1.6cqh] text-[4cqh] font-medium text-[var(--mk-primary-fg)]">
             <Phone className="size-[4.2cqh]" strokeWidth={1.75} aria-hidden="true" />
             Позвонить
           </span>
