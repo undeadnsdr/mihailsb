@@ -1,11 +1,16 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { MapPin } from 'lucide-react'
 import { hero, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
+import { cn } from '@/lib/utils'
+
+/** Как долго держится каждый кадр слайд-шоу, в миллисекундах */
+const SLIDE_DURATION_MS = 5000
 
 /**
  * Первый экран.
@@ -77,29 +82,99 @@ export function Hero() {
         </div>
 
         <Reveal step={1} className="lg:flex-1 short-landscape:hidden">
-          <figure className="relative overflow-hidden rounded-2xl border border-border card-shadow">
-            {/* 4/3 на смартфоне и 5/4 от sm: вертикального места на узком
-                экране меньше всего, и панорамный кадр отодвигал бы кнопки
-                за пределы первого экрана */}
-            <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
-              <Image
-                src={hero.image}
-                alt={hero.imageAlt}
-                fill
-                sizes="(min-width: 1024px) 640px, 100vw"
-                className="object-cover"
-                priority
-              />
-            </div>
-            {/* Плашка светлая, а не затемняющая: снимок и так темнее
-                интерфейса на чёрном фоне, и градиент поверх него только
-                уводил бы кадр в грязь */}
-            <figcaption className="glass-dark absolute bottom-3 left-3 right-3 rounded-xl px-3 py-2 text-[13px] font-medium leading-snug sm:text-[14px]">
-              {hero.imageCaption}
-            </figcaption>
-          </figure>
+          <HeroSlideshow />
         </Reveal>
       </div>
     </Section>
+  )
+}
+
+/**
+ * Слайд-шоу первого экрана.
+ *
+ * Автопрокрутка, а не одна статичная фотография: пять кадров за 5 секунд
+ * каждый показывают разнообразие объектов (дом, фундамент, каркас, крыша,
+ * фасад) без дополнительного клика — на первом экране лишний контрол
+ * только отвлекал бы от кнопок «Замер» / «Telegram».
+ *
+ * Кадры лежат друг на друге и переключаются прозрачностью, а не сменой
+ * `src` в одном `<img>`: так следующая фотография успевает декодироваться
+ * заранее, и переход не мигает белым/чёрным кадром между сменами.
+ */
+function HeroSlideshow() {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // ?nofx — полностраничный снимок одним кадром (см. Reveal): таймер
+    // автопрокрутки в этом режиме менял бы кадр посреди скриншота
+    const noFx = new URLSearchParams(window.location.search).has('nofx')
+    if (reduced || noFx) return
+
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % hero.slides.length)
+    }, SLIDE_DURATION_MS)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  return (
+    <figure className="relative overflow-hidden rounded-2xl border border-border card-shadow">
+      {/* 4/3 на смартфоне и 5/4 от sm: вертикального места на узком экране
+          меньше всего, и панорамный кадр отодвигал бы кнопки за пределы
+          первого экрана */}
+      <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
+        {hero.slides.map((slide, index) => (
+          <Image
+            key={slide.image}
+            src={slide.image}
+            alt={slide.alt}
+            fill
+            sizes="(min-width: 1024px) 640px, 100vw"
+            className={cn(
+              'object-cover transition-opacity duration-700 ease-out',
+              index === active ? 'opacity-100' : 'opacity-0',
+            )}
+            // Первый кадр приоритетный (виден сразу, без ожидания сети),
+            // остальные четыре — обычная ленивая загрузка: они почти
+            // наверняка успеют декодироваться за первые 5 секунд, пока
+            // виден первый слайд, но не задерживают LCP
+            priority={index === 0}
+          />
+        ))}
+
+        {/* Плашка светлая, а не затемняющая: снимок и так темнее интерфейса
+            на чёрном фоне, и градиент поверх него только уводил бы кадр
+            в грязь. Верхний левый угол вместо нижнего — там подпись не
+            перекрывает линию горизонта, которая на большинстве объектов
+            проходит по нижней трети кадра */}
+        <div className="absolute left-3 top-3 right-3 sm:right-auto">
+          <p
+            key={hero.slides[active].caption}
+            className="glass-dark inline-block rounded-xl px-3 py-2 text-[13px] font-medium leading-snug sm:text-[14px] animate-fade-in"
+          >
+            {hero.slides[active].caption}
+          </p>
+        </div>
+
+        {/* Индикаторы кадров — не кнопки: слайд-шоу здесь декоративное
+            доказательство разнообразия объектов, а не галерея, которую
+            листают вручную. Точки только показывают, что кадр не застыл */}
+        <div
+          className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"
+          role="presentation"
+          aria-hidden="true"
+        >
+          {hero.slides.map((slide, index) => (
+            <span
+              key={slide.image}
+              className={cn(
+                'h-1.5 rounded-full transition-all duration-300',
+                index === active ? 'w-5 bg-primary' : 'w-1.5 bg-foreground/40',
+              )}
+            />
+          ))}
+        </div>
+      </div>
+    </figure>
   )
 }
