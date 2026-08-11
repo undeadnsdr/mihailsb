@@ -412,13 +412,17 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
               ориентации (стрелки ↕ или ↔), а не текстовый символ: значок
               читается быстрее и одинаково хорошо смотрится в любом
               масштабе. У ноутбука ориентации нет — там нет иконки вовсе.
-              justify-center вместо жёсткой строки: на телефоне пять
-              кнопок не помещаются в одну линию и переходят на вторую,
-              и по центру она не выглядит обрывком */}
+              На смартфоне — та же схема, что у табов выбора проекта выше:
+              горизонтальный слайдер без переноса (-mx-4/px-4 растягивают
+              зону скролла на всю ширину экрана, no-scrollbar прячет
+              полосу), а не flex-wrap — при flex-wrap пять кнопок не
+              помещались в одну строку и падали на вторую, полурядом с
+              первой. От sm ширины хватает — там прежняя раскладка:
+              перенос строк и justify-center */}
           <div
             role="group"
             aria-label={`Устройства: ${work.niche}`}
-            className="flex flex-wrap justify-center gap-2"
+            className="-mx-4 flex flex-nowrap gap-1.5 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-2 sm:overflow-visible sm:px-0"
           >
             {slides.map((item, itemIndex) => (
               <button
@@ -427,7 +431,10 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
                 aria-pressed={itemIndex === active}
                 onClick={() => setActive(itemIndex)}
                 className={cn(
-                  'inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors lg:min-h-0',
+                  // Мельче на смартфоне (min-h-10, компактнее паддинги и
+                  // шрифт), как и соседние табы проектов — от sm снова
+                  // прежний крупный размер
+                  'inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[13px] lg:min-h-0',
                   itemIndex === active
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
