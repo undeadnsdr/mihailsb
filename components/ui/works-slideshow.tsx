@@ -519,7 +519,14 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           {/* min-h забронирован под самый длинный текст из всех проектов
               (септик: 4 строки задачи + решение из этой же панели) — так
               высота панели с описанием не меняется между проектами и не
-              двигает сцену со слайдшоу слева */}
+              двигает сцену со слайдшоу слева.
+              На планшете (sm–lg, пока внешняя сетка ещё не встала в
+              колонки и этому блоку достаётся вся ширина секции) раскладка
+              меняется на две колонки — слева «Задача», справа «Решение», —
+              а показатели остаются следующим блоком под панелью. На
+              смартфоне и от lg (там колонка снова узкая, 2/6 сетки)
+              оставлен исходный порядок сверху вниз: max-w-none/grid-cols-2
+              на sm возвращаются к max-w-[46ch]/flex-col на lg */}
           {/* Свайп влево/вправо по этой панели листает проекты — тот же
               шаг, что и табы выше. touch-pan-y оставляет браузеру
               вертикальную прокрутку страницы: перехватываем только
@@ -527,7 +534,7 @@ export function WorksSlideshow({ works }: { works: readonly Work[] }) {
           <div
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
-            className="flex min-h-[250px] max-w-[46ch] touch-pan-y flex-col gap-3 sm:min-h-[176px] lg:min-h-[262px]"
+            className="flex min-h-[250px] max-w-[46ch] touch-pan-y flex-col gap-3 sm:grid sm:min-h-[150px] sm:max-w-none sm:grid-cols-2 sm:items-start sm:gap-x-8 sm:gap-y-0 lg:flex lg:min-h-[262px] lg:max-w-[46ch] lg:flex-col lg:gap-3"
           >
             {/* Иконка сидит в одном inline-flex со словом "Задача"/"Решение"
                 (а не рядом со всем абзацем) и центрируется items-center
