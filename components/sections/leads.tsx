@@ -8,11 +8,16 @@ import { BentoCard } from '@/components/ui/bento-card'
 export function Leads() {
   return (
     <Section id="leads" labelledBy="leads-title">
-      {/* Карточка уведомления — это скриншот телефона: рядом с текстом в
-          половину планшетной ширины она сжималась до 340px и подписи полей
-          («Чем занимается») начинали переноситься. До lg идёт под текстом */}
-      <div className="grid grid-cols-1 gap-8 md:gap-6 lg:grid-cols-12 lg:items-center">
-        <div className="flex flex-col gap-6 lg:col-span-7">
+      {/* Две колонки — описание с галочками слева, карточка уведомления
+          справа — включаются уже с sm (планшет), а не только с lg: на
+          смартфоне текста и картинки одна под другой всё равно нужен
+          полный экран каждой, а от sm в ширину есть место на обе сразу.
+          items-start, а не items-center: колонка с текстом короче
+          карточки уведомления на большинстве проектов, и центрирование
+          по вертикали на sm–lg сдвигало бы заголовок вниз без видимой
+          причины — от lg возвращается items-center, там пропорции другие */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-12 sm:items-start md:gap-6 lg:items-center">
+        <div className="flex flex-col gap-6 sm:col-span-7">
           <SectionHeading id="leads-title" title={leads.title} />
 
           {/* На смартфоне описание сворачивается до 3 строк с шевроном
@@ -59,10 +64,13 @@ export function Leads() {
           </Reveal>
         </div>
 
-        {/* max-w: это макет телефонного уведомления, растянутый на 768px
-            он перестаёт читаться как экран телефона. На lg ограничение
-            снимается — там колонка сама задаёт ширину */}
-        <Reveal step={2} className="mx-auto w-full max-w-[520px] lg:col-span-5 lg:mx-0 lg:max-w-none">
+        {/* max-w: это макет телефонного уведомления, растянутый на всю
+            ширину колонки он перестаёт читаться как экран телефона.
+            С sm карточка уже стоит в своей колонке (col-span-5), поэтому
+            там же снимается mx-auto/max-w — колонка сама задаёт ширину;
+            до sm ограничение остаётся, там карточка центрируется под
+            текстом на всю ширину секции */}
+        <Reveal step={2} className="mx-auto w-full max-w-[520px] sm:col-span-5 sm:mx-0 sm:max-w-none">
           <BentoCard tone="secondary" padded={false} className="gap-0 p-4 sm:p-5 md:p-6">
             {/* Карточка уведомления */}
             <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 card-shadow sm:p-5">
