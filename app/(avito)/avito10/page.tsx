@@ -47,7 +47,11 @@ export default function Avito10() {
         className="flex h-full w-full overflow-hidden rounded-[2cqmin] ring-1 ring-inset ring-primary-foreground/15"
         style={{ background: site.bg, color: site.text }}
       >
-        <div className="flex w-[54%] flex-col gap-[3cqmin] p-[4cqmin]">
+        {/* Панель обрезана по высоте кадра (overflow-hidden), поэтому
+            вертикальные отступы и кегли здесь подобраны так, чтобы
+            прайс с плашкой помещался целиком: при p-4cqmin нижняя
+            строка уезжала за край и выглядела как баг вёрстки */}
+        <div className="flex w-[54%] flex-col gap-[2.4cqmin] p-[3.2cqmin]">
           <div className="flex flex-col gap-[1cqmin]">
             <span
               className="text-[2.4cqmin] font-bold uppercase tracking-[0.16em]"
@@ -64,7 +68,7 @@ export default function Avito10() {
             {prices.map((row) => (
               <div
                 key={row.label}
-                className="flex items-baseline justify-between gap-[3cqmin] border-b py-[2.2cqmin] first:pt-0"
+                className="flex items-baseline justify-between gap-[3cqmin] border-b py-[1.9cqmin] first:pt-0"
                 style={{ borderColor: site.line }}
               >
                 <dt className="text-pretty text-[2.9cqmin] leading-snug">{row.label}</dt>
@@ -79,7 +83,7 @@ export default function Avito10() {
           </dl>
 
           <span
-            className="mt-auto w-fit rounded-md px-[3cqmin] py-[1.8cqmin] text-[2.7cqmin] font-medium"
+            className="mt-auto w-fit rounded-md px-[2.6cqmin] py-[1.5cqmin] text-[2.5cqmin] font-medium"
             style={{ background: site.accent, color: site.accentFg }}
           >
             Замер и смета — бесплатно, в день обращения
@@ -87,7 +91,7 @@ export default function Avito10() {
         </div>
 
         <div
-          className="flex flex-1 flex-col gap-[2.4cqmin] p-[4cqmin]"
+          className="flex flex-1 flex-col gap-[2.2cqmin] p-[3.2cqmin]"
           style={{ background: site.surface }}
         >
           <span className="text-[3.4cqmin] font-bold leading-tight tracking-[-0.01em]">

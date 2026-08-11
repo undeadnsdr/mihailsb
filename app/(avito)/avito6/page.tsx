@@ -21,7 +21,12 @@ export default function Avito6() {
       note="Тюмень и область"
     >
       <Stage ratio="16 / 9">
-        <div className="absolute left-0 top-1/2 z-10 h-[76%] w-[66%] -translate-y-1/2">
+        {/* Ширины подобраны так, чтобы устройства перекрывались только
+            краями корпусов: планшет заходит на ноутбук на пару процентов,
+            телефон на планшет — примерно так же. Больший нахлёст съедает
+            первый экран у нижнего макета, и вместо трёх работающих
+            адаптаций в кадре остаются три полоски */}
+        <div className="absolute left-0 top-1/2 z-10 h-[74%] w-[60%] -translate-y-1/2">
           <DeviceFrame kind="laptop">
             <div className="absolute inset-x-0 top-0">
               <SiteMockup work={work} priority />
@@ -29,7 +34,7 @@ export default function Avito6() {
           </DeviceFrame>
         </div>
 
-        <div className="absolute bottom-0 right-[13%] z-20 h-[92%] w-[25%]">
+        <div className="absolute bottom-0 right-[13%] z-20 h-[86%] w-[24%]">
           <DeviceFrame kind="tablet-portrait">
             <div className="absolute inset-x-0 top-0">
               <TabletMockup work={work} priority />
@@ -37,7 +42,7 @@ export default function Avito6() {
           </DeviceFrame>
         </div>
 
-        <div className="absolute bottom-0 right-0 z-30 h-[64%] w-[17%]">
+        <div className="absolute bottom-0 right-0 z-30 h-[58%] w-[15%]">
           <DeviceFrame kind="phone-portrait">
             <div className="absolute inset-x-0 top-0">
               <PhoneMockup work={work} />

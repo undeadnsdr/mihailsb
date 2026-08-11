@@ -57,9 +57,17 @@ export default function Avito7() {
  * телефон стоит крупнее.
  */
 function LeadScreen() {
+  // text-primary обязателен: кадр целиком стоит на тёмном фоне и задаёт
+  // светлый цвет текста, а экран телефона внутри — светлый. Без явного
+  // переопределения почти белый #f5f6f8 наследуется на белые плашки
+  // сообщений, и текст на них пропадает
   return (
-    <div className="absolute inset-0 flex flex-col bg-secondary">
-      <div className="flex shrink-0 items-center gap-[3cqw] border-b border-border bg-card px-[4cqw] pb-[3.5cqw] pt-[11cqw]">
+    <div className="absolute inset-0 flex flex-col bg-secondary text-primary">
+      {/* pt в 15cqw, а не в 11: вырез корпуса рисуется поверх экрана, и
+          при меньшем отступе название чата уезжает под чёрную пилюлю —
+          на скриншоте это читается как замыленный текст, а не как
+          островок статус-бара */}
+      <div className="flex shrink-0 items-center gap-[3cqw] border-b border-border bg-card px-[4cqw] pb-[3.5cqw] pt-[15cqw]">
         <ChevronLeft className="size-[5cqw] shrink-0 text-primary" aria-hidden="true" />
         <span className="flex size-[11cqw] shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <TelegramIcon className="size-[6cqw]" />
@@ -92,11 +100,11 @@ function LeadScreen() {
             {leads.demo.title}
           </span>
 
-          <dl className="flex flex-col gap-[2.4cqw] border-t border-border pt-[3cqw]">
+          <dl className="flex flex-col gap-[2.8cqw] border-t border-border pt-[3cqw]">
             {leads.demo.fields.map((field) => (
-              <div key={field.label} className="flex flex-col gap-[0.4cqw]">
-                <dt className="text-[3cqw] leading-tight text-muted-foreground">{field.label}</dt>
-                <dd className="text-pretty text-[3.9cqw] font-medium leading-tight">
+              <div key={field.label} className="flex flex-col gap-[0.6cqw]">
+                <dt className="text-[3.3cqw] leading-tight text-muted-foreground">{field.label}</dt>
+                <dd className="text-pretty text-[4.4cqw] font-semibold leading-tight">
                   {field.value}
                 </dd>
               </div>
