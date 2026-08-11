@@ -87,24 +87,6 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
               {service.offer}
             </p>
 
-            <div className="flex flex-col gap-3">
-              <h3 className="text-[15px] font-semibold tracking-[0.01em] text-foreground">
-                {servicesDetail.bulletsTitle}
-              </h3>
-              <ul className="flex flex-col gap-2">
-                {service.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-2.5 text-[15px] leading-relaxed">
-                    <Check
-                      className="mt-1 size-4 shrink-0 text-primary"
-                      strokeWidth={2.25}
-                      aria-hidden="true"
-                    />
-                    <span className="text-foreground/85">{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <PhoneButton place={`service-${service.slug}`} variant="primary">
                 {servicesDetail.cta}
@@ -133,40 +115,124 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
                 />
               </div>
             </figure>
-
-            {/* Этапы работ — нумерованный список, и номера здесь несут смысл:
-                это реальная последовательность, где шаг нельзя переставить */}
-            <div className="flex flex-col gap-3">
-              <h3 className="text-[15px] font-semibold tracking-[0.01em] text-foreground">
-                {servicesDetail.stepsTitle}
-              </h3>
-              <ol className="flex flex-col gap-3">
-                {service.steps.map((step, stepIndex) => (
-                  <li key={step.title} className="flex gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="display-caps tnum flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent text-[14px] leading-none text-accent-foreground"
-                    >
-                      {stepIndex + 1}
-                    </span>
-                    <span className="flex flex-col gap-0.5">
-                      <span className="text-[15px] font-semibold leading-snug text-foreground">
-                        {step.title}
-                      </span>
-                      <span className="text-[14px] leading-relaxed text-muted-foreground">
-                        {step.text}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
           </Reveal>
         </div>
 
+        <ServiceTabs service={service} />
         <PriceList service={service} />
       </div>
     </Section>
+  )
+}
+
+/**
+ * «Что входит» и «Как проходят работы» — вкладки, а не аккордеон: ровно
+ * одна панель видна всегда, вторая закрывается сама при переключении.
+ * Раньше это были два статичных списка в разных колонках (состав рядом
+ * с офером, этапы рядом с фото) — на мобильном они складывались в длинную
+ * простыню текста до кнопок CTA. Вкладки держат объём одной секции
+ * стабильным независимо от того, сколько пунктов в списке.
+ */
+function ServiceTabs({ service }: { service: Service }) {
+  const [active, setActive] = useState<'bullets' | 'steps'>('bullets')
+  const tabsId = useId()
+
+  const tabs = [
+    { key: 'bullets' as const, label: servicesDetail.bulletsTitle },
+    { key: 'steps' as const, label: servicesDetail.stepsTitle },
+  ]
+
+  // Стрелки переключают вкладку и сразу переносят фокус на неё — активный
+  // таб в наборе всего из двух вкладок всегда единственный tabIndex=0,
+  // иначе Tab с клавиатуры пропускал бы скрытую вкладку молча
+  function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+    event.preventDefault()
+    const currentIndex = tabs.findIndex((tab) => tab.key === active)
+    const nextIndex = event.key === 'ArrowRight'
+      ? (currentIndex + 1) % tabs.length
+      : (currentIndex - 1 + tabs.length) % tabs.length
+    const nextKey = tabs[nextIndex].key
+    setActive(nextKey)
+    document.getElementById(`${tabsId}-${nextKey}-tab`)?.focus()
+  }
+
+  return (
+    <Reveal className="overflow-hidden rounded-2xl border border-border bg-card card-shadow">
+      <div
+        role="tablist"
+        aria-label={`${service.navTitle}: состав и этапы работ`}
+        className="flex border-b border-border"
+      >
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            role="tab"
+            id={`${tabsId}-${tab.key}-tab`}
+            aria-selected={active === tab.key}
+            aria-controls={`${tabsId}-${tab.key}-panel`}
+            tabIndex={active === tab.key ? 0 : -1}
+            onKeyDown={handleKeyDown}
+            onClick={() => setActive(tab.key)}
+            className={cn(
+              'min-h-[56px] flex-1 px-4 py-4 text-center text-[14px] font-semibold tracking-[0.01em] transition-colors sm:text-[15px]',
+              active === tab.key
+                ? 'bg-card text-foreground'
+                : 'bg-secondary/60 text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        role="tabpanel"
+        id={`${tabsId}-bullets-panel`}
+        aria-labelledby={`${tabsId}-bullets-tab`}
+        hidden={active !== 'bullets'}
+        className="px-5 py-5 md:px-6"
+      >
+        <ul className="flex flex-col gap-2">
+          {service.bullets.map((bullet) => (
+            <li key={bullet} className="flex items-start gap-2.5 text-[15px] leading-relaxed">
+              <Check className="mt-1 size-4 shrink-0 text-primary" strokeWidth={2.25} aria-hidden="true" />
+              <span className="text-foreground/85">{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Этапы работ — нумерованный список, и номера здесь несут смысл: это
+          реальная последовательность, где шаг нельзя переставить */}
+      <div
+        role="tabpanel"
+        id={`${tabsId}-steps-panel`}
+        aria-labelledby={`${tabsId}-steps-tab`}
+        hidden={active !== 'steps'}
+        className="px-5 py-5 md:px-6"
+      >
+        <ol className="flex flex-col gap-3">
+          {service.steps.map((step, stepIndex) => (
+            <li key={step.title} className="flex gap-3">
+              <span
+                aria-hidden="true"
+                className="display-caps tnum flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent text-[14px] leading-none text-accent-foreground"
+              >
+                {stepIndex + 1}
+              </span>
+              <span className="flex flex-col gap-0.5">
+                <span className="text-[15px] font-semibold leading-snug text-foreground">
+                  {step.title}
+                </span>
+                <span className="text-[14px] leading-relaxed text-muted-foreground">{step.text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Reveal>
   )
 }
 
