@@ -1,4 +1,4 @@
-import { Check, BellRing } from 'lucide-react'
+import { Check, BellRing, ChevronDown } from 'lucide-react'
 import { leads } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -13,8 +13,39 @@ export function Leads() {
           («Чем занимается») начинали переноситься. До lg идёт под текстом */}
       <div className="grid grid-cols-1 gap-8 md:gap-6 lg:grid-cols-12 lg:items-center">
         <div className="flex flex-col gap-6 lg:col-span-7">
-          <SectionHeading id="leads-title" title={leads.title} subtitle={leads.subtitle} />
-          <Reveal step={1}>
+          <SectionHeading id="leads-title" title={leads.title} />
+
+          {/* На смартфоне описание сворачивается до 3 строк с шевроном
+              в правом нижнем углу (тот же паттерн, что в about.tsx):
+              подпись длиннее, чем в других секциях, и полностью съедала
+              на этой ширине место буллетов и карточки-уведомления выше
+              первого экрана. На sm+ снова обычный абзац без сворачивания —
+              там текст и так укладывается в пару строк. relative + absolute
+              шеврон, а не соседний flex-элемент: pr-6 на самом тексте —
+              это padding -webkit-box, он подрезает все 3 строки одинаково
+              справа, и bottom-0 right-0 совпадает с концом третьей строки,
+              потому что line-clamp обрезает блок ровно по её высоте */}
+          <Reveal step={1} className="text-muted-foreground">
+            <details className="group sm:hidden">
+              <summary className="relative block cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <p className="max-w-[62ch] text-pretty line-clamp-3 pr-6 text-[16px] leading-relaxed group-open:hidden">
+                  {leads.subtitle}
+                </p>
+                <ChevronDown
+                  className="absolute bottom-0 right-0 size-5 shrink-0 text-primary transition-transform group-open:hidden"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+              </summary>
+              <p className="max-w-[62ch] text-pretty text-[16px] leading-relaxed">{leads.subtitle}</p>
+            </details>
+
+            <p className="hidden max-w-[62ch] text-pretty text-[16px] leading-relaxed sm:block sm:text-[17px] lg:text-lg">
+              {leads.subtitle}
+            </p>
+          </Reveal>
+
+          <Reveal step={2}>
             <ul className="flex flex-col gap-3">
               {leads.bullets.map((bullet) => (
                 <li key={bullet} className="flex items-start gap-3">
