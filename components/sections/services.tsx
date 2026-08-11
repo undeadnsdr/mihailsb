@@ -1,8 +1,8 @@
-import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { services, servicesIntro, formatNumber } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { ImagePlaceholder } from '@/components/ui/image-placeholder'
 
 /**
  * Меню направлений — семь карточек-ссылок на детальные блоки ниже.
@@ -41,12 +41,9 @@ export function Services() {
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/60"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden">
-                  <Image
-                    src={service.image}
+                  <ImagePlaceholder
                     alt={service.imageAlt}
-                    fill
-                    sizes="(min-width: 1024px) 420px, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    className="transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                 </div>
 

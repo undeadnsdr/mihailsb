@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { MapPin } from 'lucide-react'
 import { hero, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
+import { ImagePlaceholder } from '@/components/ui/image-placeholder'
 import { cn } from '@/lib/utils'
 
 /** Как долго держится каждый кадр слайд-шоу, в миллисекундах */
@@ -124,21 +124,14 @@ function HeroSlideshow() {
           первого экрана */}
       <div className="relative aspect-[4/3] w-full sm:aspect-[5/4]">
         {hero.slides.map((slide, index) => (
-          <Image
+          <ImagePlaceholder
             key={slide.image}
-            src={slide.image}
             alt={slide.alt}
-            fill
-            sizes="(min-width: 1024px) 640px, 100vw"
+            active={index === active}
             className={cn(
-              'object-cover transition-opacity duration-700 ease-out',
+              'transition-opacity duration-700 ease-out',
               index === active ? 'opacity-100' : 'opacity-0',
             )}
-            // Первый кадр приоритетный (виден сразу, без ожидания сети),
-            // остальные четыре — обычная ленивая загрузка: они почти
-            // наверняка успеют декодироваться за первые 5 секунд, пока
-            // виден первый слайд, но не задерживают LCP
-            priority={index === 0}
           />
         ))}
 

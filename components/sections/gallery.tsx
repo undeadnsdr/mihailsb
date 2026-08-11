@@ -1,11 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { gallery, services, type GalleryItem } from '@/lib/content'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { ImagePlaceholder } from '@/components/ui/image-placeholder'
 import { cn } from '@/lib/utils'
 
 const ALL = 'all'
@@ -99,14 +99,7 @@ function GalleryCard({ item, eager }: { item: GalleryItem; eager?: boolean }) {
     <li className="overflow-hidden rounded-2xl border border-border bg-card">
       <figure className="flex h-full flex-col">
         <div className="relative aspect-[4/3] w-full">
-          <Image
-            src={item.src}
-            alt={item.alt}
-            fill
-            sizes="(min-width: 1024px) 300px, 50vw"
-            className="object-cover"
-            loading={eager ? 'eager' : 'lazy'}
-          />
+          <ImagePlaceholder alt={item.alt} />
         </div>
         <figcaption className="px-3 py-2.5 text-[13px] leading-snug text-muted-foreground sm:text-[14px]">
           {item.caption}
@@ -187,14 +180,7 @@ function GalleryCarousel({ items }: { items: GalleryItem[] }) {
           >
             <figure className="flex h-full flex-col">
               <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  sizes="(min-width: 1024px) 300px, 50vw"
-                  className="object-cover"
-                  loading="lazy"
-                />
+                <ImagePlaceholder alt={item.alt} />
               </div>
               <figcaption className="px-3 py-2.5 text-[13px] leading-snug text-muted-foreground sm:text-[14px]">
                 {item.caption}

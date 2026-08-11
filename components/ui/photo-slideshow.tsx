@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ImagePlaceholder } from '@/components/ui/image-placeholder'
 import { cn } from '@/lib/utils'
 
 /** Как долго держится каждый кадр автопрокрутки, в миллисекундах */
@@ -53,17 +53,14 @@ export function PhotoSlideshow({ photos, className }: { photos: Photo[]; classNa
     >
       <div className="relative aspect-[4/3] w-full">
         {photos.map((photo, index) => (
-          <Image
+          <ImagePlaceholder
             key={photo.src}
-            src={photo.src}
             alt={photo.alt}
-            fill
-            sizes="(min-width: 1024px) 640px, 100vw"
+            active={index === active}
             className={cn(
-              'object-cover transition-opacity duration-700 ease-out',
+              'transition-opacity duration-700 ease-out',
               index === active ? 'opacity-100' : 'opacity-0',
             )}
-            priority={index === 0}
           />
         ))}
 
