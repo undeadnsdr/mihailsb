@@ -64,8 +64,16 @@ export function Pricing() {
 
               {/* Порог sm — тот же, на котором кнопка в базовых классах
                   перестаёт быть во всю ширину: раньше она тянулась до 768px
-                  и в горизонтальной ориентации смартфона занимала всю строку */}
-              <AvitoButton place="pricing" className="mt-auto sm:w-auto sm:self-start">
+                  и в горизонтальной ориентации смартфона занимала всю строку.
+                  До sm паддинги карточки (p-6) съедали столько ширины, что
+                  «Написать на Авито» при базовых px-6/text-17px переносилось
+                  на две строки — та же компактная мобильная гарнитура, что
+                  и у кнопки в hero, отдаёт тексту недостающие пиксели */}
+              <AvitoButton
+                place="pricing"
+                className="mt-auto max-sm:gap-1.5 max-sm:px-4 max-sm:text-[15px] sm:w-auto sm:self-start"
+                iconClassName="size-4 sm:size-5"
+              >
                 {pricing.main.cta}
               </AvitoButton>
             </BentoCard>

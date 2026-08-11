@@ -45,9 +45,14 @@ export function FinalCta() {
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              {/* До sm паддинг карточки (p-6) съедал столько ширины, что
+                  «Написать на Авито» при базовых px-6/text-17px переносилось
+                  на две строки — та же компактная мобильная гарнитура, что
+                  и у кнопки в hero, отдаёт тексту недостающие пиксели */}
               <AvitoButton
                 place="final"
-                className="bg-primary-foreground text-primary hover:bg-accent sm:w-auto"
+                className="bg-primary-foreground text-primary hover:bg-accent max-sm:gap-1.5 max-sm:px-4 max-sm:text-[15px] sm:w-auto"
+                iconClassName="size-4 sm:size-5"
               >
                 {finalCta.primary}
               </AvitoButton>
