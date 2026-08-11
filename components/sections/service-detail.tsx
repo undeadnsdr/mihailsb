@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react'
 import Image from 'next/image'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check } from 'lucide-react'
 import {
   type Service,
   services,
@@ -119,41 +119,75 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
         </div>
 
         <ServiceTabs service={service} />
-        <PriceList service={service} />
       </div>
     </Section>
   )
 }
 
 /**
- * «Что входит» и «Как проходят работы» — вкладки, а не аккордеон: ровно
- * одна панель видна всегда, вторая закрывается сама при переключении.
- * Раньше это были два статичных списка в разных колонках (состав рядом
- * с офером, этапы рядом с фото) — на мобильном они складывались в длинную
- * простыню текста до кнопок CTA. Вкладки держат объём одной секции
- * стабильным независимо от того, сколько пунктов в списке.
+ * Три информативных блока направления — состав, этапы и прайс — живут
+ * в одной карточке как вкладки. Раньше это были три независимых
+ * контейнера со своими бордерами и своими механизмами раскрытия, и на
+ * семь направлений давало четырнадцать рамок и две разные механики
+ * («переключить вкладку» против «развернуть прайс»).
+ *
+ * Именно вкладки, а не аккордеон из трёх пунктов: у вкладок ровно одна
+ * панель открыта всегда, поэтому высота секции предсказуема и все семь
+ * направлений скроллятся ровно. Аккордеон допускает состояние «всё
+ * закрыто» — карточка вырождается в пустую полоску, а высота секции
+ * прыгает на каждом клике.
+ *
+ * Порядок вкладок — от общего к частному: сначала «что входит», потом
+ * «как проходит», и только потом цифры. Прайс первым заставлял бы
+ * считать деньги за работу, состава которой человек ещё не видел.
  */
 function ServiceTabs({ service }: { service: Service }) {
-  const [active, setActive] = useState<'bullets' | 'steps'>('bullets')
+  const [active, setActive] = useState<'bullets' | 'steps' | 'price'>('bullets')
   const tabsId = useId()
 
+  const rowsCount = service.priceGroups.reduce((sum, group) => sum + group.rows.length, 0)
+
   const tabs = [
-    { key: 'bullets' as const, label: servicesDetail.bulletsTitle },
-    { key: 'steps' as const, label: servicesDetail.stepsTitle },
+    {
+      key: 'bullets' as const,
+      label: servicesDetail.bulletsTitle,
+      short: servicesDetail.bulletsTitleShort,
+    },
+    {
+      key: 'steps' as const,
+      label: servicesDetail.stepsTitle,
+      short: servicesDetail.stepsTitleShort,
+    },
+    {
+      key: 'price' as const,
+      label: servicesDetail.priceTitle,
+      short: servicesDetail.priceTitleShort,
+      // Счётчик позиций — единственное, что мотивирует открыть прайс:
+      // без него третья вкладка выглядит пустым ярлыком
+      badge: rowsCount,
+    },
   ]
 
-  // Стрелки переключают вкладку и сразу переносят фокус на неё — активный
-  // таб в наборе всего из двух вкладок всегда единственный tabIndex=0,
-  // иначе Tab с клавиатуры пропускал бы скрытую вкладку молча
+  function selectTab(key: (typeof tabs)[number]['key']) {
+    setActive(key)
+    // Цель на прайсе осталась от свёрнутой карточки: по ней видно, какие
+    // направления реально проверяют по деньгам
+    if (key === 'price') reachGoal('open_price', { service: service.slug })
+  }
+
+  // Стрелки переключают вкладку и сразу переносят фокус на неё. Активная
+  // вкладка — единственная с tabIndex=0, иначе Tab с клавиатуры молча
+  // проходил бы через скрытые вкладки
   function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
     event.preventDefault()
     const currentIndex = tabs.findIndex((tab) => tab.key === active)
-    const nextIndex = event.key === 'ArrowRight'
-      ? (currentIndex + 1) % tabs.length
-      : (currentIndex - 1 + tabs.length) % tabs.length
+    const nextIndex =
+      event.key === 'ArrowRight'
+        ? (currentIndex + 1) % tabs.length
+        : (currentIndex - 1 + tabs.length) % tabs.length
     const nextKey = tabs[nextIndex].key
-    setActive(nextKey)
+    selectTab(nextKey)
     document.getElementById(`${tabsId}-${nextKey}-tab`)?.focus()
   }
 
@@ -161,7 +195,7 @@ function ServiceTabs({ service }: { service: Service }) {
     <Reveal className="overflow-hidden rounded-2xl border border-border bg-card card-shadow">
       <div
         role="tablist"
-        aria-label={`${service.navTitle}: состав и этапы работ`}
+        aria-label={`${service.navTitle}: состав работ, этапы и прайс-лист`}
         className="flex border-b border-border"
       >
         {tabs.map((tab) => (
@@ -174,19 +208,38 @@ function ServiceTabs({ service }: { service: Service }) {
             aria-controls={`${tabsId}-${tab.key}-panel`}
             tabIndex={active === tab.key ? 0 : -1}
             onKeyDown={handleKeyDown}
-            onClick={() => setActive(tab.key)}
+            onClick={() => selectTab(tab.key)}
             className={cn(
-              'min-h-[56px] flex-1 px-4 py-4 text-center text-[14px] font-semibold tracking-[0.01em] transition-colors sm:text-[15px]',
+              // Активная вкладка подчёркнута снизу изнутри: рамка карточки
+              // одна, поэтому «выступающий» таб пришлось бы рисовать
+              // отрицательными отступами по чужому бордеру
+              'relative flex min-h-[56px] flex-1 items-center justify-center gap-1.5 px-2 py-4 text-center text-[14px] font-semibold tracking-[0.01em] transition-colors sm:px-4 sm:text-[15px]',
               active === tab.key
-                ? 'bg-card text-foreground'
+                ? 'bg-card text-foreground after:absolute after:inset-x-0 after:bottom-[-1px] after:h-[2px] after:bg-primary'
                 : 'bg-secondary/60 text-muted-foreground hover:text-foreground',
             )}
           >
-            {tab.label}
+            <span className="sm:hidden">{tab.short}</span>
+            <span className="hidden sm:inline">{tab.label}</span>
+            {tab.badge !== undefined && (
+              <span
+                className={cn(
+                  'tnum rounded-md px-1.5 py-0.5 text-[11px] font-semibold leading-none transition-colors sm:text-[12px]',
+                  active === tab.key
+                    ? 'bg-accent text-accent-foreground'
+                    : 'bg-border/70 text-muted-foreground',
+                )}
+              >
+                {tab.badge}
+              </span>
+            )}
           </button>
         ))}
       </div>
 
+      {/* Все три панели остаются в разметке под hidden, а не рендерятся
+          условно: Ctrl+F и поисковый робот видят и состав, и этапы, и все
+          двести позиций прайса, а не только открытую вкладку */}
       <div
         role="tabpanel"
         id={`${tabsId}-bullets-panel`}
@@ -197,7 +250,11 @@ function ServiceTabs({ service }: { service: Service }) {
         <ul className="flex flex-col gap-2">
           {service.bullets.map((bullet) => (
             <li key={bullet} className="flex items-start gap-2.5 text-[15px] leading-relaxed">
-              <Check className="mt-1 size-4 shrink-0 text-primary" strokeWidth={2.25} aria-hidden="true" />
+              <Check
+                className="mt-1 size-4 shrink-0 text-primary"
+                strokeWidth={2.25}
+                aria-hidden="true"
+              />
               <span className="text-foreground/85">{bullet}</span>
             </li>
           ))}
@@ -226,63 +283,57 @@ function ServiceTabs({ service }: { service: Service }) {
                 <span className="text-[15px] font-semibold leading-snug text-foreground">
                   {step.title}
                 </span>
-                <span className="text-[14px] leading-relaxed text-muted-foreground">{step.text}</span>
+                <span className="text-[14px] leading-relaxed text-muted-foreground">
+                  {step.text}
+                </span>
               </span>
             </li>
           ))}
         </ol>
       </div>
+
+      <div
+        role="tabpanel"
+        id={`${tabsId}-price-panel`}
+        aria-labelledby={`${tabsId}-price-tab`}
+        hidden={active !== 'price'}
+      >
+        <PriceTable service={service} />
+      </div>
     </Reveal>
   )
 }
 
-/** Свёрнутый ��райс-лист направления */
-function PriceList({ service }: { service: Service }) {
-  const [open, setOpen] = useState(false)
-  const panelId = useId()
-
+/**
+ * Прайс-лист направления внутри вкладки.
+ *
+ * Высота ограничена, прокрутка внутренняя: в прайсе бывает до сорока
+ * позиций, и без потолка третья вкладка раздувала бы карточку в разы
+ * против первых двух — полоса вкладок уезжала бы за верх экрана, и
+ * вернуться к «Что входит» было бы нечем. С потолком все семь
+ * направлений держат одинаковую предсказуемую высоту.
+ *
+ * Примечание про единицу измерения намеренно вынесено из прокрутки: оно
+ * относится ко всем строкам сразу, поэтому обязано быть видимым до того,
+ * как человек начнёт читать цифры, а не после сорока строк.
+ */
+function PriceTable({ service }: { service: Service }) {
   const rowsCount = service.priceGroups.reduce((sum, group) => sum + group.rows.length, 0)
 
   return (
-    <Reveal className="overflow-hidden rounded-2xl border border-border bg-card card-shadow">
-      <h3>
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={() => {
-            setOpen((value) => !value)
-            if (!open) reachGoal('open_price', { service: service.slug })
-          }}
-          className="flex min-h-[60px] w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-secondary md:px-6"
-        >
-          <span className="flex min-w-0 flex-col gap-0.5">
-            <span className="display-caps text-[17px] leading-tight tracking-[0.01em] text-foreground sm:text-[19px]">
-              {servicesDetail.priceTitle}: {service.navTitle}
-            </span>
-            <span className="text-[13px] text-muted-foreground sm:text-[14px]">
-              {servicesDetail.rowsCount(rowsCount)}
-            </span>
-          </span>
-          <span className="flex shrink-0 items-center gap-2 text-[14px] font-medium text-primary">
-            {/* Подпись кнопки скрыта на смартфоне: там рядом с ней уже стоят
-                название прайса и счётчик позиций, и третья строка в одну
-                кнопку не влезает без переноса */}
-            <span className="hidden sm:inline">
-              {open ? servicesDetail.closePrice : servicesDetail.openPrice}
-            </span>
-            <ChevronDown
-              className={cn('size-5 shrink-0 transition-transform duration-200', open && 'rotate-180')}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </span>
-        </button>
-      </h3>
+    <div className="flex flex-col">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 pb-4 pt-5 md:px-6">
+        <p className="max-w-[62ch] text-[13px] leading-relaxed text-muted-foreground sm:text-[14px]">
+          {servicesDetail.priceNote(
+            servicesDetail.priceUnitWords[service.priceUnit] ?? 'за работу',
+          )}
+        </p>
+        <p className="shrink-0 text-[13px] text-muted-foreground sm:text-[14px]">
+          {servicesDetail.rowsCount(rowsCount)}
+        </p>
+      </div>
 
-      {/* hidden, а не условный рендер: позиции остаются в разметке, поэтому
-          Ctrl+F и поисковый робот видят весь прайс, а не только раскрытый */}
-      <div id={panelId} hidden={!open} className="border-t border-border px-5 py-5 md:px-6">
+      <div className="max-h-[420px] overflow-y-auto border-t border-border px-5 py-5 md:px-6">
         <div className="flex flex-col gap-6">
           {service.priceGroups.map((group) => (
             <div key={group.title} className="flex flex-col gap-2">
@@ -321,14 +372,8 @@ function PriceList({ service }: { service: Service }) {
               </ul>
             </div>
           ))}
-
-          <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-[14px]">
-            {servicesDetail.priceNote(
-              servicesDetail.priceUnitWords[service.priceUnit] ?? 'за работу',
-            )}
-          </p>
         </div>
       </div>
-    </Reveal>
+    </div>
   )
 }
