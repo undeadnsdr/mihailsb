@@ -48,10 +48,10 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     url: site.url,
     siteName: site.domain,
-    title: seo.ogTitle,
-    description: seo.ogDescription,
+    title: seo.title,
+    description: seo.description,
   },
-  twitter: { card: 'summary_large_image', title: seo.ogTitle, description: seo.ogDescription },
+  twitter: { card: 'summary_large_image', title: seo.title, description: seo.description },
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],

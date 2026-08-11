@@ -1,27 +1,29 @@
-import { site, faq, pricing, geo } from '@/lib/content'
+import { site, faq, geo, services } from '@/lib/content'
 
 /**
- * Микроразметка: LocalBusiness + Service с ценой + FAQPage.
- * Данные берутся из content.ts, поэтому разметка не может разойтись
- * с тем, что человек видит на странице — за расхождение Яндекс наказывает.
+ * Микроразметка: GeneralContractor + Service по каждому направлению + FAQPage.
  *
- * Скрипт отдаётся как строка в dangerouslySetInnerHTML: это единственный
- * поддерживаемый способ вставить ld+json, содержимое статично и не
- * приходит от пользователя.
+ * GeneralContractor, а не общий LocalBusiness: это подтип, который Яндекс и
+ * Google понимают именно как «строительный подрядчик», — от него зависит,
+ * в какую товарную категорию попадёт карточка в выдаче.
+ *
+ * Данные берутся из content.ts, поэтому разметка не может разойтись с тем,
+ * что человек видит на странице — за расхождение поисковики наказывают.
+ * AggregateRating сознательно не размечен: отзывы на странице пока не
+ * подтверждены публичным источником, а рейтинг по непроверяемым отзывам —
+ * прямой путь к ручным санкциям.
  */
 export function JsonLd() {
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'ProfessionalService',
+        '@type': 'GeneralContractor',
         '@id': `${site.url}/#business`,
         name: site.name,
-        description:
-          'Разработка сайтов-одностраничников для строительных подрядчиков и частных мастеров. Срок — один день, цена 6000 ₽ вместе с доменом и хостингом.',
+        description: site.tagline,
         url: site.url,
         telephone: site.phoneRaw,
-        priceRange: '6000 ₽',
         areaServed: geo.places.map((place) => ({ '@type': 'City', name: place })),
         address: {
           '@type': 'PostalAddress',
@@ -40,25 +42,39 @@ export function JsonLd() {
             'Saturday',
             'Sunday',
           ],
-          opens: '09:00',
+          opens: '08:00',
           closes: '21:00',
         },
+        makesOffer: services.map((service) => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'Service', name: service.title },
+        })),
       },
-      {
+      // Отдельный Service на каждое направление: у них разные цены и разная
+      // поисковая выдача, и один общий «строительные работы» не даёт шанса
+      // попасть в результат по запросу «подъём дома замена венцов»
+      ...services.map((service) => ({
         '@type': 'Service',
-        name: 'Сайт-одностраничник под ключ',
-        serviceType: 'Разработка сайта',
+        '@id': `${site.url}/#${service.slug}`,
+        name: service.title,
+        serviceType: service.navTitle,
+        description: service.short,
         provider: { '@id': `${site.url}/#business` },
         areaServed: { '@type': 'AdministrativeArea', name: site.region },
         offers: {
           '@type': 'Offer',
-          price: pricing.main.price,
           priceCurrency: 'RUB',
           availability: 'https://schema.org/InStock',
-          description:
-            'Сайт на одну страницу, домен .ru или .рф и хостинг на первый год. Оплата после сдачи работы.',
+          // priceSpecification с минимумом, а не price: прайс построчный,
+          // и единственного числа у направления не существует. Минимум —
+          // единственная честная цифра, которую можно назвать до замера
+          priceSpecification: {
+            '@type': 'PriceSpecification',
+            minPrice: service.priceFrom,
+            priceCurrency: 'RUB',
+          },
         },
-      },
+      })),
       {
         '@type': 'FAQPage',
         mainEntity: faq.items.map((item) => ({

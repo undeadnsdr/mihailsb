@@ -22,11 +22,11 @@ const icons = {
  */
 export function TrustBar() {
   return (
-    <Section tight aria-label="Факты о компании">
+    <Section tight>
       {/* 2 колонки на смартфоне, 3 на планшете, 5 в ряд с lg. Пятый элемент
           на смартфоне остаётся один в последней строке и растягивается на
           всю ширину — так он не выглядит обрубком сетки */}
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
+      <ul aria-label="Факты о компании" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
         {trustBar.map((item, index) => {
           const Icon = icons[item.icon]
           return (

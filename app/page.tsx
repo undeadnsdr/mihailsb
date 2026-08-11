@@ -3,54 +3,38 @@ import { SiteFooter } from '@/components/ui/site-footer'
 import { StickyActions } from '@/components/ui/sticky-actions'
 import { BenefitsMarquee } from '@/components/ui/benefits-marquee'
 import { Hero } from '@/components/sections/hero'
-import { Pains } from '@/components/sections/pains'
+import { TrustBar } from '@/components/sections/trust-bar'
+import { Services } from '@/components/sections/services'
+import { ServiceDetails } from '@/components/sections/service-detail'
 import { HowItWorks } from '@/components/sections/how-it-works'
-import { Works } from '@/components/sections/works'
-import { Stack } from '@/components/sections/stack'
-import { Includes } from '@/components/sections/includes'
-import { Leads } from '@/components/sections/leads'
-import { PwaSection } from '@/components/sections/pwa-section'
-import { Industries } from '@/components/sections/industries'
-import { Pricing } from '@/components/sections/pricing'
-import { Support } from '@/components/sections/support'
-import { About } from '@/components/sections/about'
-import { Showcase } from '@/components/sections/showcase'
+import { Advantages } from '@/components/sections/advantages'
+import { Gallery } from '@/components/sections/gallery'
+import { Reviews } from '@/components/sections/reviews'
+import { Promos } from '@/components/sections/promos'
+import { Geo } from '@/components/sections/geo'
 import { Faq } from '@/components/sections/faq'
 import { FinalCta } from '@/components/sections/final-cta'
 import { JsonLd } from '@/components/json-ld'
 
 /**
- * Порядок секций = порядок снятия возражений, а не порядок готовности
- * блоков к показу:
+ * Порядок блоков = порядок, в котором заказчик снимает свои сомнения.
  *
- * узнавание (кто говорит) → узнавание (боли) → самоидентификация (ниши) →
- * доказательство (работы) → цена → расшифровка цены (что входит) →
- * механика (как проходит работа) → заявки/бонус → технические детали для
- * скептиков → снятие риска (сопровождение) → добивание возражений (FAQ) →
- * заявка.
+ * Первый экран отвечает «что вы делаете и где», полоса фактов — «можно ли
+ * вам верить», меню направлений — «есть ли среди этого моя задача».
+ * Дальше семь подробных блоков с прайсами: человек, пришедший за кровлей,
+ * попадает по якорю сразу в свой и читает состав работ, этапы и цены,
+ * не пролистывая шесть чужих направлений.
  *
- * About стоит сразу после первого экрана, а не в конце: прежде чем читать
- * про проблемы и цену, человек хочет понять, кто с ним говорит — реальный
- * исполнитель или очередной шаблон. Цена стоит после портфолио, а не до
- * него: на вопрос «сколько это стоит» должно быть чем ответить — «вот что
- * вы получите за эти деньги», а не абстрактное число раньше, чем человек
- * увидел результат. Includes сразу за Pricing — это буквально расшифровка
- * «что входит в 6000 ₽», держать её далеко от цены значит заставлять
- * скроллить назад. Industries стоит сразу после болей, а не в хвосте:
- * список ниш — инструмент самоидентификации («кровля — это про меня»), он
- * должен работать в начале воронки, когда сомневающийся ещё не ушёл.
- * Works стоит прямо перед Industries: сначала человек видит, как выглядит
- * готовый сайт на разных экранах, и только потом сверяет список сфер —
- * так доказательство идёт раньше самоидентификации, а не наоборот.
- * Stack — блок для скептиков, которым важно «что под капотом»; в середине
- * воронки он тормозит тех, кому это не нужно, поэтому стоит ближе к концу,
- * рядом с FAQ. HowItWorks стоит прямо перед Stack: сначала человек читает
- * про механику работы с исполнителем (шаги, сроки), и только потом —
- * про техническую механику самого сайта.
+ * Процесс и преимущества идут ПОСЛЕ прайсов, а не до: пока не назван
+ * порядок цен, «как мы работаем» читать незачем — сначала решают,
+ * подходит ли вообще, и только потом интересуются механикой.
  *
- * Showcase стоит между About и Pains: возражение «у меня уже есть Авито и
- * группа» приходит раньше, чем разговор о болях и цене, — и снимать его
- * нужно до того, как человек решит, что сайт ему в принципе не нужен.
+ * Портфолио и отзывы — доказательства, они закрывают «а вы вообще это
+ * умеете» уже после того, как человек увидел цену и заинтересовался.
+ * Акции стоят следом: скидка работает как аргумент только на том, кто
+ * уже прицелился, а не на входе, где она читается как уценка.
+ * География отвечает последним техническим вопросом — «доедете ли до
+ * меня», — и уводит в FAQ и заявку.
  */
 export default function Page() {
   return (
@@ -61,18 +45,15 @@ export default function Page() {
       <main>
         <Hero />
         <BenefitsMarquee />
-        <About />
-        <Showcase />
-        <Pains />
-        <Works />
-        <Industries />
-        <Pricing />
-        <Includes />
-        <Leads />
-        <PwaSection />
+        <TrustBar />
+        <Services />
+        <ServiceDetails />
         <HowItWorks />
-        <Stack />
-        <Support />
+        <Advantages />
+        <Gallery />
+        <Reviews />
+        <Promos />
+        <Geo />
         <Faq />
         <FinalCta />
       </main>

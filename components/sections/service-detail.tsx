@@ -3,12 +3,27 @@
 import { useId, useState } from 'react'
 import Image from 'next/image'
 import { Check, ChevronDown } from 'lucide-react'
-import { type Service, servicesDetail, formatPrice, telegramMessage } from '@/lib/content'
+import { type Service, services, servicesDetail, formatPrice, telegramMessage } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PhoneButton, TelegramButton } from '@/components/ui/cta'
 import { reachGoal } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
+
+/**
+ * Все семь направлений подряд. Список идёт из content.ts, а не перечисляется
+ * в page.tsx: добавить направление должно быть правкой данных в одном месте,
+ * иначе меню услуг, якоря навигации и детальные блоки разъезжаются.
+ */
+export function ServiceDetails() {
+  return (
+    <>
+      {services.map((service, index) => (
+        <ServiceDetail key={service.slug} service={service} index={index} />
+      ))}
+    </>
+  )
+}
 
 /**
  * Детальный блок направления: оффер, состав, этапы, прайс-лист.

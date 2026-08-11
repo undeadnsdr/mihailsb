@@ -47,7 +47,7 @@ export function Gallery() {
           <div
             role="group"
             aria-label="Фильтр работ по направлению"
-            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
+            className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
           >
             <FilterButton active={active === ALL} onClick={() => setActive(ALL)}>
               {gallery.allLabel}

@@ -1,100 +1,117 @@
 'use client'
 
-import { finalCta } from '@/lib/content'
+import { Check, Clock, Send } from 'lucide-react'
+import { finalCta, site } from '@/lib/content'
 import { Section } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BentoCard } from '@/components/ui/bento-card'
-import { AvitoButton, PhoneButton } from '@/components/ui/cta'
+import { PhoneButton } from '@/components/ui/cta'
 import { useTelegramLeadForm } from '@/lib/lead-form'
-import { Check, Clock, Send } from 'lucide-react'
 
 /**
- * Финальный экран.
+ * Финальный блок заявки.
  *
- * Форма сознательно без бэкенда: у страницы нет базы и почтового сервиса,
- * а заявка, ушедшая в никуда, хуже отсутствия формы. Поэтому по отправке
- * открывается переписка в Телеграме с уже готовым текстом сообщения —
- * человеку остаётся только нажать «Отправить» в самом мессенджере.
+ * Форма без бэкенда: у сайта нет ни базы, ни почтового сервиса, а заявка,
+ * ушедшая в никуда, хуже отсутствия формы. По отправке открывается
+ * переписка в Telegram с готовым текстом — человеку остаётся нажать
+ * «Отправить» в самом мессенджере.
  *
- * Левая плитка ниже, чем правая (заголовок + форма из 3 полей), поэтому
- * grid растягивает её на всю высоту строки (stretch по умолчанию), а
- * justify-end внутри BentoCard прижимает контент к нижней границе —
- * иначе плитка была бы растянута, но с пустым полем сверху.
+ * Слева призыв и телефон, справа поля. Разделение не декоративное: у
+ * строительного заказа звонок и переписка — разные пути к одному, и тот,
+ * кто готов говорить, не должен сначала пролистывать форму.
  */
 export function FinalCta() {
-  const { industry, setIndustry, name, setName, contact, setContact, sent, handleSubmit } =
+  const { service, setService, name, setName, phone, setPhone, comment, setComment, sent, handleSubmit } =
     useTelegramLeadForm('final')
 
   return (
     <Section id="contact" labelledBy="contact-title">
-      {/* Две колонки по половине включаются уже с sm: слева призыв
-          «Расскажите, чем занимаетесь…», справа форма «Или оставьте
-          заявку…» — рядом друг с другом. h-full на обеих плитках и
-          растяжение grid по умолчанию (stretch) уравнивают их высоту:
-          какая колонка выше, задаёт высоту строки, а justify-end в левой
-          плитке ниже не даёт контенту отрываться от нижнего края. На
-          смартфоне (<sm) блоки идут друг под другом, каждый получает
-          всю ширину */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-12 md:gap-6">
-        <Reveal className="sm:col-span-6">
-          <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-8 lg:p-10 xl:p-12">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 md:gap-6">
+        {/* Левая плитка ниже правой (в правой четыре поля), поэтому grid
+            растягивает её по высоте строки, а justify-end прижимает текст
+            к нижнему краю — иначе сверху зияло бы пустое поле */}
+        <Reveal className="lg:col-span-5">
+          <BentoCard tone="primary" className="h-full justify-end gap-6 md:p-8 lg:p-10">
             <h2
               id="contact-title"
-              className="text-balance text-[26px] font-bold leading-[1.1] tracking-[-0.02em] sm:text-[30px] md:text-[34px] lg:text-[44px]"
+              className="display-caps text-balance text-[26px] leading-[1.05] sm:text-[30px] md:text-[34px] lg:text-[40px]"
             >
               {finalCta.title}
             </h2>
-            <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-primary-foreground/85 sm:text-[17px] lg:text-lg">
+            <p className="max-w-[46ch] text-pretty text-[16px] leading-relaxed text-primary-foreground/80 sm:text-[17px]">
               {finalCta.subtitle}
             </p>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {/* До sm паддинг карточки (p-6) съедал столько ширины, что
-                  «Написать на Авито» при базовых px-6/text-17px переносилось
-                  на две строки — та же компактная мобильная гарнитура, что
-                  и у кнопки в hero, отдаёт тексту недостающие пиксели */}
-              <AvitoButton
-                place="final"
-                className="bg-primary-foreground text-primary hover:bg-accent max-sm:gap-1.5 max-sm:px-4 max-sm:text-[15px] sm:w-auto"
-                iconClassName="size-4 sm:size-5"
-              >
-                {finalCta.primary}
-              </AvitoButton>
+            <div className="flex flex-col gap-2">
+              <p className="text-[15px] font-medium text-primary-foreground/70">
+                {finalCta.callInstead}
+              </p>
+              {/* Кнопка на жёлтой плитке инвертирована: сплошной жёлтый на
+                  жёлтом не читался бы, а обводка цветом текста плитки
+                  оставляет её главным действием этой половины */}
               <PhoneButton
                 place="final"
-                className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 sm:w-auto"
+                className="border border-primary-foreground/35 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 sm:w-auto"
               >
-                {finalCta.secondary}
+                {site.phone}
               </PhoneButton>
             </div>
 
             <p className="flex items-center gap-2 text-[15px] text-primary-foreground/70">
               <Clock className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              Отвечаю в течении часа
+              Отвечаем в течение часа
             </p>
           </BentoCard>
         </Reveal>
 
-        <Reveal step={1} className="sm:col-span-6">
+        <Reveal step={1} className="lg:col-span-7">
           <BentoCard className="h-full gap-5 md:p-8 lg:p-10">
-            <h3 className="text-pretty text-[19px] font-medium leading-snug tracking-[-0.01em] sm:text-[21px]">
-              {finalCta.formTitle}
-            </h3>
-
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <Field label={finalCta.fields.industryLabel} htmlFor="industry">
+              {/* Два поля в ряд от sm: имя и телефон короткие, и в одну
+                  колонку форма из четырёх полей уезжает ниже сгиба */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label={finalCta.fields.nameLabel} htmlFor="lead-name">
+                  <input
+                    id="lead-name"
+                    name="name"
+                    required
+                    autoComplete="name"
+                    placeholder={finalCta.fields.namePlaceholder}
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    className={fieldClass}
+                  />
+                </Field>
+
+                <Field label={finalCta.fields.phoneLabel} htmlFor="lead-phone">
+                  <input
+                    id="lead-phone"
+                    name="phone"
+                    required
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder={finalCta.fields.phonePlaceholder}
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                    className={fieldClass}
+                  />
+                </Field>
+              </div>
+
+              <Field label={finalCta.fields.serviceLabel} htmlFor="lead-service">
                 <select
-                  id="industry"
-                  name="industry"
+                  id="lead-service"
+                  name="service"
                   required
-                  value={industry}
-                  onChange={(event) => setIndustry(event.target.value)}
-                  className="min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[17px] text-foreground"
+                  value={service}
+                  onChange={(event) => setService(event.target.value)}
+                  className={fieldClass}
                 >
                   <option value="" disabled>
-                    {finalCta.fields.industryPlaceholder}
+                    {finalCta.fields.servicePlaceholder}
                   </option>
-                  {finalCta.industryOptions.map((option) => (
+                  {finalCta.serviceOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>
@@ -102,54 +119,39 @@ export function FinalCta() {
                 </select>
               </Field>
 
-              <Field label={finalCta.fields.nameLabel} htmlFor="name">
-                <input
-                  id="name"
-                  name="name"
-                  required
-                  autoComplete="name"
-                  placeholder={finalCta.fields.namePlaceholder}
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[17px] text-foreground placeholder:text-muted-foreground"
+              <Field label={finalCta.fields.commentLabel} htmlFor="lead-comment">
+                <textarea
+                  id="lead-comment"
+                  name="comment"
+                  rows={3}
+                  placeholder={finalCta.fields.commentPlaceholder}
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
+                  className="w-full resize-y rounded-xl border border-border bg-secondary px-4 py-3 text-[17px] leading-relaxed text-foreground placeholder:text-muted-foreground"
                 />
               </Field>
 
-              {/* id поля — contact-field, а не contact: id="contact" занят
-                  самой секцией, а дубль ломает якорь #contact из нижней панели */}
-              <Field label={finalCta.fields.contactLabel} htmlFor="contact-field">
-                <input
-                  id="contact-field"
-                  name="contact"
-                  required
-                  inputMode="text"
-                  autoComplete="tel"
-                  placeholder={finalCta.fields.contactPlaceholder}
-                  value={contact}
-                  onChange={(event) => setContact(event.target.value)}
-                  className="min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[17px] text-foreground placeholder:text-muted-foreground"
-                />
-              </Field>
-
-              {/* Обводка вместо сплошной заливки — тот же приём, что и у
-                  кнопки «Перезвоните мне» в hero (см. hero.tsx): рядом,
-                  в левой плитке, уже стоит сплошная «Написать на Авито»,
-                  и форма — запасной путь для тех, кому проще заполнить
-                  поля, чем сразу писать или звонить */}
               <button
                 type="submit"
                 data-goal="form_submit"
-                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-6 text-[17px] font-medium leading-none text-primary transition-colors hover:bg-secondary"
+                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[17px] font-medium leading-none text-primary-foreground transition-colors hover:bg-primary-hover"
               >
                 <Send className="size-5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 {finalCta.fields.submit}
               </button>
 
-              <p aria-live="polite" className="text-center text-[15px] leading-relaxed text-muted-foreground">
+              <p
+                aria-live="polite"
+                className="text-center text-[14px] leading-relaxed text-muted-foreground"
+              >
                 {sent ? (
                   <span className="flex items-center justify-center gap-2 font-medium text-foreground">
-                    <Check className="size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
-                    Открылся Телеграм с готовым сообщением — нажмите «Отправить» там.
+                    <Check
+                      className="size-4 shrink-0 text-primary"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    {finalCta.successText}
                   </span>
                 ) : (
                   finalCta.microcopy
@@ -163,6 +165,9 @@ export function FinalCta() {
   )
 }
 
+const fieldClass =
+  'min-h-[52px] w-full rounded-xl border border-border bg-secondary px-4 text-[17px] text-foreground placeholder:text-muted-foreground'
+
 function Field({
   label,
   htmlFor,
@@ -174,7 +179,10 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={htmlFor} className="text-[15px] font-medium tracking-[0.01em] text-muted-foreground">
+      <label
+        htmlFor={htmlFor}
+        className="text-[15px] font-medium tracking-[0.01em] text-muted-foreground"
+      >
         {label}
       </label>
       {children}

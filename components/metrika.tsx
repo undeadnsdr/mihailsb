@@ -13,7 +13,7 @@ import { YM_ID, captureUtm, reachGoal } from '@/lib/analytics'
  * счётчик с чужим id, а разработка не должна портить статистику.
  */
 export function Metrika() {
-  const fired = useRef({ scroll75: false, pricing: false })
+  const fired = useRef({ scroll75: false, services: false })
 
   useEffect(() => {
     captureUtm()
@@ -34,16 +34,17 @@ export function Metrika() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Автоцель «доскроллил до цен» — самый показательный сигнал интереса
+  // Автоцель «доскроллил до направлений» — самый показательный сигнал
+  // интереса: дальше человек уходит в конкретный блок со своим прайсом
   useEffect(() => {
-    const target = document.getElementById('pricing')
+    const target = document.getElementById('services')
     if (!target) return
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting && !fired.current.pricing) {
-            fired.current.pricing = true
-            reachGoal('view_pricing')
+          if (entry.isIntersecting && !fired.current.services) {
+            fired.current.services = true
+            reachGoal('view_services')
             observer.disconnect()
           }
         }
