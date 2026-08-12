@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const ALL = 'all'
 /** Сколько снимков показываем сразу статичным рядом, без прокрутки */
-const FEATURED_COUNT = 4
+const FEATURED_COUNT = 3
 
 /**
  * Портфолио с фильтром по направлению.
@@ -77,9 +77,9 @@ export function Gallery() {
         </p>
 
         {featured.length > 0 ? (
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:gap-4">
             {featured.map((item, index) => (
-              <GalleryCard key={item.src} item={item} eager={index < 4} />
+              <GalleryCard key={item.src} item={item} eager={index < 3} />
             ))}
           </ul>
         ) : (
@@ -160,7 +160,7 @@ function GalleryCarousel({ items }: { items: GalleryItem[] }) {
             type="button"
             onClick={() => scrollByPage(1)}
             disabled={!canNext}
-            aria-label="Показать следующие фото"
+            aria-label="Показать следующи�� фото"
             className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/60 disabled:pointer-events-none disabled:opacity-40"
           >
             <ChevronRight className="size-5" strokeWidth={2} aria-hidden="true" />

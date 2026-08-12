@@ -25,16 +25,14 @@ export function Services() {
           subtitle={servicesIntro.subtitle}
         />
 
-        {/* Семь карточек: 1 колонка на смартфоне, 2 на планшете, 3 с lg.
-            Седьмая при трёх колонках остаётся одна в последней строке —
-            растягиваем её на две, чтобы ряд не выглядел обрубленным */}
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Шесть карточек: 1 колонка на смартфоне, 2 на планшете, 3 с md —
+            ровно два полных ряда по три, без обрубленной последней строки */}
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {services.map((service, index) => (
             <Reveal
               as="li"
               key={service.slug}
               step={(Math.min(index, 5) as 0 | 1 | 2 | 3 | 4 | 5)}
-              className="lg:last:col-span-2"
             >
               <a
                 href={`#${service.slug}`}

@@ -64,7 +64,7 @@ export function ServiceDetail({ service, index }: { service: Service; index: num
           <Reveal className="flex min-w-0 flex-col gap-5 lg:flex-1">
             <div className="flex flex-col gap-3">
               <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-primary">
-                Направление {index + 1} из 7
+                Направление {index + 1} из {services.length}
               </p>
               <h2
                 id={`${service.slug}-title`}
